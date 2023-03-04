@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users
         lastname VARCHAR(255),
         email VARCHAR(50) NOT NULL,
         password VARCHAR NOT NULL,
-        role VARCHAR NOT NULL CHECK (role in ('ADMIN', 'USER')),
+        role VARCHAR NOT NULL DEFAULT 'USER' CHECK (role in ('ADMIN', 'USER')),
         balance INTEGER NOT NULL DEFAULT 0,
         phone_number INTEGER,
         created_at TIMESTAMP NOT NULL DEFAULT now(),

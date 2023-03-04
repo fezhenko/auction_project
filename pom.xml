@@ -32,6 +32,7 @@
         <feign.httpclient>11.8</feign.httpclient>
         <org.postgres.version>42.5.1</org.postgres.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
+        <jackson.version>2.14.1</jackson.version>
         <lombok.version>1.18.24</lombok.version>
         <lombok-mapstruct.version>0.2.0</lombok-mapstruct.version>
         <maven-surefire-plugin>3.0.0-M8</maven-surefire-plugin>
@@ -102,6 +103,11 @@
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
                 <version>${org.mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
