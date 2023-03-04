@@ -17,4 +17,11 @@ public class UsersService {
         return usersRepository.findUsers();
     }
 
+    public AppUser getUserById(Long userId) {
+        return usersRepository.getAppUserById(userId);
+    }
+
+    public Long createUser(String email, String password, String role) {
+        return usersRepository.createUser(email, password, role).getId();
+    }
 }
