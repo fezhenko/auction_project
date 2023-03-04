@@ -21,7 +21,11 @@ public class UsersService {
         return usersRepository.getAppUserById(userId);
     }
 
-    public Long createUser(String email, String password, String role) {
-        return usersRepository.createUser(email, password, role).getId();
+    public void createUser(String email, String password, String role) {
+        usersRepository.createUser(email, password, role);
+    }
+
+    public void updateNonMandatoryFieldsByUserId(Long userId, String firstname, String lastname, String phoneNumber) {
+        usersRepository.updateNonMandatoryFieldsById(userId, firstname, lastname, phoneNumber);
     }
 }

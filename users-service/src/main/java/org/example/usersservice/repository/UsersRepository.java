@@ -12,7 +12,7 @@ public interface UsersRepository extends Repository<AppUser, Long> {
     @Query("SELECT * FROM users")
     List<AppUser> findUsers();
 
-    @Query("SELECT email, role, balance, created_at " +
+    @Query("SELECT user_id, firstname, lastname, email, role, balance, phone_number, created_at " +
             "FROM users " +
             "WHERE user_id = :userId;")
     AppUser getAppUserById(@Param("userId") Long userId);
@@ -21,7 +21,7 @@ public interface UsersRepository extends Repository<AppUser, Long> {
     @Query("INSERT INTO users (email, password, role) " +
             "VALUES (:email, :password, :role);")
     //TODO: сделать возможность добавления админов только для админов
-    AppUser createUser(@Param("email") String email,
+    void createUser(@Param("email") String email,
                     @Param("password") String password,
                     @Param("role") String role);
 
@@ -31,7 +31,7 @@ public interface UsersRepository extends Repository<AppUser, Long> {
             "    lastname  = :lastname, " +
             "    phone_number = :phoneNumber " +
             "WHERE user_id = :userId;")
-    AppUser updateNonMandatoryFieldsById(@Param("userId") Long userId,
+    void updateNonMandatoryFieldsById(@Param("userId") Long userId,
                                          @Param("firstname") String firstname,
                                          @Param("lastname") String lastname,
                                          @Param("phoneNumber") String phoneNumber);

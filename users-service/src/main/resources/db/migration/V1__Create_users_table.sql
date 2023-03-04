@@ -3,11 +3,11 @@ CREATE TABLE IF NOT EXISTS users
         user_id BIGSERIAL NOT NULL UNIQUE,
         firstname VARCHAR(255),
         lastname VARCHAR(255),
-        email VARCHAR(50) NOT NULL,
+        email VARCHAR(50) NOT NULL UNIQUE,
         password VARCHAR NOT NULL,
         role VARCHAR NOT NULL DEFAULT 'USER' CHECK (role in ('ADMIN', 'USER')),
         balance INTEGER NOT NULL DEFAULT 0,
-        phone_number INTEGER,
+        phone_number VARCHAR(10),
         created_at TIMESTAMP NOT NULL DEFAULT now(),
         PRIMARY KEY (user_id)
     );
