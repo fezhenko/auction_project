@@ -27,4 +27,4 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-      - run: mvn -f auction_project/pom.xml clean verify
+      - run: mvn -f pom.xml clean verify
