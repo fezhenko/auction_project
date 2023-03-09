@@ -1,6 +1,6 @@
 package org.example.usersservice.converter;
 
-import org.example.usersservice.dto.AppUserDto;
+import org.example.usersservice.dto.users.AppUserDto;
 import org.example.usersservice.model.AppUser;
 import org.mapstruct.Mapper;
 

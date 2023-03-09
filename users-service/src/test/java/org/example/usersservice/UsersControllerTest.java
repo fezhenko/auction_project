@@ -4,7 +4,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.example.usersservice.controller.UsersController;
 import org.example.usersservice.converter.UsersConverter;
-import org.example.usersservice.dto.CreateUserDto;
+import org.example.usersservice.dto.users.CreateUserDto;
+import org.example.usersservice.dto.users.UpdateUserRelatedFieldsDto;
 import org.example.usersservice.model.AppUser;
 import org.example.usersservice.service.UsersService;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +23,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -63,19 +63,9 @@ public class UsersControllerTest {
     @SneakyThrows
     @Test
     @DisplayName("User should be found by user id")
-    public void userIsFoundById() {
+    public void testUserCanBeFoundByValidUserId() {
         final Long userId = 123123L;
-        final AppUser appUser = new AppUser(
-                123123L,
-                "firstName",
-                "lastName",
-                "email@test.test",
-                "password1",
-                "USER",
-                0.0,
-                "1234567890",
-                new Date(3000)
-        );
+
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/users/{userId}", userId)
                         .accept(MediaType.APPLICATION_JSON))
@@ -110,5 +100,54 @@ public class UsersControllerTest {
                         createUserWithValidData.getPassword(),
                         createUserWithValidData.getRole());
     }
+
+    @Test
+    @SneakyThrows
+    @DisplayName("verify that user is deleted if valid user Id is provided")
+    public void testUserDeletingWithValidUserId() {
+        final Long userId = 123L;
+        mockMvc.perform(MockMvcRequestBuilders
+                .delete("/api/v1/users/{userId}", userId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers
+                        .status()
+                        .isAccepted());
+        BDDMockito.then(usersService)
+                .should()
+                .deleteUserById(userId);
+    }
+
+    @Test
+    @DisplayName("Verify that user service will be called when put endpoint is called")
+    @SneakyThrows
+    public void testFieldsUpdatingWithValidUserId() {
+        final Long userId = 123L;
+        final UpdateUserRelatedFieldsDto fieldsToUpdate = UpdateUserRelatedFieldsDto.builder()
+                .email("test@admin.test")
+                .firstname("updatedName")
+                .lastname("updatedLastName")
+                .phoneNumber("12312312312")
+                .build();
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/api/v1/users/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(MAPPER.writeValueAsString(fieldsToUpdate))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers
+                        .status()
+                        .isAccepted());
+        BDDMockito.then(usersService)
+                .should()
+                .updateFieldsByUserId(
+                        userId,
+                        fieldsToUpdate.getEmail(),
+                        fieldsToUpdate.getFirstname(),
+                        fieldsToUpdate.getLastname(),
+                        fieldsToUpdate.getPhoneNumber()
+                );
+    }
+
+
 
 }

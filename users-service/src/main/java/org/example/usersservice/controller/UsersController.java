@@ -6,12 +6,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.example.usersservice.converter.UsersConverter;
-import org.example.usersservice.dto.AppUserDto;
-import org.example.usersservice.dto.CreateUserDto;
-import org.example.usersservice.dto.ValidateUserDto;
-import org.example.usersservice.dto.UserValidationResultDto;
-import org.example.usersservice.dto.UpdateUserRelatedFieldsDto;
-import org.example.usersservice.dto.UpdatePasswordDto;
+import org.example.usersservice.dto.users.AppUserDto;
+import org.example.usersservice.dto.users.CreateUserDto;
+import org.example.usersservice.dto.users.ValidateUserDto;
+import org.example.usersservice.dto.users.UserValidationResultDto;
+import org.example.usersservice.dto.users.UpdateUserRelatedFieldsDto;
+import org.example.usersservice.dto.users.UpdatePasswordDto;
 import org.example.usersservice.model.AppUser;
 import org.example.usersservice.service.UsersService;
 import org.springframework.http.HttpStatus;
@@ -100,7 +100,7 @@ public class UsersController {
                 updateUserRelatedFieldsDto.getPhoneNumber()
         );
         AppUser appUser = usersService.getUserById(userId);
-        return ResponseEntity.ok(usersConverter.toDto(appUser));
+        return ResponseEntity.accepted().body(usersConverter.toDto(appUser));
     }
 
     @Tag(name = "Users")
