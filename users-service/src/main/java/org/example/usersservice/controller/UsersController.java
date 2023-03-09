@@ -8,19 +8,15 @@ import lombok.AllArgsConstructor;
 import org.example.usersservice.converter.UsersConverter;
 import org.example.usersservice.dto.AppUserDto;
 import org.example.usersservice.dto.CreateUserDto;
-import org.example.usersservice.dto.UpdateUserNonMandatoryFieldsDto;
+import org.example.usersservice.dto.ValidateUserDto;
+import org.example.usersservice.dto.UserValidationResultDto;
+import org.example.usersservice.dto.UpdateUserRelatedFieldsDto;
+import org.example.usersservice.dto.UpdatePasswordDto;
 import org.example.usersservice.model.AppUser;
 import org.example.usersservice.service.UsersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
@@ -55,7 +51,7 @@ public class UsersController {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "User successfully found"),
-                    @ApiResponse(responseCode = "404", description = "There are no users were found"),
+                    @ApiResponse(responseCode = "404", description = "User is not found"),
                     @ApiResponse(responseCode = "500", description = "Something Went Wrong")
             }
     )
@@ -69,13 +65,13 @@ public class UsersController {
     @Operation(summary = "Create user by email, password, role")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "User successfully found"),
-                    @ApiResponse(responseCode = "404", description = "There are no users were found"),
+                    @ApiResponse(responseCode = "201", description = "User successfully created"),
+                    @ApiResponse(responseCode = "400", description = "Check the input and try again"),
                     @ApiResponse(responseCode = "500", description = "Something Went Wrong")
             }
     )
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@Valid @RequestBody CreateUserDto createUserDto) {
         usersService.createUser(
                 createUserDto.getEmail(),
@@ -84,26 +80,76 @@ public class UsersController {
     }
 
     @Tag(name = "Users")
-    @Operation(summary = "Update non-mandatory fields of user by user id")
+    @Operation(summary = "Update fields related to user by user id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "User successfully found"),
-                    @ApiResponse(responseCode = "404", description = "There are no users were found"),
+                    @ApiResponse(responseCode = "404", description = "User is not found"),
                     @ApiResponse(responseCode = "500", description = "Something Went Wrong")
             }
     )
     @PutMapping("/{userId}")
-    public ResponseEntity<AppUserDto> updateUserNonMandatoryFields(
+    public ResponseEntity<AppUserDto> updateUserRelatedFields(
             @PathVariable Long userId,
-            @Valid @RequestBody UpdateUserNonMandatoryFieldsDto userNonMandatoryFieldsDto) {
-        usersService.updateNonMandatoryFieldsByUserId(
+            @Valid @RequestBody UpdateUserRelatedFieldsDto updateUserRelatedFieldsDto) {
+        usersService.updateFieldsByUserId(
                 userId,
-                userNonMandatoryFieldsDto.getFirstname(),
-                userNonMandatoryFieldsDto.getLastname(),
-                userNonMandatoryFieldsDto.getPhoneNumber()
+                updateUserRelatedFieldsDto.getEmail(),
+                updateUserRelatedFieldsDto.getFirstname(),
+                updateUserRelatedFieldsDto.getLastname(),
+                updateUserRelatedFieldsDto.getPhoneNumber()
         );
         AppUser appUser = usersService.getUserById(userId);
         return ResponseEntity.ok(usersConverter.toDto(appUser));
+    }
+
+    @Tag(name = "Users")
+    @Operation(summary = "Update user password by user id")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "User password is updated"),
+                    @ApiResponse(responseCode = "404", description = "User is not found"),
+                    @ApiResponse(responseCode = "500", description = "Something Went Wrong")
+            }
+    )
+    @PatchMapping("/{userId}/update-password")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void updateUserPassword(
+            @PathVariable Long userId,
+            @Valid @RequestBody UpdatePasswordDto updatePasswordDto
+    ) {
+        usersService.updateUserPassword(
+                userId,
+                updatePasswordDto.getPassword()
+        );
+    }
+
+    @Tag(name = "Users")
+    @Operation(summary = "Delete user by id")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "204", description = "User successfully found"),
+                    @ApiResponse(responseCode = "404", description = "User is not found"),
+                    @ApiResponse(responseCode = "500", description = "Something Went Wrong")
+            }
+    )
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void deleteUserById(
+            @PathVariable Long userId
+    ) {
+        usersService.deleteUserById(userId);
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<UserValidationResultDto> validateUserByEmail(
+            @RequestBody ValidateUserDto validateUserDto
+    ) {
+        UserValidationResultDto validationResult =
+                UserValidationResultDto.builder()
+                        .isValid(usersService.validateUserByEmail(validateUserDto.getEmail()))
+                        .build();
+        return ResponseEntity.ok(validationResult);
     }
 
 }

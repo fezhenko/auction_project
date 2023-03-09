@@ -20,35 +20,30 @@ public interface UsersRepository extends Repository<AppUser, Long> {
     @Modifying
     @Query("INSERT INTO users (email, password, role) " +
             "VALUES (:email, :password, :role);")
-    //TODO: сделать возможность добавления админов только для админов
+        //TODO: сделать возможность добавления админов только для админов
     void createUser(@Param("email") String email,
                     @Param("password") String password,
                     @Param("role") String role);
 
     @Modifying
     @Query("UPDATE users " +
-            "SET firstname = :firstname, " +
+            "SET email = :email, " +
+            "    firstname = :firstname, " +
             "    lastname  = :lastname, " +
             "    phone_number = :phoneNumber " +
             "WHERE user_id = :userId;")
-    void updateNonMandatoryFieldsById(@Param("userId") Long userId,
-                                         @Param("firstname") String firstname,
-                                         @Param("lastname") String lastname,
-                                         @Param("phoneNumber") String phoneNumber);
+    void updateFieldsByUserId(@Param("userId") Long userId,
+                              @Param("email") String email,
+                              @Param("firstname") String firstname,
+                              @Param("lastname") String lastname,
+                              @Param("phoneNumber") String phoneNumber);
 
     @Modifying
-    @Query("UPDATE users u " +
-            "SET u.email = :email " +
+    @Query("UPDATE users " +
+            "SET password = :password " +
             "WHERE user_id = :userId;")
-    AppUser updateUserEmailById(@Param("userId") Long userId,
-                                @Param("email") String email);
-
-    @Modifying
-    @Query("UPDATE users u " +
-            "SET u.password = :password " +
-            "WHERE user_id = :userId;")
-    AppUser updateUserPasswordById(@Param("userId") Long userId,
-                                   @Param("password") String password);
+    void updateUserPasswordById(@Param("userId") Long userId,
+                                @Param("password") String password);
 
     @Modifying
     @Query("DELETE " +

@@ -25,7 +25,25 @@ public class UsersService {
         usersRepository.createUser(email, password, role);
     }
 
-    public void updateNonMandatoryFieldsByUserId(Long userId, String firstname, String lastname, String phoneNumber) {
-        usersRepository.updateNonMandatoryFieldsById(userId, firstname, lastname, phoneNumber);
+    public void updateFieldsByUserId(
+            Long userId,
+            String email,
+            String firstname,
+            String lastname,
+            String phoneNumber) {
+        usersRepository.updateFieldsByUserId(userId, email, firstname, lastname, phoneNumber);
     }
+
+    public void deleteUserById(Long userId) {
+        usersRepository.deleteAppUserById(userId);
+    }
+
+    public boolean validateUserByEmail(String email) {
+        return usersRepository.validateUser(email);
+    }
+
+    public void updateUserPassword(Long userId, String password) {
+        usersRepository.updateUserPasswordById(userId, password);
+    }
+
 }
