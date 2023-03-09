@@ -80,7 +80,7 @@ public class PaymentsControllerTest {
                         payment.getCardNumber(),
                         payment.getExpirationDate(),
                         payment.getAmount()
-                );
+            );
     }
 
 }
