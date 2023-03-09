@@ -1,6 +1,7 @@
 package org.example.usersservice.repository;
 
 import org.example.usersservice.model.AppUser;
+import org.example.usersservice.model.Payment;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.Repository;
@@ -55,4 +56,12 @@ public interface UsersRepository extends Repository<AppUser, Long> {
             "FROM users u " +
             "WHERE u.email = :userEmail;")
     boolean validateUser(@Param("userEmail") String userEmail);
+
+    @Query("select payment_id, amount, payment_date " +
+            "from payments p " +
+            "         join users u on u.user_id = p.user_id " +
+            "where u.user_id = :userId;")
+    List<Payment> findPaymentsByUserId(
+            @Param("userId") Long userId
+    );
 }

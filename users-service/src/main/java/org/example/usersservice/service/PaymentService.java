@@ -16,4 +16,12 @@ public class PaymentService {
     public List<Payment> findPayments() {
         return paymentsRepository.findAllPayments();
     }
+
+    public Payment findPayment(Long paymentId) {
+        return paymentsRepository.findPaymentsByPaymentId(paymentId);
+    }
+
+    public void createPayment(Long userId, String cardNumber, String expirationDate, Double amount) {
+        paymentsRepository.addPaymentByUserId(userId, cardNumber, expirationDate, amount);
+    }
 }

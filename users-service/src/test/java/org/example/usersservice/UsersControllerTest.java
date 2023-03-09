@@ -107,9 +107,9 @@ public class UsersControllerTest {
     public void testUserDeletingWithValidUserId() {
         final Long userId = 123L;
         mockMvc.perform(MockMvcRequestBuilders
-                .delete("/api/v1/users/{userId}", userId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .delete("/api/v1/users/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers
                         .status()
                         .isAccepted());
@@ -144,10 +144,25 @@ public class UsersControllerTest {
                         fieldsToUpdate.getEmail(),
                         fieldsToUpdate.getFirstname(),
                         fieldsToUpdate.getLastname(),
-                        fieldsToUpdate.getPhoneNumber()
-                );
+                        fieldsToUpdate.getPhoneNumber());
     }
 
+    @Test
+    @DisplayName("Test payments can be found by users id")
+    @SneakyThrows
+    public void testUserPaymentsCanBeFoundByUserId() {
+        final Long userId = 32132L;
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/v1/users/{userId}/payments", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers
+                        .status()
+                        .isOk());
+        BDDMockito.then(usersService)
+                .should()
+                .findPaymentsByUserId(userId);
+    }
 
 
 }

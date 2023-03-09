@@ -2,6 +2,7 @@ package org.example.usersservice.service;
 
 import lombok.AllArgsConstructor;
 import org.example.usersservice.model.AppUser;
+import org.example.usersservice.model.Payment;
 import org.example.usersservice.repository.UsersRepository;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,10 @@ public class UsersService {
 
     public void updateUserPassword(Long userId, String password) {
         usersRepository.updateUserPasswordById(userId, password);
+    }
+
+    public List<Payment> findPaymentsByUserId(Long userId) {
+        return usersRepository.findPaymentsByUserId(userId);
     }
 
 }

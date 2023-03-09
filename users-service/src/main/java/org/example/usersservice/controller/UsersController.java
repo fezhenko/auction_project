@@ -6,17 +6,28 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.example.usersservice.converter.UsersConverter;
+import org.example.usersservice.dto.users.UserPaymentsDto;
 import org.example.usersservice.dto.users.AppUserDto;
 import org.example.usersservice.dto.users.CreateUserDto;
+import org.example.usersservice.dto.users.UpdatePasswordDto;
+import org.example.usersservice.dto.users.UpdateUserRelatedFieldsDto;
 import org.example.usersservice.dto.users.ValidateUserDto;
 import org.example.usersservice.dto.users.UserValidationResultDto;
-import org.example.usersservice.dto.users.UpdateUserRelatedFieldsDto;
-import org.example.usersservice.dto.users.UpdatePasswordDto;
 import org.example.usersservice.model.AppUser;
+import org.example.usersservice.model.Payment;
 import org.example.usersservice.service.UsersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 
 import javax.validation.Valid;
@@ -150,6 +161,21 @@ public class UsersController {
                         .isValid(usersService.validateUserByEmail(validateUserDto.getEmail()))
                         .build();
         return ResponseEntity.ok(validationResult);
+    }
+
+    @Tag(name = "Users")
+    @Operation(summary = "Get payments of user by user Id")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Payments successfully found"),
+                    @ApiResponse(responseCode = "404", description = "User is not found"),
+                    @ApiResponse(responseCode = "500", description = "Something Went Wrong")
+            }
+    )
+    @GetMapping("/{userId}/payments")
+    public ResponseEntity<List<UserPaymentsDto>> getPaymentsByUserId(@PathVariable Long userId) {
+        List<Payment> payments = usersService.findPaymentsByUserId(userId);
+        return ResponseEntity.ok(usersConverter.paymentsToDto(payments));
     }
 
 }

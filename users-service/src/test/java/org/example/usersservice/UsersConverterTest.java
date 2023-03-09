@@ -3,7 +3,9 @@ package org.example.usersservice;
 import lombok.SneakyThrows;
 import org.example.usersservice.converter.UsersConverter;
 import org.example.usersservice.dto.users.AppUserDto;
+import org.example.usersservice.dto.users.UserPaymentsDto;
 import org.example.usersservice.model.AppUser;
+import org.example.usersservice.model.Payment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,11 @@ public class UsersConverterTest {
                         .phoneNumber(appUser.getPhoneNumber())
                         .createdAt(appUser.getCreatedAt())
                         .build();
+            }
+
+            @Override
+            public List<UserPaymentsDto> paymentsToDto(List<Payment> payments) {
+                return null;
             }
         };
 
@@ -100,6 +107,11 @@ public class UsersConverterTest {
                         .phoneNumber(appUser.getPhoneNumber())
                         .createdAt(appUser.getCreatedAt())
                         .build();
+            }
+
+            @Override
+            public List<UserPaymentsDto> paymentsToDto(List<Payment> payments) {
+                return null;
             }
         };
 

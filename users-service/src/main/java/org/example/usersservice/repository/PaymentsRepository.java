@@ -16,8 +16,11 @@ public interface PaymentsRepository extends Repository<Payment, Long> {
     @Query("select * from payments")
     List<Payment> findAllPayments();
 
-    @Query("select * from payments where user_id = :userId;")
-    Payment findPaymentsByUserId(@Param("userId") Long userId);
+    @Query("select * from payments " +
+            "where payment_id = :paymentId;")
+    Payment findPaymentsByPaymentId(
+            @Param("paymentId") Long paymentId
+    );
 
     @Transactional(rollbackFor = {SQLException.class})
     @Modifying
