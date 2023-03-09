@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -22,6 +23,6 @@ public class CreatePaymentDto {
     @Size(min = 5, max = 5)
     String expirationDate;
     @NotNull
-    @Pattern(regexp = "^0*?[1-9]\\d*$\n")
+    @DecimalMin(value = "0.001", message = "Please enter a valid amount more than 0")
     Double amount;
 }

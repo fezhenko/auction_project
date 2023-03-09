@@ -18,7 +18,6 @@ public class Payment {
     @Column("card_number")
     String cardNumber;
     @Column("expiration_date")
-
     String expirationDate;
     @Column("amount")
     Double amount;

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.example.usersservice.converter.UsersConverter;
+import org.example.usersservice.dto.users.UpdatePaymentInformationDto;
 import org.example.usersservice.dto.users.UserPaymentsDto;
 import org.example.usersservice.dto.users.AppUserDto;
 import org.example.usersservice.dto.users.CreateUserDto;
@@ -176,6 +177,31 @@ public class UsersController {
     public ResponseEntity<List<UserPaymentsDto>> getPaymentsByUserId(@PathVariable Long userId) {
         List<Payment> payments = usersService.findPaymentsByUserId(userId);
         return ResponseEntity.ok(usersConverter.paymentsToDto(payments));
+    }
+
+
+    @Tag(name = "Users")
+    @Operation(summary = "Update payment information by user Id ")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "202", description = "Payments successfully updated"),
+                    @ApiResponse(responseCode = "404", description = "Payment is not found"),
+                    @ApiResponse(responseCode = "500", description = "Something Went Wrong")
+            }
+    )
+    @PatchMapping("/{userId}/payments/{paymentId}")
+    public ResponseEntity<UserPaymentsDto> updatePaymentInformationByUserId(
+            @PathVariable Long userId,
+            @PathVariable Long paymentId,
+            @Valid @RequestBody UpdatePaymentInformationDto updatePaymentInformationDto
+    ) {
+        Payment payment = usersService.updatePaymentInformation(
+                userId,
+                paymentId,
+                updatePaymentInformationDto.getCardNumber(),
+                updatePaymentInformationDto.getExpirationDate()
+        );
+        return ResponseEntity.accepted().body(usersConverter.paymentsToDto(payment));
     }
 
 }

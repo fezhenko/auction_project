@@ -24,4 +24,16 @@ public class PaymentService {
     public void createPayment(Long userId, String cardNumber, String expirationDate, Double amount) {
         paymentsRepository.addPaymentByUserId(userId, cardNumber, expirationDate, amount);
     }
+
+    public void updatePaymentInformation(
+            Long paymentId,
+            String cardNumber,
+            String expirationDate) {
+        paymentsRepository.updatePaymentInformationById(
+                paymentId,
+                cardNumber,
+                expirationDate
+        );
+    }
+
 }

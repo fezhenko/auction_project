@@ -35,9 +35,10 @@ public interface PaymentsRepository extends Repository<Payment, Long> {
     @Modifying
     @Query("update payments " +
             "set card_number = :cardNumber, expiration_date = :expirationDate, payment_date = now() " +
-            "where user_id = :userId;")
-    void updatePaymentInformationByUserId(@Param("userId") Long userId,
-                                          @Param("cardNumber") String cardNumber,
-                                          @Param("expirationDate") String expirationDate);
+            "where payment_id = :paymentId;")
+    void updatePaymentInformationById(@Param("paymentId") Long paymentId,
+                                      @Param("cardNumber") String cardNumber,
+                                      @Param("expirationDate") String expirationDate);
+
 
 }

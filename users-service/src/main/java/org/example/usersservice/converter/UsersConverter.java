@@ -17,5 +17,6 @@ public interface UsersConverter {
     AppUserDto toDto(@Valid AppUser appUser);
 
     List<UserPaymentsDto> paymentsToDto(@Valid List<Payment> payments);
+    UserPaymentsDto paymentsToDto(@Valid Payment payments);
 
 }

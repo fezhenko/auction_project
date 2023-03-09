@@ -72,7 +72,6 @@ public class UsersControllerTest {
                 .andExpect(MockMvcResultMatchers
                         .status()
                         .isOk());
-
         BDDMockito.then(usersService)
                 .should()
                 .getUserById(userId);

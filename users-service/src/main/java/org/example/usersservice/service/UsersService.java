@@ -51,4 +51,13 @@ public class UsersService {
         return usersRepository.findPaymentsByUserId(userId);
     }
 
+    public Payment updatePaymentInformation(Long userId, Long paymentId, String cardNumber, String expirationDate) {
+        return usersRepository.updatePaymentInformationByUserId(
+                userId,
+                paymentId,
+                cardNumber,
+                expirationDate
+        );
+    }
+
 }

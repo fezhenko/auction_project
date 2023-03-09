@@ -64,4 +64,12 @@ public interface UsersRepository extends Repository<AppUser, Long> {
     List<Payment> findPaymentsByUserId(
             @Param("userId") Long userId
     );
+
+    @Query("update payments as p " +
+            "set card_number     = :cardNum, " +
+            "    expiration_date = :expDate " +
+            "from users as u " +
+            "where payment_id = :paymentId " +
+            "  and u.user_id = :userId;")
+    Payment updatePaymentInformationByUserId(Long userId, Long paymentId, String cardNumber, String expirationDate);
 }

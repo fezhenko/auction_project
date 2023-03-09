@@ -13,5 +13,4 @@ public class UserPaymentsDto {
     @Pattern(regexp = "^0*?[1-9]\\d*$\n")
     Double amount;
     Date paymentDate;
-
 }

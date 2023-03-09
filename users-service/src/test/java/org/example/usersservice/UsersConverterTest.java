@@ -44,6 +44,11 @@ public class UsersConverterTest {
             public List<UserPaymentsDto> paymentsToDto(List<Payment> payments) {
                 return null;
             }
+
+            @Override
+            public UserPaymentsDto paymentsToDto(Payment payments) {
+                return null;
+            }
         };
 
         final AppUser appUser = new AppUser(
@@ -111,6 +116,11 @@ public class UsersConverterTest {
 
             @Override
             public List<UserPaymentsDto> paymentsToDto(List<Payment> payments) {
+                return null;
+            }
+
+            @Override
+            public UserPaymentsDto paymentsToDto(Payment payments) {
                 return null;
             }
         };
