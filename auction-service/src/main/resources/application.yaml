@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:15433/postgres
+    username: postgres
+    password: postgres
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+server:
+  port: 8081
+
+feign:
+  client:
+    config:
+      domain:
+        connectTimeout: 5000
+        readTimeout: 3000
+
+services:
+  exchange-service:
+    url: 'https://api.apilayer.com/exchangerates_data'
+    api-key: dZ0VERSnNCWKLJ0XBHtTswYviUbmg0hk
