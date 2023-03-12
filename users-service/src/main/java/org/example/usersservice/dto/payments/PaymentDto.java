@@ -3,7 +3,7 @@ package org.example.usersservice.dto.payments;
 import lombok.Builder;
 import lombok.Value;
 
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.DecimalMin;
 import java.util.Date;
 
 @Value
@@ -14,7 +14,7 @@ public class PaymentDto {
     Long userId;
     String cardNumber;
     String expirationDate;
-    @Pattern(regexp = "^0*?[1-9]\\d*$\n")
+    @DecimalMin(value = "0.001", message = "Please enter a valid amount more than 0")
     Double amount;
     Date paymentDate;
 

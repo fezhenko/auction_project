@@ -1,0 +1,2 @@
+ALTER TABLE items
+AlTER COLUMN currency SET DEFAULT 5;
