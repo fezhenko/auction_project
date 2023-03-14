@@ -24,4 +24,4 @@ feign:
 services:
   exchange-service:
     url: 'https://api.apilayer.com/exchangerates_data'
-    api-key: dZ0VERSnNCWKLJ0XBHtTswYviUbmg0hk
+    api-key: 'dZ0VERSnNCWKLJ0XBHtTswYviUbmg0hk'

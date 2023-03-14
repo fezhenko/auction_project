@@ -40,4 +40,19 @@ public class CurrenciesService {
     public List<Currency> findAllCurrencies() {
         return currencyRepository.getAllCurrencies();
     }
+
+    public void updateCurrency(Long currencyId, String currencyKey) {
+        String updatedJson = "{\"currency\":\"%s\"}".formatted(currencyKey);
+        currencyRepository.updateCurrency(currencyId, updatedJson);
+    }
+
+    public void updateCurrency(Long currencyId, String currencyKey, String currencyValue) {
+        String updatedJson = "{\"currency\":\"%s\", \"currencyDescription\": \"%s\"}"
+                .formatted(currencyKey, currencyValue);
+        currencyRepository.updateCurrency(currencyId, updatedJson);
+    }
+
+    public void deleteCurrency(Long currencyId) {
+        currencyRepository.deleteCurrency(currencyId);
+    }
 }

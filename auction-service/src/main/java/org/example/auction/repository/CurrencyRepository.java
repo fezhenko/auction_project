@@ -24,4 +24,14 @@ public interface CurrencyRepository extends Repository<Currency, Long> {
             "from currencies " +
             "where id = :id;")
     Currency getCurrencyById(@Param("id") Long currencyId);
+
+    @Query("UPDATE currencies " +
+            "SET currency = :updatedJson::json " +
+            "WHERE id = :id;")
+    @Modifying
+    void updateCurrency(@Param("id") Long currencyId, @Param("updatedJson") String updatedJson);
+
+    @Query("delete from currencies where id = :id")
+    @Modifying
+    void deleteCurrency(@Param("id") Long currencyId);
 }

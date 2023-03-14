@@ -8,11 +8,13 @@ import org.example.auction.model.Currency;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Mapper
+@Component
 public interface CurrencyConverter {
 
     @Mapping(source = "Currency", target = "FullCurrencyInfoDto", qualifiedByName = "CurrencyToDto")
