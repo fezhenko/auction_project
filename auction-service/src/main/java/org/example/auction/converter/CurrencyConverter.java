@@ -2,8 +2,8 @@ package org.example.auction.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.auction.dto.CurrencyDto;
-import org.example.auction.dto.FullCurrencyInfoDto;
+import org.example.auction.dto.currency.CurrencyDto;
+import org.example.auction.dto.currency.FullCurrencyInfoDto;
 import org.example.auction.model.Currency;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

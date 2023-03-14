@@ -1,4 +1,4 @@
-package org.example.auction.dto;
+package org.example.auction.dto.currency;
 
 import lombok.Builder;
 import lombok.Value;
