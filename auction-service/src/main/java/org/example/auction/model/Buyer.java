@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Embedded;
 import org.springframework.data.relational.core.mapping.Table;
 
 import javax.validation.constraints.NotNull;
@@ -17,7 +18,7 @@ public class Buyer {
     @Id
     @Column("id")
     Long id;
-    @NotNull
+    @Embedded.Nullable
     @Column("bid_id")
     Long bidId;
     @NotNull
