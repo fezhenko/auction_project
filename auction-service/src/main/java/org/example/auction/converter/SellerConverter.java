@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import java.util.List;
 
 @Mapper
-public interface SellersConverter {
+public interface SellerConverter {
     List<SellerDto> toDto(List<Seller> sellers);
     SellerDto toDto(Seller seller);
 

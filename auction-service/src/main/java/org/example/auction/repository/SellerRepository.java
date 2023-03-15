@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface SellersRepository extends Repository<Seller, Long> {
+public interface SellerRepository extends Repository<Seller, Long> {
     @Query("select * from sellers")
     List<Seller> findAll();
 

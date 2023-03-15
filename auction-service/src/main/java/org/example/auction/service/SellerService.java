@@ -2,29 +2,29 @@ package org.example.auction.service;
 
 import lombok.AllArgsConstructor;
 import org.example.auction.model.Seller;
-import org.example.auction.repository.SellersRepository;
+import org.example.auction.repository.SellerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class SellersService {
-    private final SellersRepository sellersRepository;
+public class SellerService {
+    private final SellerRepository sellerRepository;
 
     public List<Seller> findAllSellers() {
-        return sellersRepository.findAll();
+        return sellerRepository.findAll();
     }
 
     public Seller findSellerById(Long id) {
-        return sellersRepository.findSellerById(id);
+        return sellerRepository.findSellerById(id);
     }
 
     public void createSeller(Long auctionId) {
-        sellersRepository.createSeller(auctionId);
+        sellerRepository.createSeller(auctionId);
     }
 
     public void deleteSellerById(Long id) {
-        sellersRepository.deleteSellerData(id);
+        sellerRepository.deleteSellerData(id);
     }
 }

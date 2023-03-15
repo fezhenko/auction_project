@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class CurrenciesService {
+public class CurrencyService {
     private final ExchangeClient exchangeClient;
     private final CurrencyRepository currencyRepository;
 

@@ -16,7 +16,7 @@ import org.example.auction.dto.exchange.ConvertedValuesDto;
 import org.example.auction.dto.exchange.CurrenciesResultDto;
 import org.example.auction.dto.exchange.QueryDto;
 import org.example.auction.model.Currency;
-import org.example.auction.service.CurrenciesService;
+import org.example.auction.service.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -38,18 +38,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/currencies")
 @Tag(name = "Currencies")
-public class CurrenciesController {
-    private final CurrenciesService currenciesService;
+public class CurrencyController {
+    private final CurrencyService currencyService;
     private final ObjectMapper objectMapper;
     private final CurrencyConverter currencyConverter;
     private final String apiKey;
 
     @Autowired
-    public CurrenciesController(CurrenciesService currenciesService,
-                                ObjectMapper objectMapper,
-                                CurrencyConverter currencyConverter,
-                                @Value("${services.exchange-service.api-key}") String apiKey) {
-        this.currenciesService = currenciesService;
+    public CurrencyController(CurrencyService currencyService,
+                              ObjectMapper objectMapper,
+                              CurrencyConverter currencyConverter,
+                              @Value("${services.exchange-service.api-key}") String apiKey) {
+        this.currencyService = currencyService;
         this.objectMapper = objectMapper;
         this.currencyConverter = currencyConverter;
         this.apiKey = apiKey;
@@ -64,14 +64,14 @@ public class CurrenciesController {
     @PostMapping("/convert")
     public ResponseEntity<ConvertedValuesDto> convertCurrencies(
             @Parameter(required = true) @RequestBody @Valid QueryDto queryDto) {
-        ConvertedValuesDto convertResponse = currenciesService.convertCurrencies(
+        ConvertedValuesDto convertResponse = currencyService.convertCurrencies(
                 apiKey, queryDto.getTo(), queryDto.getFrom(), queryDto.getAmount());
         return ResponseEntity.ok(convertResponse);
     }
 
     @GetMapping("/symbols")
     public ResponseEntity<CurrenciesResultDto> getCurrencies() {
-        CurrenciesResultDto currenciesResultDto = currenciesService.getCurrencies(apiKey);
+        CurrenciesResultDto currenciesResultDto = currencyService.getCurrencies(apiKey);
         return ResponseEntity.ok().body(currenciesResultDto);
     }
 
@@ -85,7 +85,7 @@ public class CurrenciesController {
     @ResponseStatus(HttpStatus.CREATED)
     @SneakyThrows
     public void addCurrency(@RequestBody @Valid AddCurrencyDto addCurrencyDto) {
-        currenciesService.addCurrency(objectMapper.writeValueAsString(addCurrencyDto));
+        currencyService.addCurrency(objectMapper.writeValueAsString(addCurrencyDto));
     }
 
     @Operation(summary = "Find all existing currencies")
@@ -97,7 +97,7 @@ public class CurrenciesController {
     @GetMapping()
     @SneakyThrows
     public ResponseEntity<List<FullCurrencyInfoDto>> findAllCurrencies() {
-        List<Currency> currencies = currenciesService.findAllCurrencies();
+        List<Currency> currencies = currencyService.findAllCurrencies();
         return ResponseEntity.ok(currencyConverter.toDto(currencies));
     }
 
@@ -110,7 +110,7 @@ public class CurrenciesController {
     @GetMapping("/{currencyId}")
     @SneakyThrows
     public ResponseEntity<FullCurrencyInfoDto> findCurrencyById(@PathVariable("currencyId") Long currencyId) {
-        Currency currency = currenciesService.getCurrencyById(currencyId);
+        Currency currency = currencyService.getCurrencyById(currencyId);
         CurrencyDto currencyDto = objectMapper.readValue(currency.getCurrency().toString(), CurrencyDto.class);
         return ResponseEntity.ok(
                 FullCurrencyInfoDto.builder()
@@ -130,10 +130,10 @@ public class CurrenciesController {
     public void updateCurrency(@PathVariable("currencyId") Long currencyId,
                                @RequestBody @Valid CurrencyDto updateCurrencyDto) {
         if (updateCurrencyDto.getCurrencyValue() == null) {
-            currenciesService.updateCurrency(currencyId, updateCurrencyDto.getCurrencyKey()
+            currencyService.updateCurrency(currencyId, updateCurrencyDto.getCurrencyKey()
             );
         }
-        currenciesService.updateCurrency(currencyId, updateCurrencyDto.getCurrencyKey(),
+        currencyService.updateCurrency(currencyId, updateCurrencyDto.getCurrencyKey(),
                 updateCurrencyDto.getCurrencyValue()
         );
     }
@@ -148,7 +148,7 @@ public class CurrenciesController {
     @DeleteMapping("/{currencyId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void deleteCurrency(@PathVariable("currencyId") Long currencyId) {
-        currenciesService.deleteCurrency(currencyId);
+        currencyService.deleteCurrency(currencyId);
     }
 
 }

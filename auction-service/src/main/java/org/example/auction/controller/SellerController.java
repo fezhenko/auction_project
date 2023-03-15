@@ -6,11 +6,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.example.auction.converter.SellersConverter;
+import org.example.auction.converter.SellerConverter;
 import org.example.auction.dto.seller.CreateSellerDto;
 import org.example.auction.dto.seller.SellerDto;
 import org.example.auction.model.Seller;
-import org.example.auction.service.SellersService;
+import org.example.auction.service.SellerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,10 +29,10 @@ import java.util.List;
 @RequestMapping("/api/v1/sellers")
 @Tag(name = "Sellers")
 @AllArgsConstructor
-public class SellersController {
+public class SellerController {
 
-    private final SellersService sellersService;
-    private final SellersConverter sellersConverter;
+    private final SellerService sellerService;
+    private final SellerConverter sellerConverter;
 
     @GetMapping
     @Operation(summary = "find all existed sellers")
@@ -42,11 +42,11 @@ public class SellersController {
                     @ApiResponse(responseCode = "204", description = "No content")
             })
     public ResponseEntity<List<SellerDto>> findAllSellers() {
-        List<Seller> sellers = sellersService.findAllSellers();
+        List<Seller> sellers = sellerService.findAllSellers();
         if (sellers.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(sellersConverter.toDto(sellers));
+        return ResponseEntity.ok(sellerConverter.toDto(sellers));
     }
 
     @Operation(summary = "find user by id")
@@ -57,11 +57,11 @@ public class SellersController {
             })
     @GetMapping("/{sellerId}")
     public ResponseEntity<SellerDto> findUserById(@PathVariable("sellerId") Long id) {
-        Seller seller = sellersService.findSellerById(id);
+        Seller seller = sellerService.findSellerById(id);
         if (seller == null) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(sellersConverter.toDto(seller));
+        return ResponseEntity.ok(sellerConverter.toDto(seller));
     }
 
     @Operation(summary = "Create new seller")
@@ -73,7 +73,7 @@ public class SellersController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void findSellerById(@RequestBody @Valid CreateSellerDto seller) {
-        sellersService.createSeller(seller.getAuctionId());
+        sellerService.createSeller(seller.getAuctionId());
     }
 
     @Hidden
@@ -86,7 +86,7 @@ public class SellersController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping("/{sellerId}")
     public void deleteSeller(@PathVariable("sellerId") Long id) {
-        sellersService.deleteSellerById(id);
+        sellerService.deleteSellerById(id);
     }
 
 
