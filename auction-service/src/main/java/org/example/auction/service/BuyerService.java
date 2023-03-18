@@ -20,15 +20,8 @@ public class BuyerService {
         return buyerRepository.findBuyerById(id);
     }
 
-    public void createBuyer(Long auctionId, Long bidId) {
-        if (bidId == null) {
-            buyerRepository.createBuyer(auctionId);
-        }
-        buyerRepository.createBuyer(auctionId, bidId);
-    }
-
-    public void updateBuyer(Long id, Long bidId) {
-        buyerRepository.updateBuyer(id, bidId);
+    public void createBuyer(Long auctionId) {
+        buyerRepository.createBuyer(auctionId);
     }
 
     public void deleteBuyer(Long id) {

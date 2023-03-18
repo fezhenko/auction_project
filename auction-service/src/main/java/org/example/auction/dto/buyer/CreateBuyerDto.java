@@ -3,7 +3,6 @@ package org.example.auction.dto.buyer;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
-import org.springframework.data.relational.core.mapping.Embedded;
 
 import javax.validation.constraints.NotNull;
 
@@ -13,6 +12,4 @@ import javax.validation.constraints.NotNull;
 public class CreateBuyerDto {
     @NotNull
     Long auctionId;
-    @Embedded.Nullable
-    Long bidId;
 }

@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import org.example.auction.converter.BuyerConverter;
 import org.example.auction.dto.buyer.BuyerDto;
 import org.example.auction.dto.buyer.CreateBuyerDto;
-import org.example.auction.dto.buyer.UpdateBuyerDto;
 import org.example.auction.model.Buyer;
 import org.example.auction.service.BuyerService;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -77,20 +75,7 @@ public class BuyerController {
             }
     )
     private void createBuyer(@RequestBody @Valid CreateBuyerDto buyer) {
-        buyerService.createBuyer(buyer.getAuctionId(), buyer.getBidId());
-    }
-
-    @PutMapping("/{buyerId}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    @Operation(summary = "Update buyer info")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "202", description = "Buyer updated"),
-                    @ApiResponse(responseCode = "204", description = "No content")
-            }
-    )
-    private void updateBuyer(@PathVariable("buyerId") Long id, @RequestBody @Valid UpdateBuyerDto buyer) {
-        buyerService.updateBuyer(id, buyer.getBidId());
+        buyerService.createBuyer(buyer.getAuctionId());
     }
 
     @DeleteMapping("/{buyerId}")

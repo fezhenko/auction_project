@@ -23,17 +23,6 @@ public interface BuyerRepository extends Repository<Buyer, Long> {
     void createBuyer(@Param("auctionId") Long id);
 
     @Modifying
-    @Query("insert into buyers (auction_id, bid_id) " +
-            "values (:auctionId, :bidId);")
-    void createBuyer(@Param("auctionId") Long id, @Param("bidId") Long bidId);
-
-    @Modifying
-    @Query("update buyers " +
-            "set bid_id = :bidId " +
-            "where id = :id;")
-    void updateBuyer(@Param("id") Long id, @Param("bidId") Long bidId);
-
-    @Modifying
     @Query("delete " +
             "from buyers " +
             "where id = :id;")
