@@ -5,22 +5,31 @@ import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
 import java.util.List;
 
 public interface AuctionRepository extends Repository<Auction, Long> {
 
+    @Query("select a.*, i.description " +
+            "from auctions a " +
+            "join items i on a.auction_id = i.auction_id;")
     List<Auction> findAllAuctions();
-    @Query("select * from auctions where auction_id = :id")
+
+    @Query("select a.*, i.description " +
+            "from auctions a " +
+            "join items i on a.auction_id = i.auction_id " +
+            "where a.auction_id = :id;")
     Auction findAuctionById(@Param("id") Long id);
 
-    void createAuction(Long sellerId);
-    void updateAuction(Date date);
-    void updateAuction(String state);
-
-    @Query("")
-    void updateAuction(Long itemId, Double itemStartPrice);
-    void updateAuction(Double currentPrice);
-    void updateAuction(Double itemFinalPrice, Long buyerId);
+//    void createAuction(Long sellerId);
+//
+//    void updateAuction(Date date);
+//
+//    void updateAuction(String state);
+//
+//    void updateAuction(Long itemId, Double itemStartPrice);
+//
+//    void updateAuction(Double currentPrice);
+//
+//    void updateAuction(Double itemFinalPrice, Long buyerId);
 
 }

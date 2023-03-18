@@ -13,12 +13,6 @@ CREATE TABLE IF NOT EXISTS auctions
     PRIMARY KEY (auction_id)
 );
 
-INSERT INTO auctions (auction_date, auction_state, seller_id, item_id, start_price, buyer_id)
-VALUES (now(), 'FINISHED', 1, 1, 500, 1);
-INSERT INTO auctions (auction_date, auction_state, seller_id, item_id, start_price, buyer_id)
-VALUES (now(), 'IN_PROGRESS', 1, 2, 100, 1);
-
-
 CREATE TABLE IF NOT EXISTS bids
 (
     bid_id     BIGSERIAL NOT NULL UNIQUE,
@@ -38,12 +32,6 @@ CREATE TABLE IF NOT EXISTS buyers
     FOREIGN KEY (auction_id) REFERENCES auctions (auction_id)
 );
 
-INSERT INTO bids (bid_amount)
-VALUES (100);
-INSERT INTO buyers (bid_id, auction_id)
-VALUES (1, 1);
-
-
 CREATE TABLE IF NOT EXISTS sellers
 (
     id         BIGSERIAL NOT NULL UNIQUE,
@@ -52,10 +40,6 @@ CREATE TABLE IF NOT EXISTS sellers
     PRIMARY KEY (id),
     FOREIGN KEY (auction_id) REFERENCES auctions (auction_id)
 );
-
-INSERT INTO sellers (auction_id)
-VALUES (1);
-
 
 CREATE TABLE IF NOT EXISTS currencies
 (
@@ -70,14 +54,6 @@ CREATE TABLE IF NOT EXISTS categories
     name VARCHAR(300),
     PRIMARY KEY (id)
 );
-
-
-insert into currencies (currency)
-values ('{
-  "AED": "United Arab Emirates Dirham",
-  "AFN": "Afghan Afghani"
-}'::json);
-
 
 CREATE TABLE IF NOT EXISTS items
 (
@@ -94,7 +70,6 @@ CREATE TABLE IF NOT EXISTS items
     FOREIGN KEY (currency) REFERENCES currencies (id),
     FOREIGN KEY (item_category) REFERENCES categories (id)
 );
-
 
 CREATE TABLE IF NOT EXISTS chat
 (

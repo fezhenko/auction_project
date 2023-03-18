@@ -22,7 +22,7 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger seller_insert_into_auction_test
+create trigger seller_insert_into_auction
     after insert
     on sellers
     for each row

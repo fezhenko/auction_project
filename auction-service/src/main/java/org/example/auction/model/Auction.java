@@ -24,6 +24,8 @@ public class Auction {
     Date auctionDate;
     @Column("auction_state")
     String auctionState;
+    @Column("description")
+    String itemDescription;
     @Column("seller_id")
     Long sellerId;
     @Column("item_id")
