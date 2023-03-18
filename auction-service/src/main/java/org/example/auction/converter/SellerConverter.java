@@ -10,5 +10,4 @@ import java.util.List;
 public interface SellerConverter {
     List<SellerDto> toDto(List<Seller> sellers);
     SellerDto toDto(Seller seller);
-
 }

@@ -20,8 +20,8 @@ public class SellerService {
         return sellerRepository.findSellerById(id);
     }
 
-    public void createSeller(Long auctionId) {
-        sellerRepository.createSeller(auctionId);
+    public void createSeller() {
+        sellerRepository.createSeller();
     }
 
     public void deleteSellerById(Long id) {

@@ -45,6 +45,4 @@ public class Item {
     @NotNull
     @Column("created_at")
     Date createdAt;
-
-
 }

@@ -1,19 +1,23 @@
 package org.example.auction.dto.auction;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.Date;
 
-@Data
+@Value
+@Jacksonized
+@Builder
 public class AuctionDto {
-    String auctionId;
+    Long auctionId;
     Date auctionDate;
-    String status;
-    String itemId;
-    String itemDescription;
-    Double minimalBid;
-    Double startPrice;
-    Double currentPrice;
-    Double finalPrice;
+    @JsonProperty("status")
+    String auctionState;
+    @JsonProperty("item")
+    AuctionItemDto itemDto;
+    @JsonProperty("prices")
+    PriceDto priceDto;
     Date createdAt;
 }

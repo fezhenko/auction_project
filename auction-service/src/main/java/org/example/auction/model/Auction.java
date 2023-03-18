@@ -24,19 +24,19 @@ public class Auction {
     Date auctionDate;
     @Column("auction_state")
     String auctionState;
-    @Column("description")
-    String itemDescription;
     @Column("seller_id")
     Long sellerId;
     @Column("item_id")
     Long itemId;
+    @Column("description")
+    String itemDescription;
     @Column("start_price")
     @DecimalMin(value = "0.001", message = "Please enter a valid amount more than 0")
     Double startPrice;
     @Column("current_price")
     Double currentPrice;
     @Column("minimal_bid")
-    Double minBid;
+    Double minimalBid;
     @Column("final_price")
     Double finalPrice;
     @Column("buyer_id")
