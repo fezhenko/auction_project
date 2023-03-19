@@ -3,16 +3,16 @@ package org.example.auction.dto.auction;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
+import org.example.auction.validator.ValidateAuctionState;
 
 import javax.validation.constraints.NotNull;
 
-@Builder
-@Jacksonized
+
 @Value
-public class UpdateAuctionPriceDto {
+@Jacksonized
+@Builder
+public class UpdateAuctionStateDto {
+    @ValidateAuctionState
     @NotNull
-    Double currentPrice;
-    Double startPrice;
-    Double finalPrice;
-    Double minimalBid;
+    String status;
 }

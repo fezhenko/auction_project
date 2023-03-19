@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS bids
 (
     bid_id     BIGSERIAL NOT NULL UNIQUE,
     bid_amount INTEGER   NOT NULL,
+    buyer_id   BIGSERIAL NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     PRIMARY KEY (bid_id)
 );
@@ -73,11 +74,11 @@ CREATE TABLE IF NOT EXISTS items
 
 CREATE TABLE IF NOT EXISTS chat
 (
-    id BIGSERIAL NOT NULL UNIQUE,
-    message VARCHAR(500) NULL,
-    buyer_id BIGSERIAL NOT NULL,
-    seller_id BIGSERIAL NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    id         BIGSERIAL    NOT NULL UNIQUE,
+    message    VARCHAR(500) NULL,
+    buyer_id   BIGSERIAL    NOT NULL,
+    seller_id  BIGSERIAL    NOT NULL,
+    created_at TIMESTAMP    NOT NULL DEFAULT now(),
     PRIMARY KEY (id),
     FOREIGN KEY (buyer_id) REFERENCES buyers (id),
     FOREIGN KEY (seller_id) REFERENCES sellers (id)

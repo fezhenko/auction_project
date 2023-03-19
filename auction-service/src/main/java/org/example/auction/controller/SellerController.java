@@ -61,7 +61,7 @@ public class SellerController {
         return ResponseEntity.ok(sellerConverter.toDto(seller));
     }
 
-    @Operation(summary = "Create new seller")
+    @Operation(summary = "Create new seller, also new auction automatically created")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "201", description = "Seller created"),

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.auction.exceptions.dto.ExceptionDto;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -20,7 +21,16 @@ public class GlobalExceptionHandler {
                         .message(nullPointerException.getMessage())
                         .build());
     }
-
+    @ExceptionHandler
+    public ResponseEntity<ExceptionDto> handleValidationException(
+            final MethodArgumentNotValidException methodArgumentNotValidException
+    ) {
+        log.error(methodArgumentNotValidException.getMessage());
+        return ResponseEntity.badRequest().body(
+                ExceptionDto.builder()
+                        .message(methodArgumentNotValidException.getLocalizedMessage())
+                        .build());
+    }
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handlePSQLException(
             final PSQLException psqlException
