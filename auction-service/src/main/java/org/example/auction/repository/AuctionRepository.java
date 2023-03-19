@@ -29,6 +29,7 @@ public interface AuctionRepository extends Repository<Auction, Long> {
     @Query("update auctions set last_updated = now() where auction_id = :id")
     @Modifying
     void updateLastUpdatedTime(@Param("id") Long id);
+
     @Query("update auctions set auction_date = :date where auction_id = :id")
     @Modifying
     void updateAuctionDate(@Param("id") Long id, @Param("date") Timestamp newAuctionDate);
@@ -41,8 +42,11 @@ public interface AuctionRepository extends Repository<Auction, Long> {
     @Modifying
     void updateAuctionState(@Param("id") Long id, @Param("status") String status);
 
+    @Query("update auctions set item_id = :itemId where auction_id = :id")
+    @Modifying
+    void updateAuctionItem(@Param("id") Long id, @Param("itemId") Long itemId);
+    //todo: после апдейта айтем айди в аукционе, триггер чтобы заапдейтить старт прайс, ласт апдейт
 
-//    void updateAuction(Long itemId, Double itemStartPrice);
 //    void updateAuction(Double itemFinalPrice, Long buyerId);
-
+    //todo: если каррен прайс не изменяется в течении 6 часов после начала аукциона, каррент прайс=файнал, ласт апдейт
 }

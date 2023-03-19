@@ -7,6 +7,6 @@ import lombok.extern.jackson.Jacksonized;
 @Value
 @Builder
 @Jacksonized
-public class UpdateCurrentPriceResultDto {
+public class UpdateAuctionResultDto {
     String message;
 }

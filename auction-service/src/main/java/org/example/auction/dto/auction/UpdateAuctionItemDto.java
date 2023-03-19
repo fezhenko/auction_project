@@ -4,9 +4,12 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
+import javax.validation.constraints.NotNull;
+
 @Value
 @Jacksonized
 @Builder
-public class UpdateAuctionStateResultDto {
-    String message;
+public class UpdateAuctionItemDto {
+    @NotNull
+    Long itemId;
 }

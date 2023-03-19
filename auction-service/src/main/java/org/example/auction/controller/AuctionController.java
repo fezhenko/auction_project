@@ -9,11 +9,10 @@ import lombok.SneakyThrows;
 import org.example.auction.converter.AuctionConverter;
 import org.example.auction.dto.auction.AuctionDto;
 import org.example.auction.dto.auction.UpdateAuctionDateDto;
-import org.example.auction.dto.auction.UpdateAuctionDateResultDto;
+import org.example.auction.dto.auction.UpdateAuctionItemDto;
+import org.example.auction.dto.auction.UpdateAuctionResultDto;
 import org.example.auction.dto.auction.UpdateAuctionPriceDto;
 import org.example.auction.dto.auction.UpdateAuctionStateDto;
-import org.example.auction.dto.auction.UpdateAuctionStateResultDto;
-import org.example.auction.dto.auction.UpdateCurrentPriceResultDto;
 import org.example.auction.model.Auction;
 import org.example.auction.service.AuctionService;
 import org.springframework.http.HttpStatus;
@@ -40,7 +39,7 @@ public class AuctionController {
     private final AuctionConverter auctionConverter;
 
     @GetMapping
-    @Operation(summary = "Find all auctions")
+    @Operation(summary = "find all auctions")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Auctions are found"),
@@ -57,7 +56,7 @@ public class AuctionController {
     }
 
     @GetMapping("/{auctionId}")
-    @Operation(summary = "Find auction by id")
+    @Operation(summary = "find auction by id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Auction is found"),
@@ -80,10 +79,10 @@ public class AuctionController {
             }
     )
     @PatchMapping("/{auctionId}/price")
-    private ResponseEntity<UpdateCurrentPriceResultDto> updateAuctionPrice(
+    private ResponseEntity<UpdateAuctionResultDto> updateAuctionPrice(
             @PathVariable("auctionId") Long auctionId,
             @RequestBody @Valid UpdateAuctionPriceDto auctionPrice) {
-        UpdateCurrentPriceResultDto result =
+        UpdateAuctionResultDto result =
                 auctionService.updateAuctionPrice(auctionId, auctionPrice.getCurrentPrice());
         if (result.getMessage() == null) {
             return ResponseEntity.accepted().build();
@@ -99,11 +98,11 @@ public class AuctionController {
             }
     )
     @PatchMapping("/{auctionId}/date")
-    private ResponseEntity<UpdateAuctionDateResultDto> updateAuctionDate(
+    private ResponseEntity<UpdateAuctionResultDto> updateAuctionDate(
             @PathVariable("auctionId") Long auctionId,
             @RequestBody @Valid UpdateAuctionDateDto updateAuctionDateDto
     ) {
-        UpdateAuctionDateResultDto result =
+        UpdateAuctionResultDto result =
                 auctionService.updateAuctionStartDate(auctionId, updateAuctionDateDto.getAuctionDate());
         if (result.getMessage() == null) {
             return ResponseEntity.accepted().build();
@@ -111,12 +110,19 @@ public class AuctionController {
         return ResponseEntity.badRequest().body(result);
     }
 
+    @Operation(summary = "update auction status for specified auction")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "202", description = "Status has been updated"),
+                    @ApiResponse(responseCode = "400", description = "Invalid body")
+            }
+    )
     @PatchMapping("/{auctionId}/state")
-    private ResponseEntity<UpdateAuctionStateResultDto> updateAuctionState(
+    private ResponseEntity<UpdateAuctionResultDto> updateAuctionState(
             @PathVariable("auctionId") Long auctionId,
             @RequestBody @Valid UpdateAuctionStateDto updateAuctionState
     ) {
-        UpdateAuctionStateResultDto result =
+        UpdateAuctionResultDto result =
                 auctionService.updateAuctionState(auctionId, updateAuctionState.getStatus());
         if (result.getMessage() == null) {
             return ResponseEntity.accepted().build();
@@ -124,7 +130,20 @@ public class AuctionController {
         return ResponseEntity.badRequest().body(result);
     }
 
-    @Operation(summary = "update current price for specified auction")
+    @PatchMapping("/{auctionId}/item")
+    private ResponseEntity<UpdateAuctionResultDto> updateAuctionItem(
+            @PathVariable("auctionId") Long auctionId,
+            @RequestBody @Valid UpdateAuctionItemDto auctionItemDto
+    ) {
+        UpdateAuctionResultDto result = auctionService.updateAuctionItem(
+                auctionId, auctionItemDto.getItemId());
+        if (result.getMessage() == null) {
+            return ResponseEntity.accepted().build();
+        }
+        return ResponseEntity.badRequest().body(result);
+    }
+
+    @Operation(summary = "delete specified auction and all related sellers/buyers/items")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "202", description = "Auction has been deleted")
