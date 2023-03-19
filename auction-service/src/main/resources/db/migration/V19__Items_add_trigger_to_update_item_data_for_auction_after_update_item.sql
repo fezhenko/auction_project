@@ -7,8 +7,7 @@ begin
     set item_id     = new.id,
         start_price = new.price,
         minimal_bid = (new.price * 0.05)
-    where auctions.auction_id = new.auction_id
-      and item_state = new.item_state;
+    where auctions.auction_id = new.auction_id;
     return new;
 end;
 $$ language plpgsql;

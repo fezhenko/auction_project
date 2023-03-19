@@ -31,12 +31,19 @@ public interface ItemRepository extends Repository<Item, Long> {
 
     @Modifying
     @Query("update items set description = :description, price = :price, item_state = :itemStatus, " +
-            "item_category = :categoryId, auction_id = :auctionId " +
-            " where id = :itemId;")
-    void updateItem(@Param("itemId") Long itemId, @Param("description") String description,
-                    @Param("price") Double price, @Param("itemStatus") String status,
-                    @Param("category") Long categoryId);
+            "item_category = :categoryId " +
+            "where id = :itemId;")
+    void updateItem(@Param("description") String description, @Param("price") Double price,
+                    @Param("itemStatus") String status, @Param("categoryId") Long categoryId,
+                    @Param("itemId") Long itemId);
 
+    @Modifying
+    @Query("update items set description = :description, price = :price, item_state = :itemStatus " +
+            "where id = :itemId;")
+    void updateItem(@Param("description") String description, @Param("price") Double price,
+                    @Param("itemStatus") String itemStatus, @Param("itemId") Long id);
+
+    @Modifying
     @Query("delete from items where auction_id = :id")
     void deleteItemByAuctionId(@Param("id") Long id);
 }

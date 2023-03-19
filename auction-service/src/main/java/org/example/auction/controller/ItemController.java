@@ -1,5 +1,8 @@
 package org.example.auction.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -12,6 +15,7 @@ import org.example.auction.model.Item;
 import org.example.auction.service.ItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +35,12 @@ public class ItemController {
     private final ItemService itemService;
     private final ItemConverter itemConverter;
 
+    @Operation(summary = "find all items")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "list of items"),
+                    @ApiResponse(responseCode = "204", description = "no content")
+            })
     @GetMapping
     @SneakyThrows
     private ResponseEntity<List<ItemDto>> findAll() {
@@ -40,8 +50,14 @@ public class ItemController {
         }
         return ResponseEntity.ok(itemConverter.toDto(items));
     }
-
+    @Operation(summary = "find item by id")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "item is found"),
+                    @ApiResponse(responseCode = "204", description = "no content")
+            })
     @GetMapping("/{itemId}")
+    @SneakyThrows
     private ResponseEntity<ItemDto> findAuctionById(@PathVariable("itemId") Long id) {
         Item item = itemService.findItemById(id);
         if (item == null) {
@@ -49,7 +65,12 @@ public class ItemController {
         }
         return ResponseEntity.ok(itemConverter.toDto(item));
     }
-
+    @Operation(summary = "create new item")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "201", description = "item is created"),
+                    @ApiResponse(responseCode = "400", description = "invalid body")
+            })
     @PostMapping
     private ResponseEntity<UpdateItemResultDto> createItem(
             @RequestBody @Valid CreateItemDto createItemDto
@@ -61,21 +82,39 @@ public class ItemController {
         }
         return ResponseEntity.badRequest().body(result);
     }
-
+    @Operation(summary = "update item by id")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "202", description = "item is updated"),
+                    @ApiResponse(responseCode = "204", description = "no content")
+            })
     @PatchMapping("/{itemId}")
     private ResponseEntity<UpdateItemResultDto> updateItem(
             @PathVariable("itemId") Long id,
             @RequestBody @Valid UpdateItemDto updateItemDto
     ) {
         UpdateItemResultDto result = itemService.updateItem(
-                id, updateItemDto.getItemStatus(), updateItemDto.getItemCategory(), updateItemDto.getPrice(),
-                updateItemDto.getDescription()
+                id, updateItemDto.getDescription(), updateItemDto.getItemStatus(), updateItemDto.getPrice(),
+                updateItemDto.getItemCategory()
         );
         if (result.getMessage() == null) {
-            ResponseEntity.accepted().build();
+            return ResponseEntity.accepted().build();
         }
         return ResponseEntity.badRequest().body(result);
     }
-
+    @Operation(summary = "delete item by id")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "item is deleted"),
+                    @ApiResponse(responseCode = "204", description = "no content")
+            })
+    @DeleteMapping("/{itemId}")
+    private ResponseEntity<UpdateItemResultDto> deleteItem(@PathVariable("itemId") Long id) {
+        UpdateItemResultDto result = itemService.deleteItem(id);
+        if (result.getMessage() == null) {
+            return ResponseEntity.accepted().build();
+        }
+        return ResponseEntity.badRequest().body(result);
+    }
 
 }

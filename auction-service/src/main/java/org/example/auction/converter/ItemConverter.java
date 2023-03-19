@@ -17,9 +17,34 @@ import java.util.List;
 @Mapper
 public interface ItemConverter {
 
-    ItemDto toDto(Item item);
-
     @Mapping(source = "Item", target = "ItemDto", qualifiedByName = "ItemToItemDto")
+    @Named("ItemToItemDto")
+    default ItemDto toDto(Item item) throws RuntimeException, JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return ItemDto.builder()
+                .id(item.getId())
+                .description(item.getDescription())
+                .itemState(item.getItemState())
+                .price(item.getPrice())
+                .currencyDto(
+                        FullCurrencyInfoDto.builder()
+                                .id(item.getCurrency())
+                                .currency(
+                                        objectMapper.readValue(item.getCurrencyDesc().toString(), CurrencyDto.class)
+                                )
+                                .build()
+                )
+                .categoryDto(
+                        CategoryDto.builder()
+                                .id(item.getItemCategory())
+                                .name(item.getCategoryName())
+                                .build()
+                )
+                .createdAt(item.getCreatedAt())
+                .build();
+    }
+
+    @Mapping(source = "List<Item>", target = "List<ItemDto>", qualifiedByName = "ItemToItemDto")
     @Named("ItemToItemDto")
     default List<ItemDto> toDto(List<Item> items) throws RuntimeException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -28,6 +53,7 @@ public interface ItemConverter {
             ItemDto convertedItem = ItemDto.builder()
                     .id(item.getId())
                     .description(item.getDescription())
+                    .itemState(item.getItemState())
                     .price(item.getPrice())
                     .currencyDto(
                             FullCurrencyInfoDto.builder()

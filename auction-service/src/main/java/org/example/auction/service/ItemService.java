@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.auction.dto.item.UpdateItemResultDto;
 import org.example.auction.model.Auction;
+import org.example.auction.model.Category;
 import org.example.auction.model.Item;
 import org.example.auction.repository.AuctionRepository;
+import org.example.auction.repository.CategoryRepository;
 import org.example.auction.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ import java.util.List;
 public class ItemService {
     private final ItemRepository itemRepository;
     private final AuctionRepository auctionRepository;
+    private final CategoryRepository categoryRepository;
 
     public List<Item> findAllItems() {
         return itemRepository.findAllItems();
@@ -40,13 +43,31 @@ public class ItemService {
         return UpdateItemResultDto.builder().build();
     }
 
-    public UpdateItemResultDto updateItem(Long id, String itemStatus, Long itemCategory, Double price, String description) {
-        Item item = findItemById(id);
+    public UpdateItemResultDto updateItem(
+            Long id, String description, String itemStatus, Double price, Long itemCategory
+    ) {
+        Item item = itemRepository.findItemById(id);
+        Category category = categoryRepository.findCategoryById(itemCategory);
         if (item == null) {
             log.error("item id:'%s' doesn't exist".formatted(id));
             return UpdateItemResultDto.builder().message("item id:'%s' doesn't exist".formatted(id)).build();
         }
-        itemRepository.updateItem(id, description, price, itemStatus, itemCategory);
+        if (category == null) {
+            log.info("category id:'%s' doesn't exist".formatted(itemCategory));
+            itemRepository.updateItem(description, price, itemStatus.toUpperCase(), id);
+            return UpdateItemResultDto.builder().build();
+        }
+        itemRepository.updateItem(description, price, itemStatus.toUpperCase(), itemCategory, id);
+        return UpdateItemResultDto.builder().build();
+    }
+
+    public UpdateItemResultDto deleteItem(Long id) {
+        Item item = itemRepository.findItemById(id);
+        if (item == null) {
+            log.error("item id:'%s' doesn't exist".formatted(id));
+            return UpdateItemResultDto.builder().message("item id:'%s' doesn't exist".formatted(id)).build();
+        }
+        itemRepository.deleteItemByAuctionId(id);
         return UpdateItemResultDto.builder().build();
     }
 }
