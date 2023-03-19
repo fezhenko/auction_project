@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 import org.example.auction.dto.category.CategoryDto;
-import org.example.auction.dto.currency.CurrencyDto;
+import org.example.auction.dto.currency.FullCurrencyInfoDto;
 
 import java.util.Date;
 
@@ -16,7 +16,7 @@ public class ItemDto {
     String description;
     String itemState;
     Double price;
-    CurrencyDto currencyDto;
+    FullCurrencyInfoDto currencyDto;
     CategoryDto categoryDto;
     Date createdAt;
 }

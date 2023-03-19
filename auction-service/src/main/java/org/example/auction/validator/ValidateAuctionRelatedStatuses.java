@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = AuctionStateValidator.class)
-public @interface ValidateAuctionState {
-    String message() default "Invalid auction state, use on of values: 'PLANNED','IN_PROGRESS','FINISHED'";
+public @interface ValidateAuctionRelatedStatuses {
+    String message() default "Invalid status";
 
     Class<?>[] groups() default {};
 

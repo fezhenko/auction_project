@@ -1,13 +1,17 @@
 package org.example.auction.dto.currency;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 import org.springframework.data.relational.core.mapping.Embedded;
 
 import javax.validation.constraints.NotNull;
 
 
-@Data
+@Builder
+@Value
+@Jacksonized
 public class CurrencyDto {
     @NotNull
     @JsonProperty("currency") String currencyKey;

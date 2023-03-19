@@ -1,18 +1,17 @@
-package org.example.auction.dto.auction;
+package org.example.auction.dto.item;
 
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 import org.example.auction.validator.ValidateAuctionRelatedStatuses;
 
-import javax.validation.constraints.NotNull;
-
-
 @Value
-@Jacksonized
 @Builder
-public class UpdateAuctionStateDto {
+@Jacksonized
+public class UpdateItemDto {
+    String description;
     @ValidateAuctionRelatedStatuses
-    @NotNull
-    String status;
+    String itemStatus;
+    Double price;
+    Long itemCategory;
 }

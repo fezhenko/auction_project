@@ -14,5 +14,4 @@ public class Currency {
 
     @Column("currency")
     Object currency;
-
 }

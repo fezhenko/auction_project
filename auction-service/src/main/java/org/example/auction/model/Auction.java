@@ -43,5 +43,4 @@ public class Auction {
     Long buyerId;
     @Column("created_at")
     Date createdAt;
-
 }
