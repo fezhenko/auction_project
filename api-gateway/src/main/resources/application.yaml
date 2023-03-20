@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+feign:
+  client:
+    config:
+      domain:
+        connectTimeout: 5000
+        readTimeout: 3000
+
+jwt:
+  secret: "hello@world!"
+
+services:
+  auction-service:
+    url: 'http://localhost:8081'
+  users-service:
+    url: 'http://localhost:8082'
