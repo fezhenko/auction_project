@@ -45,6 +45,10 @@ public interface AuctionRepository extends Repository<Auction, Long> {
     @Query("update auctions set item_id = :itemId where auction_id = :id")
     @Modifying
     void updateAuctionItem(@Param("id") Long id, @Param("itemId") Long itemId);
+
+    @Modifying
+    @Query("update auctions set auction_state = :state where auction_id = :id")
+    void startAuction(@Param("state") String state, @Param("id") Long id);
     //todo: после апдейта айтем айди в аукционе, триггер чтобы заапдейтить старт прайс, ласт апдейт
 
 //    void updateAuction(Double itemFinalPrice, Long buyerId);

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.auction.dto.auction.UpdateAuctionResultDto;
 import org.example.auction.model.Auction;
 import org.example.auction.repository.AuctionRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -124,6 +125,47 @@ public class AuctionService {
         }
         auctionRepository.updateAuctionItem(id, itemId);
         return UpdateAuctionResultDto.builder().build();
+    }
+
+    @Scheduled(zone = "ECT", cron = "3 * * * * 0-6")
+    private void startAuction() {
+        List<Auction> auctionsList = auctionRepository.findAllAuctions();
+        Long currentDate = System.currentTimeMillis();
+        for (Auction auction : auctionsList) {
+            if (auction.getAuctionDate() != null) {
+                Long plannedDate = auction.getAuctionDate().getTime();
+                if ((plannedDate - currentDate) <= 0 && auction.getAuctionState().equals("PLANNED")) {
+                    log.info("auction with id:'%d' starts now".formatted(auction.getAuctionId()));
+                    auctionRepository.startAuction("IN_PROGRESS", auction.getAuctionId());
+                }
+                if ((plannedDate - currentDate) > 0 && auction.getAuctionState().equals("PLANNED")) {
+                    log.info("Auction '%d' will be started in '%d' minutes".formatted(
+                                    auction.getAuctionId(), convertMillisecondsToMinutes(plannedDate - currentDate)
+                            )
+                    );
+                }
+            }
+        }
+    }
+
+    //if currentDate>plannedDate on 6 hours and auctionStatus = in_progress change status to finished
+    @Scheduled(zone = "ECT", cron = "4 * * * * 0-6")
+    private void finishAuction() {
+        List<Auction> auctionsList = auctionRepository.findAllAuctions();
+        int currentDate = convertMillisecondsToMinutes(System.currentTimeMillis());
+        for (Auction auction : auctionsList) {
+            if (auction.getAuctionDate() != null) {
+                int plannedDate = convertMillisecondsToMinutes(auction.getAuctionDate().getTime());
+                if ((plannedDate + 360) < currentDate && auction.getAuctionState().equals("IN_PROGRESS")) {
+                    log.info("auction with id:'%d' finished".formatted(auction.getAuctionId()));
+                    auctionRepository.startAuction("FINISHED", auction.getAuctionId());
+                }
+            }
+        }
+    }
+
+    private int convertMillisecondsToMinutes(Long milliseconds) {
+        return (int) ((milliseconds / (1000 * 60)) % 60);
     }
 
 }
