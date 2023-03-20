@@ -1,21 +1,19 @@
-package org.example.usersservice.dto.payments;
+package org.example.auction.dto.bid;
 
 import lombok.Builder;
 import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
 import javax.validation.constraints.DecimalMin;
-import java.util.Date;
+import javax.validation.constraints.NotNull;
 
 @Value
 @Builder
-public class PaymentDto {
-
-    Long id;
-    Long userId;
-    String cardNumber;
-    String expirationDate;
+@Jacksonized
+public class CreateBidDto {
+    @NotNull
     @DecimalMin(value = "0.001", message = "Please enter a valid amount more than 0")
     Double amount;
-    Date paymentDate;
-
+    @NotNull
+    Long buyerId;
 }
