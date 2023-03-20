@@ -4,10 +4,9 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
-@Builder
-@Jacksonized
 @Value
-public class CategoryDto {
-    Long id;
-    String categoryName;
+@Jacksonized
+@Builder
+public class UpdateCategoryResultDto {
+    String message;
 }

@@ -1,5 +1,6 @@
 package org.example.auction.dto.exchange;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
@@ -10,6 +11,7 @@ import java.util.Date;
 @Value
 @Jacksonized
 @Builder
+@JsonPropertyOrder({"result", "query", "info", "date", "success"})
 public class ConvertedValuesDto {
     boolean success;
     QueryDto query;

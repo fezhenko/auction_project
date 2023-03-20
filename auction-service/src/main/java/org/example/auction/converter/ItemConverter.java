@@ -37,7 +37,7 @@ public interface ItemConverter {
                 .categoryDto(
                         CategoryDto.builder()
                                 .id(item.getItemCategory())
-                                .name(item.getCategoryName())
+                                .categoryName(item.getCategoryName())
                                 .build()
                 )
                 .createdAt(item.getCreatedAt())
@@ -66,7 +66,7 @@ public interface ItemConverter {
                     .categoryDto(
                             CategoryDto.builder()
                                     .id(item.getItemCategory())
-                                    .name(item.getCategoryName())
+                                    .categoryName(item.getCategoryName())
                                     .build()
                     )
                     .createdAt(item.getCreatedAt())
