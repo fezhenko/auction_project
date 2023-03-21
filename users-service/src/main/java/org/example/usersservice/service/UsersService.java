@@ -1,6 +1,7 @@
 package org.example.usersservice.service;
 
 import lombok.AllArgsConstructor;
+import org.example.usersservice.dto.users.UserVerificationDto;
 import org.example.usersservice.model.AppUser;
 import org.example.usersservice.model.Payment;
 import org.example.usersservice.repository.UsersRepository;
@@ -60,4 +61,15 @@ public class UsersService {
         );
     }
 
+    public UserVerificationDto verifyUser(String email) {
+        AppUser user = usersRepository.findUserByEmail(email);
+        if (user == null) {
+            return UserVerificationDto.builder().build();
+        }
+        return UserVerificationDto.builder().email(user.getEmail()).password(user.getPassword()).build();
+    }
+
+    public AppUser findUserByEmail(String email) {
+        return usersRepository.findUserByEmail(email);
+    }
 }

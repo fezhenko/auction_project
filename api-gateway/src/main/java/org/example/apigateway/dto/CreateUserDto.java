@@ -1,4 +1,4 @@
-package org.example.usersservice.dto.users;
+package org.example.apigateway.dto;
 
 import lombok.Builder;
 import lombok.Value;
@@ -11,8 +11,8 @@ import javax.validation.constraints.NotNull;
 @Jacksonized
 @Builder
 public class CreateUserDto {
-    @NotNull
     @Email
+    @NotNull
     String email;
     @NotNull
     String password;

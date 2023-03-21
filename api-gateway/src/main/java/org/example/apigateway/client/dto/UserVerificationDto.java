@@ -7,7 +7,8 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 @Value
-public class CredentialsDto {
+public class UserVerificationDto {
     String email;
     String password;
+
 }

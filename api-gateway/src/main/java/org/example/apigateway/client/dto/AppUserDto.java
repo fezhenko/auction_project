@@ -4,19 +4,17 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
-import javax.validation.constraints.Email;
 import java.util.Date;
 
 @Value
-@Jacksonized
 @Builder
+@Jacksonized
 public class AppUserDto {
-    Long userId;
+    Long id;
     String firstname;
     String lastname;
-    @Email
-    String email;
     String password;
+    String email;
     String role;
     Double balance;
     String phoneNumber;
