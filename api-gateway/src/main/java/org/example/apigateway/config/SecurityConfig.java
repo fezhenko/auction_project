@@ -31,8 +31,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin()
-                .loginPage("/login")
-//                .loginProcessingUrl("/login")
                 .successForwardUrl("/users")
                 .permitAll()
                 .and()

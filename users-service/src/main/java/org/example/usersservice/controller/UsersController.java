@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 import javax.validation.Valid;
@@ -218,13 +219,13 @@ public class UsersController {
     }
 
     @Hidden
-    @GetMapping("/{email}")
-    public ResponseEntity<AppUserDto> findUserByEmail(@PathVariable("email") String email) {
+    @GetMapping("/validate")
+    public ResponseEntity<AppUser> findUserByEmail(@RequestParam(value = "email") String email) {
         AppUser user = usersService.findUserByEmail(email);
         if (user == null) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(usersConverter.toDto(user));
+        return ResponseEntity.ok(user);
     }
 
 }
