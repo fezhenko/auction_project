@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @FeignClient(name = "users-service", url = "${services.users-service.url}/api/v1/users")
@@ -24,4 +25,7 @@ public interface UserClient {
 
     @RequestMapping(method = RequestMethod.GET, value = "/validate")
     AppUserDto findUserByEmail(@RequestParam(value = "email") String email);
+
+    @RequestMapping(method = RequestMethod.GET)
+    List<AppUserDto> findAllUsers();
 }

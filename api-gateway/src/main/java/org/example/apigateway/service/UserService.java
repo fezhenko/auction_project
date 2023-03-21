@@ -11,6 +11,8 @@ import org.example.apigateway.dto.CreateUserResultDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class UserService {
@@ -37,5 +39,9 @@ public class UserService {
 
     public AppUserDto findUserByEmail(String email) {
         return userClient.findUserByEmail(email);
+    }
+
+    public List<AppUserDto> findAllUsers() {
+        return userClient.findAllUsers();
     }
 }
