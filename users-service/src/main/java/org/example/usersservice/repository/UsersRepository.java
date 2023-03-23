@@ -72,4 +72,7 @@ public interface UsersRepository extends Repository<AppUser, Long> {
             "where payment_id = :paymentId " +
             "  and u.user_id = :userId;")
     Payment updatePaymentInformationByUserId(Long userId, Long paymentId, String cardNumber, String expirationDate);
+
+    @Query("select * from users where email = :email")
+    AppUser findUserByEmail(@Param("email") String email);
 }

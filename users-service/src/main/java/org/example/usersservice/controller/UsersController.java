@@ -1,19 +1,22 @@
 package org.example.usersservice.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.example.usersservice.converter.UsersConverter;
-import org.example.usersservice.dto.users.UpdatePaymentInformationDto;
-import org.example.usersservice.dto.users.UserPaymentsDto;
 import org.example.usersservice.dto.users.AppUserDto;
 import org.example.usersservice.dto.users.CreateUserDto;
-import org.example.usersservice.dto.users.UpdatePasswordDto;
+import org.example.usersservice.dto.users.CredentialsDto;
+import org.example.usersservice.dto.users.UserVerificationDto;
 import org.example.usersservice.dto.users.UpdateUserRelatedFieldsDto;
-import org.example.usersservice.dto.users.ValidateUserDto;
+import org.example.usersservice.dto.users.UserPaymentsDto;
+import org.example.usersservice.dto.users.UpdatePasswordDto;
 import org.example.usersservice.dto.users.UserValidationResultDto;
+import org.example.usersservice.dto.users.ValidateUserDto;
+import org.example.usersservice.dto.users.UpdatePaymentInformationDto;
 import org.example.usersservice.model.AppUser;
 import org.example.usersservice.model.Payment;
 import org.example.usersservice.service.UsersService;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 import javax.validation.Valid;
@@ -43,7 +47,24 @@ public class UsersController {
     private final UsersService usersService;
     private final UsersConverter usersConverter;
 
-    @Tag(name = "Users")
+    @Operation(summary = "Verify user")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Users successfully found"),
+                    @ApiResponse(responseCode = "404", description = "There are no users were found"),
+                    @ApiResponse(responseCode = "500", description = "Something Went Wrong")
+            }
+    )
+    @PostMapping("/verify")
+    public ResponseEntity<UserVerificationDto> verifyUser(@RequestBody @Valid CredentialsDto credentials) {
+        UserVerificationDto userVerificationDto =
+                usersService.verifyUser(credentials.getEmail());
+        if (userVerificationDto == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(userVerificationDto);
+    }
+
     @Operation(summary = "Get all existed users from users database")
     @ApiResponses(
             value = {
@@ -58,7 +79,6 @@ public class UsersController {
         return ResponseEntity.ok(usersConverter.toDto(appUsers));
     }
 
-    @Tag(name = "Users")
     @Operation(summary = "Get user from database by userId")
     @ApiResponses(
             value = {
@@ -73,7 +93,6 @@ public class UsersController {
         return ResponseEntity.ok(usersConverter.toDto(appUser));
     }
 
-    @Tag(name = "Users")
     @Operation(summary = "Create user by email, password, role")
     @ApiResponses(
             value = {
@@ -91,7 +110,6 @@ public class UsersController {
                 createUserDto.getRole());
     }
 
-    @Tag(name = "Users")
     @Operation(summary = "Update fields related to user by user id")
     @ApiResponses(
             value = {
@@ -115,7 +133,6 @@ public class UsersController {
         return ResponseEntity.accepted().body(usersConverter.toDto(appUser));
     }
 
-    @Tag(name = "Users")
     @Operation(summary = "Update user password by user id")
     @ApiResponses(
             value = {
@@ -136,7 +153,6 @@ public class UsersController {
         );
     }
 
-    @Tag(name = "Users")
     @Operation(summary = "Delete user by id")
     @ApiResponses(
             value = {
@@ -164,7 +180,6 @@ public class UsersController {
         return ResponseEntity.ok(validationResult);
     }
 
-    @Tag(name = "Users")
     @Operation(summary = "Get payments of user by user Id")
     @ApiResponses(
             value = {
@@ -180,7 +195,6 @@ public class UsersController {
     }
 
 
-    @Tag(name = "Users")
     @Operation(summary = "Update payment information by user Id ")
     @ApiResponses(
             value = {
@@ -202,6 +216,16 @@ public class UsersController {
                 updatePaymentInformationDto.getExpirationDate()
         );
         return ResponseEntity.accepted().body(usersConverter.paymentsToDto(payment));
+    }
+
+    @Hidden
+    @GetMapping("/validate")
+    public ResponseEntity<AppUser> findUserByEmail(@RequestParam(value = "email") String email) {
+        AppUser user = usersService.findUserByEmail(email);
+        if (user == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(user);
     }
 
 }

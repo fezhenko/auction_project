@@ -1,4 +1,4 @@
-package org.example.usersservice.dto.users;
+package org.example.apigateway.dto;
 
 import lombok.Builder;
 import lombok.Value;
@@ -7,9 +7,9 @@ import lombok.extern.jackson.Jacksonized;
 import java.util.Date;
 
 @Value
-@Builder
 @Jacksonized
-public class AppUserDto {
+@Builder
+public class UserDto {
     Long id;
     String firstname;
     String lastname;

@@ -1,4 +1,4 @@
-package org.example.usersservice.dto.users;
+package org.example.apigateway.client.dto;
 
 import lombok.Builder;
 import lombok.Value;
@@ -13,6 +13,7 @@ public class AppUserDto {
     Long id;
     String firstname;
     String lastname;
+    String password;
     String email;
     String role;
     Double balance;
