@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Collections;
 @Service
 @RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
@@ -24,6 +24,7 @@ public class AuthService implements UserDetailsService {
         return new User(
                 user.getEmail(),
                 user.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())));
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
+        );
     }
 }

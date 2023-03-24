@@ -24,4 +24,6 @@ public class Buyer {
     Long auctionId;
     @Column("created_at")
     Date createdAt;
+    @Column("email")
+    String email;
 }

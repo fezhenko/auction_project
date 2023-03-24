@@ -1,5 +1,6 @@
-package org.example.auction.dto.buyer;
+package org.example.apigateway.dto.buyer;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
@@ -10,10 +11,11 @@ import javax.validation.constraints.NotNull;
 @Value
 @Jacksonized
 @Builder
-public class CreateBuyerDto {
+public class CreateBuyerWithUserEmailDto {
     @NotNull
     @Email
-    String email;
+    @JsonProperty("email")
+    String userEmail;
     @NotNull
     Long auctionId;
 }

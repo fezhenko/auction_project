@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.apigateway.client.dto.AppUserDto;
 import org.example.apigateway.config.jwt.Jwt;
 import org.example.apigateway.client.dto.AuthResultDto;
@@ -33,6 +34,7 @@ import java.util.List;
 @Tag(name = "Users")
 @AllArgsConstructor
 @SecurityScheme(type = SecuritySchemeType.HTTP, bearerFormat = "JWT")
+@Slf4j
 public class UserController {
     private final UserService userService;
     private final UserConverter userConverter;
@@ -71,4 +73,5 @@ public class UserController {
         CreateUserResultDto result = userService.createUser(createUserDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
+
 }

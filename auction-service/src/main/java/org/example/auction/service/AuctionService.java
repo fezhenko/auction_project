@@ -133,14 +133,15 @@ public class AuctionService {
         Long currentDate = System.currentTimeMillis();
         for (Auction auction : auctionsList) {
             if (auction.getAuctionDate() != null) {
-                Long plannedDate = auction.getAuctionDate().getTime();
-                if ((plannedDate - currentDate) <= 0 && auction.getAuctionState().equals("PLANNED")) {
+                Long plannedTime = auction.getAuctionDate().getTime();
+                if ((plannedTime - currentDate) <= 0 && auction.getAuctionState().equals("PLANNED")) {
                     log.info("auction with id:'%d' starts now".formatted(auction.getAuctionId()));
-                    auctionRepository.startAuction("IN_PROGRESS", auction.getAuctionId());
+                    auctionRepository.updateAuctionStateBySchedule("IN_PROGRESS", auction.getAuctionId());
+                    auctionRepository.updateLastUpdatedTime(auction.getAuctionId());
                 }
-                if ((plannedDate - currentDate) > 0 && auction.getAuctionState().equals("PLANNED")) {
+                if ((plannedTime - currentDate) > 0 && auction.getAuctionState().equals("PLANNED")) {
                     log.info("Auction '%d' will be started in '%d' minutes".formatted(
-                                    auction.getAuctionId(), convertMillisecondsToMinutes(plannedDate - currentDate)
+                                    auction.getAuctionId(), convertMillisecondsToMinutes(plannedTime - currentDate)
                             )
                     );
                 }
@@ -152,13 +153,14 @@ public class AuctionService {
     @Scheduled(zone = "ECT", cron = "4 * * * * 0-6")
     private void finishAuction() {
         List<Auction> auctionsList = auctionRepository.findAllAuctions();
-        int currentDate = convertMillisecondsToMinutes(System.currentTimeMillis());
+        long currentDate = System.currentTimeMillis();
         for (Auction auction : auctionsList) {
             if (auction.getAuctionDate() != null) {
-                int plannedDate = convertMillisecondsToMinutes(auction.getAuctionDate().getTime());
-                if ((plannedDate + 360) < currentDate && auction.getAuctionState().equals("IN_PROGRESS")) {
+                long plannedTime = auction.getAuctionDate().getTime();
+                if ((currentDate - plannedTime) >= 21600000 && auction.getAuctionState().equals("IN_PROGRESS")) {
                     log.info("auction with id:'%d' finished".formatted(auction.getAuctionId()));
-                    auctionRepository.startAuction("FINISHED", auction.getAuctionId());
+                    auctionRepository.updateAuctionStateBySchedule("FINISHED", auction.getAuctionId());
+                    auctionRepository.updateLastUpdatedTime(auction.getAuctionId());
                 }
             }
         }

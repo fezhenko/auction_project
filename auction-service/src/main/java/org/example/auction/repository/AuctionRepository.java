@@ -48,9 +48,10 @@ public interface AuctionRepository extends Repository<Auction, Long> {
 
     @Modifying
     @Query("update auctions set auction_state = :state where auction_id = :id")
-    void startAuction(@Param("state") String state, @Param("id") Long id);
+    void updateAuctionStateBySchedule(@Param("state") String state, @Param("id") Long id);
+
     //todo: после апдейта айтем айди в аукционе, триггер чтобы заапдейтить старт прайс, ласт апдейт
 
-//    void updateAuction(Double itemFinalPrice, Long buyerId);
+    //void updateAuction(Double itemFinalPrice, Long buyerId);
     //todo: если каррен прайс не изменяется в течении 6 часов после начала аукциона, каррент прайс=файнал, ласт апдейт
 }
