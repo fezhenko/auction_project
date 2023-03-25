@@ -75,7 +75,7 @@ public class BidController {
     )
     @PostMapping
     private ResponseEntity<UpdateBidResultDto> createBid(@RequestBody @Valid CreateBidDto createBidDto) {
-        UpdateBidResultDto result = bidService.createBid(createBidDto.getAmount(), createBidDto.getBuyerId());
+        UpdateBidResultDto result = bidService.createBid(createBidDto.getAmount(), createBidDto.getEmail());
         if (result.getMessage() == null) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }

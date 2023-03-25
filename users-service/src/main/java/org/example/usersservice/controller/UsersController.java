@@ -7,16 +7,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.example.usersservice.converter.UsersConverter;
+import org.example.usersservice.dto.users.UserBalanceDto;
+import org.example.usersservice.dto.users.UserVerificationDto;
+import org.example.usersservice.dto.users.CredentialsDto;
 import org.example.usersservice.dto.users.AppUserDto;
 import org.example.usersservice.dto.users.CreateUserDto;
-import org.example.usersservice.dto.users.CredentialsDto;
-import org.example.usersservice.dto.users.UserVerificationDto;
+import org.example.usersservice.dto.users.UpdatePasswordDto;
 import org.example.usersservice.dto.users.UpdateUserRelatedFieldsDto;
 import org.example.usersservice.dto.users.UserPaymentsDto;
-import org.example.usersservice.dto.users.UpdatePasswordDto;
+import org.example.usersservice.dto.users.UpdatePaymentInformationDto;
 import org.example.usersservice.dto.users.UserValidationResultDto;
 import org.example.usersservice.dto.users.ValidateUserDto;
-import org.example.usersservice.dto.users.UpdatePaymentInformationDto;
 import org.example.usersservice.model.AppUser;
 import org.example.usersservice.model.Payment;
 import org.example.usersservice.service.UsersService;
@@ -226,6 +227,16 @@ public class UsersController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(user);
+    }
+
+    @Hidden
+    @GetMapping("/{userId}/balance")
+    private ResponseEntity<UserBalanceDto> getUserBalance(@PathVariable("userId") Long userId) {
+        UserBalanceDto result = usersService.getUserBalanceById(userId);
+        if (result.getBalance() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(result);
     }
 
 }

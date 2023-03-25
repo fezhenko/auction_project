@@ -2,12 +2,16 @@ package org.example.apigateway.config;
 
 import lombok.RequiredArgsConstructor;
 import org.example.apigateway.config.filter.JwtFilter;
+import org.example.apigateway.config.service.AuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -17,6 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
+    private final AuthService authService;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
@@ -27,16 +33,24 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests(request -> request
                         .antMatchers("/api/v1/auth").permitAll()
-                        .antMatchers("/api/v1/users/**").hasAnyRole("ADMIN", "USER")
-                        .antMatchers("/swagger-ui/index.html").hasAnyRole("ADMIN", "USER")
+                        .antMatchers("/api/v1/users/**").hasAnyRole("ADMIN")
+                        .antMatchers("/api/v1/bids/**").hasAnyRole("ADMIN", "USER")
+                        .antMatchers("/swagger-ui/index.html").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin()
-                .successForwardUrl("/swagger-ui/index.html")
-                .permitAll()
                 .and()
+                .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(LogoutConfigurer::permitAll);
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(authService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
+        return authenticationProvider;
     }
 }

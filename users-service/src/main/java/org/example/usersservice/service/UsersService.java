@@ -1,6 +1,7 @@
 package org.example.usersservice.service;
 
 import lombok.AllArgsConstructor;
+import org.example.usersservice.dto.users.UserBalanceDto;
 import org.example.usersservice.dto.users.UserVerificationDto;
 import org.example.usersservice.model.AppUser;
 import org.example.usersservice.model.Payment;
@@ -71,5 +72,13 @@ public class UsersService {
 
     public AppUser findUserByEmail(String email) {
         return usersRepository.findUserByEmail(email);
+    }
+
+    public UserBalanceDto getUserBalanceById(Long userId) {
+        AppUser user = getUserById(userId);
+        if (user == null) {
+            return UserBalanceDto.builder().build();
+        }
+        return UserBalanceDto.builder().balance(usersRepository.getCurrentUserBalance(userId)).build();
     }
 }

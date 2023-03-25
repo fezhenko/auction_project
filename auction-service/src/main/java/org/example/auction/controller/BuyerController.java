@@ -75,7 +75,7 @@ public class BuyerController {
             }
     )
     private void createBuyer(@RequestBody @Valid CreateBuyerDto buyer) {
-        buyerService.createBuyer(buyer.getAuctionId());
+        buyerService.createBuyer(buyer.getEmail(), buyer.getAuctionId());
     }
 
     @DeleteMapping("/{buyerId}")

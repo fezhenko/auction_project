@@ -18,9 +18,9 @@ public interface BuyerRepository extends Repository<Buyer, Long> {
     Buyer findBuyerById(@Param("buyerId") Long id);
 
     @Modifying
-    @Query("insert into buyers (auction_id) " +
-            "values (:auctionId);")
-    void createBuyer(@Param("auctionId") Long id);
+    @Query("insert into buyers (email, auction_id) " +
+            "values (:email, :auctionId);")
+    void createBuyer(@Param("email") String email, @Param("auctionId") Long id);
 
     @Modifying
     @Query("delete " +
@@ -28,4 +28,6 @@ public interface BuyerRepository extends Repository<Buyer, Long> {
             "where id = :id;")
     void deleteBuyer(@Param("id") Long id);
 
+    @Query("select id from buyers where email = :email")
+    Long findBuyerByEmail(@Param("email") String email);
 }

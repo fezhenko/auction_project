@@ -20,8 +20,8 @@ public class BuyerService {
         return buyerRepository.findBuyerById(id);
     }
 
-    public void createBuyer(Long auctionId) {
-        buyerRepository.createBuyer(auctionId);
+    public void createBuyer(String email, Long auctionId) {
+        buyerRepository.createBuyer(email, auctionId);
     }
 
     public void deleteBuyer(Long id) {
