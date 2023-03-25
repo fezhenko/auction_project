@@ -28,4 +28,6 @@ public interface BuyerRepository extends Repository<Buyer, Long> {
             "where id = :id;")
     void deleteBuyer(@Param("id") Long id);
 
+    @Query("select id from buyers where email = :email")
+    Long findBuyerByEmail(@Param("email") String email);
 }

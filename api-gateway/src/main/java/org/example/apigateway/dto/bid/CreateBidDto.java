@@ -1,4 +1,4 @@
-package org.example.auction.dto.bid;
+package org.example.apigateway.dto.bid;
 
 import lombok.Builder;
 import lombok.Value;
@@ -14,6 +14,4 @@ public class CreateBidDto {
     @NotNull
     @DecimalMin(value = "0.001", message = "Please enter a valid amount more than 0")
     Double amount;
-    @NotNull
-    String email;
 }

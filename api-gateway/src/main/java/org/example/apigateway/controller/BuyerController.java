@@ -4,9 +4,12 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.apigateway.dto.bid.CreateBidDto;
+import org.example.apigateway.dto.bid.MakeBidResultDto;
 import org.example.apigateway.dto.buyer.CreateBuyerDto;
 import org.example.apigateway.dto.buyer.CreateBuyerResultDto;
 import org.example.apigateway.dto.buyer.CreateBuyerWithUserEmailDto;
+import org.example.apigateway.service.BidService;
 import org.example.apigateway.service.BuyerService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,8 @@ import javax.validation.Valid;
 public class BuyerController {
 
     private final BuyerService buyerService;
+
+    private final BidService bidService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -58,4 +63,27 @@ public class BuyerController {
         // если файнал прайс не равен нулю, получаю айди байера, и сумму равную файнал прайсу
         // через байер айди нахожу юзера, отнимаю сумму ставки из баланса, если не достаточно, нужно закенселить аукцион.
     }
+
+    @PostMapping("/bids")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    private ResponseEntity<MakeBidResultDto> makeBidToAuction(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                              @RequestBody @Valid CreateBidDto createBidDto) {
+        if (token.isEmpty()) {
+            MakeBidResultDto result = MakeBidResultDto.builder().message("Invalid token").build();
+            return ResponseEntity.badRequest().body(result);
+        }
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user.getUsername() == null) {
+            MakeBidResultDto result = MakeBidResultDto.builder()
+                    .message("User with '%s' is not exist".formatted(user.getUsername())).build();
+            return ResponseEntity.badRequest().body(result);
+        }
+        MakeBidResultDto makeBidResultDto = bidService.makeBidToAuction(user.getUsername(), createBidDto.getAmount());
+        if (makeBidResultDto.getMessage() == null) {
+            return ResponseEntity.accepted().build();
+        }
+        return ResponseEntity.badRequest().body(makeBidResultDto);
+    }
+
+
 }

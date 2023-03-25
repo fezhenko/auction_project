@@ -9,4 +9,5 @@ import java.util.List;
 @Mapper
 public interface UserConverter {
     List<UserDto> toDto(List<AppUserDto> users);
+    UserDto toDto(AppUserDto user);
 }

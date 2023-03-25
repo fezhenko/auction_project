@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.auction.dto.bid.UpdateBidResultDto;
 import org.example.auction.model.Bid;
 import org.example.auction.repository.BidRepository;
+import org.example.auction.repository.BuyerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @Slf4j
 public class BidService {
     private final BidRepository bidRepository;
+    private final BuyerRepository buyerRepository;
 
     public List<Bid> findAllBids() {
         return bidRepository.findAllBids();
@@ -23,10 +25,15 @@ public class BidService {
         return bidRepository.findBidById(bidId);
     }
 
-    public UpdateBidResultDto createBid(Double amount, Long buyerId) {
+    public UpdateBidResultDto createBid(Double amount, String email) {
         if (amount < 0) {
             log.error("bid amount should be more than zero");
             return UpdateBidResultDto.builder().message("bid amount should be more than zero").build();
+        }
+        Long buyerId = buyerRepository.findBuyerByEmail(email);
+        if (buyerId == null) {
+            log.error("buyer with '%s' email does not exist");
+            return UpdateBidResultDto.builder().message("buyer with '%s' email does not exist".formatted(email)).build();
         }
         bidRepository.createBid(amount, buyerId);
         return UpdateBidResultDto.builder().build();
