@@ -4,7 +4,10 @@ import org.example.apigateway.client.dto.AppUserDto;
 import org.example.apigateway.client.dto.CredentialsDto;
 import org.example.apigateway.client.dto.UserVerificationDto;
 import org.example.apigateway.dto.CreateUserDto;
+import org.example.apigateway.dto.UpdateBalanceResultDto;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,4 +31,8 @@ public interface UserClient {
 
     @RequestMapping(method = RequestMethod.GET)
     List<AppUserDto> findAllUsers();
+
+    @RequestMapping(method = RequestMethod.PATCH, value = "/{userId}/balance",
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    UpdateBalanceResultDto updateUserBalance(@PathVariable("userId") Long userId, Double finalPrice);
 }

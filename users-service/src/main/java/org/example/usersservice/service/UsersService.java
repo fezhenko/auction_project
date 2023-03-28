@@ -1,6 +1,7 @@
 package org.example.usersservice.service;
 
 import lombok.AllArgsConstructor;
+import org.example.usersservice.dto.users.UpdateBalanceResultDto;
 import org.example.usersservice.dto.users.UserBalanceDto;
 import org.example.usersservice.dto.users.UserVerificationDto;
 import org.example.usersservice.model.AppUser;
@@ -80,5 +81,20 @@ public class UsersService {
             return UserBalanceDto.builder().build();
         }
         return UserBalanceDto.builder().balance(usersRepository.getCurrentUserBalance(userId)).build();
+    }
+
+    public UpdateBalanceResultDto updateUserBalance(Long id, Double price) {
+        if (id == null) {
+            return UpdateBalanceResultDto.builder().build();
+        }
+        Double userBalance = usersRepository.findBalanceByUserId(id);
+        Double newBalance = userBalance - price;
+        if (price <= userBalance) {
+            return UpdateBalanceResultDto.builder().build();
+        }
+        return UpdateBalanceResultDto.builder()
+            .balance(usersRepository.updateUserBalanceAfterAuctionFinish(
+                    id, newBalance)
+            ).build();
     }
 }

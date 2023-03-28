@@ -30,4 +30,7 @@ public interface BuyerRepository extends Repository<Buyer, Long> {
 
     @Query("select id from buyers where email = :email")
     Long findBuyerByEmail(@Param("email") String email);
+
+    @Query("select auction_id from buyers where id = :buyerId")
+    Long findAuctionByBuyerId(@Param("buyerId") Long buyerId);
 }

@@ -1,5 +1,6 @@
 package org.example.auction.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -8,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.example.auction.converter.AuctionConverter;
 import org.example.auction.dto.auction.AuctionDto;
+import org.example.auction.dto.auction.BuyerEmailDto;
 import org.example.auction.dto.auction.UpdateAuctionDateDto;
 import org.example.auction.dto.auction.UpdateAuctionItemDto;
 import org.example.auction.dto.auction.UpdateAuctionResultDto;
@@ -155,5 +157,13 @@ public class AuctionController {
         auctionService.deleteAuction(id);
     }
 
-
+    @Hidden
+    @GetMapping("/{auctionId}/buyer")
+    private ResponseEntity<BuyerEmailDto> findBuyerEmailByAuctionId(@PathVariable("auctionId") Long id) {
+        BuyerEmailDto buyerEmail = auctionService.findBuyerByAuctionId(id);
+        if (buyerEmail.getEmail() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(buyerEmail);
+    }
 }
