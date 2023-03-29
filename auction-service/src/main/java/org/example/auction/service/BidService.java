@@ -3,7 +3,9 @@ package org.example.auction.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.auction.dto.bid.UpdateBidResultDto;
+import org.example.auction.model.Auction;
 import org.example.auction.model.Bid;
+import org.example.auction.repository.AuctionRepository;
 import org.example.auction.repository.BidRepository;
 import org.example.auction.repository.BuyerRepository;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.List;
 public class BidService {
     private final BidRepository bidRepository;
     private final BuyerRepository buyerRepository;
+    private final AuctionRepository auctionRepository;
 
     public List<Bid> findAllBids() {
         return bidRepository.findAllBids();
@@ -32,10 +35,19 @@ public class BidService {
         }
         Long buyerId = buyerRepository.findBuyerByEmail(email);
         if (buyerId == null) {
-            log.error("buyer with '%s' email does not exist");
+            log.error("bid with buyer id null is not allowed");
+            return UpdateBidResultDto.builder().message("bid with buyer id null is not allowed").build();
+        }
+        Long auctionId = buyerRepository.findAuctionByBuyerId(buyerId);
+        Auction auction = auctionRepository.findAuctionById(auctionId);
+        if (auction.getAuctionState().equals("PLANNED") || auction.getAuctionState().equals("FINISHED")) {
+            log.error("auction with id '%d' in not in progress, bid is canceled".formatted(auctionId));
             return UpdateBidResultDto.builder().message("buyer with '%s' email does not exist".formatted(email)).build();
         }
-        bidRepository.createBid(amount, buyerId);
+        if (amount > auction.getCurrentPrice()) {
+            bidRepository.createBid(amount, buyerId);
+            auctionRepository.updateBuyerIdForAuction(amount, buyerId, auctionId);
+        }
         return UpdateBidResultDto.builder().build();
     }
 

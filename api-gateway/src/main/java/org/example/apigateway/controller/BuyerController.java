@@ -45,7 +45,6 @@ public class BuyerController {
             return ResponseEntity.badRequest().body(result);
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        // при создании байера, беру юзернейм из контекста, сохраняю его в таблице байеров
         CreateBuyerResultDto result = buyerService.createBuyer(
                 CreateBuyerWithUserEmailDto.builder()
                         .userEmail(user.getUsername())
@@ -57,11 +56,6 @@ public class BuyerController {
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }
         return ResponseEntity.badRequest().body(result);
-
-        // юзер выйграл аукцион
-        // каррент прайс становится файнал прайсом
-        // если файнал прайс не равен нулю, получаю айди байера, и сумму равную файнал прайсу
-        // через байер айди нахожу юзера, отнимаю сумму ставки из баланса, если не достаточно, нужно закенселить аукцион.
     }
 
     @PostMapping("/bids")
@@ -85,5 +79,7 @@ public class BuyerController {
         return ResponseEntity.badRequest().body(makeBidResultDto);
     }
 
-
 }
+//TODO: юзер выйграл аукцион
+// если файнал прайс не равен нулю, получаю айди байера, и сумму равную файнал прайсу
+// через байер айди нахожу юзера, отнимаю сумму ставки из баланса, если не достаточно, нужно закенселить аукцион.

@@ -2,6 +2,7 @@ package org.example.auction.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.auction.dto.auction.BuyerEmailDto;
 import org.example.auction.dto.auction.UpdateAuctionResultDto;
 import org.example.auction.model.Auction;
 import org.example.auction.repository.AuctionRepository;
@@ -160,6 +161,7 @@ public class AuctionService {
                 if ((currentDate - plannedTime) >= 21600000 && auction.getAuctionState().equals("IN_PROGRESS")) {
                     log.info("auction with id:'%d' finished".formatted(auction.getAuctionId()));
                     auctionRepository.updateAuctionStateBySchedule("FINISHED", auction.getAuctionId());
+                    auctionRepository.updateAuctionFinalPrice(auction.getCurrentPrice(), auction.getAuctionId());
                     auctionRepository.updateLastUpdatedTime(auction.getAuctionId());
                 }
             }
@@ -170,4 +172,11 @@ public class AuctionService {
         return (int) ((milliseconds / (1000 * 60)) % 60);
     }
 
+    public BuyerEmailDto findBuyerByAuctionId(Long id) {
+        if (auctionRepository.findBuyerEmailByAuctionId(id) == null) {
+            return BuyerEmailDto.builder().build();
+        } else {
+            return BuyerEmailDto.builder().email(auctionRepository.findBuyerEmailByAuctionId(id)).build();
+        }
+    }
 }
