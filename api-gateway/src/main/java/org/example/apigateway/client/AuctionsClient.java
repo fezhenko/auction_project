@@ -11,7 +11,7 @@ import java.util.List;
 
 @FeignClient(name = "auction-client", url = "${services.auction-service.url}/api/v1/auctions")
 public interface AuctionsClient {
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     List<AuctionDto> getAllAuctions();
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
