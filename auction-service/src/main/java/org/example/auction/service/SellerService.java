@@ -25,7 +25,7 @@ public class SellerService {
     }
 
     public CreateSellerResultDto createSeller(CreateSellerDto sellerDto) {
-        if (sellerDto.getEmail().isEmpty()) {
+        if (sellerDto.getEmail() == null) {
             log.error("user email cannot be null");
             return CreateSellerResultDto.builder().message("user email cannot be null").build();
         }

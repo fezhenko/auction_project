@@ -9,7 +9,7 @@ import org.example.apigateway.client.UserClient;
 import org.example.apigateway.client.dto.AppUserDto;
 import org.example.apigateway.dto.auction.AuctionDto;
 import org.example.apigateway.dto.auction.BuyerEmailDto;
-import org.example.apigateway.dto.auction.CreateAuctionResultDto;
+import org.example.apigateway.dto.seller.CreateSellerResultDto;
 import org.example.apigateway.dto.seller.CreateSellerDto;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -57,10 +57,10 @@ public class AuctionService {
         }
     }
 
-    public CreateAuctionResultDto createAuction(CreateSellerDto sellerDto) {
-        CreateAuctionResultDto result = sellerClient.createNewSeller(sellerDto);
-        if (result.getMessage().isEmpty()) {
-            return CreateAuctionResultDto.builder().build();
+    public CreateSellerResultDto createAuction(CreateSellerDto sellerDto) {
+        CreateSellerResultDto result = sellerClient.createNewSeller(sellerDto);
+        if (result == null) {
+            return CreateSellerResultDto.builder().build();
         }
         return result;
     }

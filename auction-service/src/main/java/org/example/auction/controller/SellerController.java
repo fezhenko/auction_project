@@ -75,7 +75,7 @@ public class SellerController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CreateSellerResultDto> createSeller(@RequestBody @Valid CreateSellerDto sellerDto) {
         CreateSellerResultDto result = sellerService.createSeller(sellerDto);
-        if (result.getMessage().isEmpty()) {
+        if (result.getMessage() == null) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }
         return ResponseEntity.badRequest().body(result);

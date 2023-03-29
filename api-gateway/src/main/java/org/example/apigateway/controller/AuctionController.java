@@ -1,7 +1,7 @@
 package org.example.apigateway.controller;
 
 import lombok.AllArgsConstructor;
-import org.example.apigateway.dto.auction.CreateAuctionResultDto;
+import org.example.apigateway.dto.seller.CreateSellerResultDto;
 import org.example.apigateway.dto.seller.CreateSellerDto;
 import org.example.apigateway.service.AuctionService;
 import org.springframework.http.HttpHeaders;
@@ -24,16 +24,16 @@ public class AuctionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private ResponseEntity<CreateAuctionResultDto> createAuction(
+    private ResponseEntity<CreateSellerResultDto> createAuction(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         if (token.isEmpty()) {
-            return ResponseEntity.badRequest().body(CreateAuctionResultDto.builder().message("Invalid token").build());
+            return ResponseEntity.badRequest().body(CreateSellerResultDto.builder().message("Invalid token").build());
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        CreateAuctionResultDto result = auctionService.createAuction(
+        CreateSellerResultDto result = auctionService.createAuction(
                 CreateSellerDto.builder().email(user.getUsername()).build()
         );
-        if (result.getMessage().isEmpty()) {
+        if (result.getMessage() == null) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }
         return ResponseEntity.badRequest().body(result);
