@@ -78,5 +78,4 @@ public class BuyerController {
         }
         return ResponseEntity.badRequest().body(makeBidResultDto);
     }
-
 }

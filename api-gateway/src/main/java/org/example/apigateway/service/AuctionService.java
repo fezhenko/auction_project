@@ -4,10 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.example.apigateway.client.AuctionsClient;
+import org.example.apigateway.client.SellerClient;
 import org.example.apigateway.client.UserClient;
 import org.example.apigateway.client.dto.AppUserDto;
 import org.example.apigateway.dto.auction.AuctionDto;
 import org.example.apigateway.dto.auction.BuyerEmailDto;
+import org.example.apigateway.dto.auction.CreateAuctionResultDto;
+import org.example.apigateway.dto.seller.CreateSellerDto;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,7 @@ public class AuctionService {
     private final AuctionsClient auctionsClient;
     private final HashSet<Long> payedAuctions;
     private final UserClient userClient;
+    private final SellerClient sellerClient;
 
     @Scheduled(zone = "ECT", cron = "1 * * * * 0-7")
     private void updateUserBalance() {
@@ -53,4 +57,11 @@ public class AuctionService {
         }
     }
 
+    public CreateAuctionResultDto createAuction(CreateSellerDto sellerDto) {
+        CreateAuctionResultDto result = sellerClient.createNewSeller(sellerDto);
+        if (result.getMessage().isEmpty()) {
+            return CreateAuctionResultDto.builder().build();
+        }
+        return result;
+    }
 }
