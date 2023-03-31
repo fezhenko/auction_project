@@ -7,10 +7,6 @@ import lombok.extern.jackson.Jacksonized;
 @Value
 @Jacksonized
 @Builder
-public class PriceDto {
-    Double startPrice;
-    Double minimalBid;
-    Double currentPrice;
-    Double finalPrice;
-    Long buyer;
+public class UserEmailDto {
+    String email;
 }

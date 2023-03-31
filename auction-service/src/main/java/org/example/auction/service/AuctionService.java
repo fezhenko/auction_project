@@ -2,7 +2,7 @@ package org.example.auction.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.auction.dto.auction.BuyerEmailDto;
+import org.example.auction.dto.auction.UserEmailDto;
 import org.example.auction.dto.auction.UpdateAuctionResultDto;
 import org.example.auction.model.Auction;
 import org.example.auction.repository.AuctionRepository;
@@ -163,6 +163,7 @@ public class AuctionService {
                     auctionRepository.updateAuctionStateBySchedule("FINISHED", auction.getAuctionId());
                     auctionRepository.updateAuctionFinalPrice(auction.getCurrentPrice(), auction.getAuctionId());
                     auctionRepository.updateLastUpdatedTime(auction.getAuctionId());
+                    //todo: change item status to SOLD
                 }
             }
         }
@@ -172,11 +173,26 @@ public class AuctionService {
         return (int) ((milliseconds / (1000 * 60)) % 60);
     }
 
-    public BuyerEmailDto findBuyerByAuctionId(Long id) {
-        if (auctionRepository.findBuyerEmailByAuctionId(id) == null) {
-            return BuyerEmailDto.builder().build();
+    public UserEmailDto findUserByAuctionId(Long id, String userType) {
+        String email;
+        if (userType.equals("buyer")) {
+            email = auctionRepository.findBuyerEmailByAuctionId(id);
         } else {
-            return BuyerEmailDto.builder().email(auctionRepository.findBuyerEmailByAuctionId(id)).build();
+            email = auctionRepository.findSellerEmailByAuctionId(id);
         }
+        if (email == null) {
+            log.error("user email for auction with id:'%d' is null".formatted(id));
+            return UserEmailDto.builder().build();
+        } else {
+            return UserEmailDto.builder().email(email).build();
+        }
+    }
+
+    public void updateIsPayedToTrue(Long auctionId) {
+        if (auctionId == null) {
+            log.error("auction id is null");
+        }
+        auctionRepository.updateIsPayedToTrue(auctionId);
+        log.info("auction with id:'%d' has been payed".formatted(auctionId));
     }
 }

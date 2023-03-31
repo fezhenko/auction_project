@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.example.usersservice.converter.UsersConverter;
+import org.example.usersservice.dto.users.FinalPriceDto;
 import org.example.usersservice.dto.users.AppUserDto;
 import org.example.usersservice.dto.users.CreateUserDto;
 import org.example.usersservice.dto.users.CredentialsDto;
@@ -243,8 +244,9 @@ public class UsersController {
     @Hidden
     @PatchMapping("/{userId}/balance")
     private ResponseEntity<UpdateBalanceResultDto> updateUserBalanceAfterAuctionFinish(
-            @PathVariable("userId") Long id, Double price) {
-        UpdateBalanceResultDto result = usersService.updateUserBalance(id, price);
+            @PathVariable("userId") Long id, @RequestParam(value = "userType") String userType,
+            @RequestBody @Valid FinalPriceDto finalPrice) {
+        UpdateBalanceResultDto result = usersService.updateUserBalance(id, userType, finalPrice.getFinalPrice());
         if (result.getBalance() == null) {
             return ResponseEntity.badRequest().build();
         }

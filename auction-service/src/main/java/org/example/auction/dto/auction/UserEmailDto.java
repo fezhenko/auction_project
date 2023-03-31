@@ -7,6 +7,6 @@ import lombok.extern.jackson.Jacksonized;
 @Value
 @Jacksonized
 @Builder
-public class BuyerEmailDto {
+public class UserEmailDto {
     String email;
 }

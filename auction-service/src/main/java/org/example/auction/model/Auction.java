@@ -43,4 +43,8 @@ public class Auction {
     Long buyerId;
     @Column("created_at")
     Date createdAt;
+    @Column("last_updated")
+    Date lastUpdated;
+    @Column("is_payed")
+    Boolean isPayed;
 }

@@ -18,27 +18,7 @@ public interface AuctionConverter {
     default List<AuctionDto> toDto(List<Auction> auctions) {
         List<AuctionDto> auctionsDtoList = new ArrayList<>();
         for (Auction auction : auctions) {
-            AuctionDto auctionDto = AuctionDto.builder()
-                    .auctionId(auction.getAuctionId())
-                    .auctionDate(auction.getAuctionDate())
-                    .priceDto(
-                            PriceDto.builder()
-                                    .startPrice(auction.getStartPrice())
-                                    .currentPrice(auction.getCurrentPrice())
-                                    .finalPrice(auction.getFinalPrice())
-                                    .minimalBid(auction.getMinimalBid())
-                                    .build()
-                    )
-                    .itemDto(
-                            AuctionItemDto.builder()
-                                    .id(auction.getItemId())
-                                    .description(auction.getItemDescription())
-                                    .build()
-                    )
-                    .auctionState(auction.getAuctionState())
-                    .createdAt(auction.getCreatedAt())
-                    .build();
-            auctionsDtoList.add(auctionDto);
+            auctionsDtoList.add(toDto(auction));
         }
         return auctionsDtoList;
     }
@@ -52,17 +32,20 @@ public interface AuctionConverter {
                 .priceDto(
                         PriceDto.builder()
                                 .startPrice(auction.getStartPrice())
+                                .minimalBid(auction.getMinimalBid())
                                 .currentPrice(auction.getCurrentPrice())
                                 .finalPrice(auction.getFinalPrice())
-                                .minimalBid(auction.getMinimalBid())
+                                .buyer(auction.getBuyerId())
                                 .build()
                 )
                 .itemDto(
                         AuctionItemDto.builder()
                                 .id(auction.getItemId())
                                 .description(auction.getItemDescription())
+                                .seller(auction.getSellerId())
                                 .build()
                 )
+                .isPayed(auction.getIsPayed())
                 .auctionState(auction.getAuctionState())
                 .createdAt(auction.getCreatedAt())
                 .build();

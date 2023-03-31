@@ -17,9 +17,9 @@ public interface SellerRepository extends Repository<Seller, Long> {
             "where id = :id;")
     Seller findSellerById(@Param("id") Long id);
 
-    @Query("insert into sellers default values;")
+    @Query("insert into sellers (email) values (:email)")
     @Modifying
-    void createSeller();
+    void createSeller(@Param("email") String email);
 
     @Query("delete " +
             "from sellers " +

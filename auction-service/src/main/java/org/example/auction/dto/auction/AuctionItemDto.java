@@ -13,4 +13,5 @@ public class AuctionItemDto {
     Long id;
     @Embedded.Nullable
     String description;
+    Long seller;
 }

@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -25,5 +26,6 @@ public class Buyer {
     @Column("created_at")
     Date createdAt;
     @Column("email")
+    @Email
     String email;
 }
