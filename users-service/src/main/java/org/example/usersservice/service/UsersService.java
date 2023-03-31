@@ -85,20 +85,24 @@ public class UsersService {
         return UserBalanceDto.builder().balance(usersRepository.getCurrentUserBalance(userId)).build();
     }
 
-    public UpdateBalanceResultDto updateUserBalance(Long id, Double price) {
+    public UpdateBalanceResultDto updateUserBalance(Long id, String userType, Double price) {
         if (id == null) {
             log.error("user id should be not null to update balance");
             return UpdateBalanceResultDto.builder().build();
         }
         Double userBalance = usersRepository.findBalanceByUserId(id);
-        Double newBalance = userBalance - price;
-        if (price > userBalance) {
-            log.error("user id:'%d' balance is less than price".formatted(id));
-            return UpdateBalanceResultDto.builder().build();
+        double newBalance = 0.0000;
+        if (userType.equals("seller")) {
+            newBalance = userBalance + price;
+        }
+        if (userType.equals("buyer")) {
+            newBalance = userBalance - price;
+            if (price > userBalance) {
+                log.error("user id:'%d' balance is less than price".formatted(id));
+                return UpdateBalanceResultDto.builder().build();
+            }
         }
         return UpdateBalanceResultDto.builder()
-            .balance(usersRepository.updateUserBalanceAfterAuctionFinish(
-                    id, newBalance)
-            ).build();
+                .balance(usersRepository.updateUserBalanceAfterAuctionFinish(id, newBalance)).build();
     }
 }

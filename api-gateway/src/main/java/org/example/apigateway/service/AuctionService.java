@@ -8,7 +8,7 @@ import org.example.apigateway.client.SellerClient;
 import org.example.apigateway.client.UserClient;
 import org.example.apigateway.client.dto.AppUserDto;
 import org.example.apigateway.dto.auction.AuctionDto;
-import org.example.apigateway.dto.auction.BuyerEmailDto;
+import org.example.apigateway.dto.auction.UserEmailDto;
 import org.example.apigateway.dto.auction.FinalPriceDto;
 import org.example.apigateway.dto.seller.CreateSellerResultDto;
 import org.example.apigateway.dto.seller.CreateSellerDto;
@@ -37,16 +37,33 @@ public class AuctionService {
                 .filter(auction -> !auction.getIsPayed())
                 .toList();
         todayAuctions.forEach(
-                this::updateBuyerBalanceAfterAuctionFinish
+            auction -> {
+                updateBuyerBalanceAfterAuctionFinish(auction);
+                updateSellerBalanceAfterAuctionFinish(auction);
+            }
         );
     }
 
     private void updateBuyerBalanceAfterAuctionFinish(AuctionDto auction) {
-        BuyerEmailDto buyer = auctionsClient.getBuyerEmailByAuctionId(auction.getAuctionId());
+        UserEmailDto buyer = auctionsClient.getBuyerEmailByAuctionId(auction.getAuctionId());
         AppUserDto user = userClient.findUserByEmail(buyer.getEmail());
         FinalPriceDto finalPrice = FinalPriceDto.builder().finalPrice(auction.getPriceDto().getFinalPrice()).build();
-        userClient.updateUserBalance(user.getId(), finalPrice);
+        userClient.updateUserBalance(user.getId(), "buyer", finalPrice);
+        log.info("user id:'%d' balance has been updated".formatted(user.getId()));
         auctionsClient.setIsPayedToTrue(auction.getAuctionId());
+        log.info("auction id:'%d' has been payed by buyer:'%d'"
+                .formatted(auction.getAuctionId(), auction.getPriceDto().getBuyer()));
+    }
+
+
+
+    private void updateSellerBalanceAfterAuctionFinish(AuctionDto auction) {
+        UserEmailDto seller = auctionsClient.getSellerEmailByAuctionId(auction.getAuctionId());
+        AppUserDto user = userClient.findUserByEmail(seller.getEmail());
+        FinalPriceDto finalPrice = FinalPriceDto.builder().finalPrice(auction.getPriceDto().getFinalPrice()).build();
+        userClient.updateUserBalance(user.getId(), "seller", finalPrice);
+        log.info("user id:'%d' balance has been updated after selling an item on auction:'%d'"
+                .formatted(user.getId(), auction.getAuctionId()));
     }
 
     public CreateSellerResultDto createAuction(CreateSellerDto sellerDto) {

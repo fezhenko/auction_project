@@ -244,8 +244,9 @@ public class UsersController {
     @Hidden
     @PatchMapping("/{userId}/balance")
     private ResponseEntity<UpdateBalanceResultDto> updateUserBalanceAfterAuctionFinish(
-            @PathVariable("userId") Long id, @RequestBody @Valid FinalPriceDto finalPrice) {
-        UpdateBalanceResultDto result = usersService.updateUserBalance(id, finalPrice.getFinalPrice());
+            @PathVariable("userId") Long id, @RequestParam(value = "userType") String userType,
+            @RequestBody @Valid FinalPriceDto finalPrice) {
+        UpdateBalanceResultDto result = usersService.updateUserBalance(id, userType, finalPrice.getFinalPrice());
         if (result.getBalance() == null) {
             return ResponseEntity.badRequest().build();
         }

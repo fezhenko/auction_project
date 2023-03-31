@@ -36,5 +36,6 @@ public interface UserClient {
     @RequestMapping(method = RequestMethod.PATCH, value = "/{userId}/balance",
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     UpdateBalanceResultDto updateUserBalance(@PathVariable("userId") Long userId,
+                                             @RequestParam(value = "userType") String userType,
                                              @RequestBody @Valid FinalPriceDto finalPrice);
 }

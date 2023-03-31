@@ -1,7 +1,7 @@
 package org.example.apigateway.client;
 
 import org.example.apigateway.dto.auction.AuctionDto;
-import org.example.apigateway.dto.auction.BuyerEmailDto;
+import org.example.apigateway.dto.auction.UserEmailDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +17,11 @@ public interface AuctionsClient {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{auctionId}/buyer",
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    BuyerEmailDto getBuyerEmailByAuctionId(@PathVariable("auctionId") Long auctionId);
+    UserEmailDto getBuyerEmailByAuctionId(@PathVariable("auctionId") Long auctionId);
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{auctionId}/seller",
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    UserEmailDto getSellerEmailByAuctionId(@PathVariable("auctionId") Long auctionId);
 
     @RequestMapping(method = RequestMethod.PATCH, value = "/{auctionId}/pay")
     void setIsPayedToTrue(@PathVariable("auctionId") Long auctionId);

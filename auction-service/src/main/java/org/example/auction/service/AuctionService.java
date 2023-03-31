@@ -2,7 +2,7 @@ package org.example.auction.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.auction.dto.auction.BuyerEmailDto;
+import org.example.auction.dto.auction.UserEmailDto;
 import org.example.auction.dto.auction.UpdateAuctionResultDto;
 import org.example.auction.model.Auction;
 import org.example.auction.repository.AuctionRepository;
@@ -173,13 +173,18 @@ public class AuctionService {
         return (int) ((milliseconds / (1000 * 60)) % 60);
     }
 
-    public BuyerEmailDto findBuyerByAuctionId(Long id) {
-        String email = auctionRepository.findBuyerEmailByAuctionId(id);
-        if (email == null) {
-            log.error("buyer email for auction with id:'%d' is null".formatted(id));
-            return BuyerEmailDto.builder().build();
+    public UserEmailDto findUserByAuctionId(Long id, String userType) {
+        String email;
+        if (userType.equals("buyer")) {
+            email = auctionRepository.findBuyerEmailByAuctionId(id);
         } else {
-            return BuyerEmailDto.builder().email(email).build();
+            email = auctionRepository.findSellerEmailByAuctionId(id);
+        }
+        if (email == null) {
+            log.error("user email for auction with id:'%d' is null".formatted(id));
+            return UserEmailDto.builder().build();
+        } else {
+            return UserEmailDto.builder().email(email).build();
         }
     }
 

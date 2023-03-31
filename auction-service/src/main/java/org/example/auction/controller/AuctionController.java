@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.example.auction.converter.AuctionConverter;
 import org.example.auction.dto.auction.AuctionDto;
-import org.example.auction.dto.auction.BuyerEmailDto;
+import org.example.auction.dto.auction.UserEmailDto;
 import org.example.auction.dto.auction.UpdateAuctionDateDto;
 import org.example.auction.dto.auction.UpdateAuctionItemDto;
 import org.example.auction.dto.auction.UpdateAuctionResultDto;
@@ -159,12 +159,22 @@ public class AuctionController {
 
     @Hidden
     @GetMapping("/{auctionId}/buyer")
-    private ResponseEntity<BuyerEmailDto> findBuyerEmailByAuctionId(@PathVariable("auctionId") Long id) {
-        BuyerEmailDto buyerEmail = auctionService.findBuyerByAuctionId(id);
+    private ResponseEntity<UserEmailDto> findBuyerEmailByAuctionId(@PathVariable("auctionId") Long id) {
+        UserEmailDto buyerEmail = auctionService.findUserByAuctionId(id, "buyer");
         if (buyerEmail.getEmail() == null) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(buyerEmail);
+    }
+
+    @Hidden
+    @GetMapping("/{auctionId}/seller")
+    private ResponseEntity<UserEmailDto> findSellerEmailByAuctionId(@PathVariable("auctionId") Long id) {
+        UserEmailDto sellerEmail = auctionService.findUserByAuctionId(id, "seller");
+        if (sellerEmail.getEmail() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(sellerEmail);
     }
 
     @Hidden
