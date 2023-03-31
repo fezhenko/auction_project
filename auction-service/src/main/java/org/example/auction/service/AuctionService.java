@@ -163,6 +163,7 @@ public class AuctionService {
                     auctionRepository.updateAuctionStateBySchedule("FINISHED", auction.getAuctionId());
                     auctionRepository.updateAuctionFinalPrice(auction.getCurrentPrice(), auction.getAuctionId());
                     auctionRepository.updateLastUpdatedTime(auction.getAuctionId());
+                    //todo: change item status to SOLD
                 }
             }
         }
@@ -173,10 +174,13 @@ public class AuctionService {
     }
 
     public BuyerEmailDto findBuyerByAuctionId(Long id) {
-        if (auctionRepository.findBuyerEmailByAuctionId(id) == null) {
+        String email = auctionRepository.findBuyerEmailByAuctionId(id);
+        if (email == null) {
+            log.error("buyer email for auction with id:'%d' is null".formatted(id));
             return BuyerEmailDto.builder().build();
         } else {
-            return BuyerEmailDto.builder().email(auctionRepository.findBuyerEmailByAuctionId(id)).build();
+            log.info("buyer email for auction with id:'%d' is '%s'".formatted(id, email));
+            return BuyerEmailDto.builder().email(email).build();
         }
     }
 }

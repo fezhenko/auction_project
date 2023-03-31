@@ -21,7 +21,6 @@ public interface UsersRepository extends Repository<AppUser, Long> {
     @Modifying
     @Query("INSERT INTO users (email, password, role) " +
             "VALUES (:email, :password, :role);")
-        //TODO: сделать возможность добавления админов только для админов
     void createUser(@Param("email") String email,
                     @Param("password") String password,
                     @Param("role") String role);

@@ -9,6 +9,7 @@ import org.example.apigateway.client.UserClient;
 import org.example.apigateway.client.dto.AppUserDto;
 import org.example.apigateway.dto.auction.AuctionDto;
 import org.example.apigateway.dto.auction.BuyerEmailDto;
+import org.example.apigateway.dto.auction.FinalPriceDto;
 import org.example.apigateway.dto.seller.CreateSellerResultDto;
 import org.example.apigateway.dto.seller.CreateSellerDto;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,34 +28,36 @@ public class AuctionService {
     private final UserClient userClient;
     private final SellerClient sellerClient;
 
-    @Scheduled(zone = "ECT", cron = "1 * * * * 0-7")
+    @Scheduled(zone = "ECT", cron = "* * * * * 0-7")
     private void updateUserBalance() {
         List<AuctionDto> auctions = auctionsClient.getAllAuctions();
-        List<AuctionDto> todayAuctionsIds = auctions.stream()
-                .filter(auction -> auction.getAuctionState().equals("FINISHED"))
+        List<AuctionDto> todayAuctions = auctions.stream()
+                .filter(auction -> auction.getAuctionDate() != null)
+                .filter(auction -> auction.getPriceDto().getBuyer() != null)
                 .filter(auction -> DateUtils.isSameDay(auction.getAuctionDate(), Calendar.getInstance().getTime()))
+                .filter(auction -> auction.getAuctionState().equals("FINISHED"))
                 .toList();
         if (payedAuctions.isEmpty()) {
-            todayAuctionsIds.forEach(
-                auction -> {
-                    BuyerEmailDto buyer = auctionsClient.getBuyerEmailByAuctionId(auction.getAuctionId());
-                    AppUserDto user = userClient.findUserByEmail(buyer.getEmail());
-                    userClient.updateUserBalance(user.getId(), auction.getPriceDto().getFinalPrice());
-                    payedAuctions.add(auction.getAuctionId());
-                }
+            todayAuctions.forEach(
+                    this::updateBuyerBalanceAfterAuctionFinish
             );
         } else {
-            todayAuctionsIds.forEach(
+            todayAuctions.forEach(
                 auction -> {
                     if (!payedAuctions.contains(auction.getAuctionId())) {
-                        BuyerEmailDto buyer = auctionsClient.getBuyerEmailByAuctionId(auction.getAuctionId());
-                        AppUserDto user = userClient.findUserByEmail(buyer.getEmail());
-                        userClient.updateUserBalance(user.getId(), auction.getPriceDto().getFinalPrice());
-                        payedAuctions.add(auction.getAuctionId());
+                        updateBuyerBalanceAfterAuctionFinish(auction);
                     }
                 }
             );
         }
+    }
+
+    private void updateBuyerBalanceAfterAuctionFinish(AuctionDto auction) {
+        BuyerEmailDto buyer = auctionsClient.getBuyerEmailByAuctionId(auction.getAuctionId());
+        AppUserDto user = userClient.findUserByEmail(buyer.getEmail());
+        FinalPriceDto finalPrice = FinalPriceDto.builder().finalPrice(auction.getPriceDto().getFinalPrice()).build();
+        userClient.updateUserBalance(user.getId(), finalPrice);
+        payedAuctions.add(auction.getAuctionId());
     }
 
     public CreateSellerResultDto createAuction(CreateSellerDto sellerDto) {

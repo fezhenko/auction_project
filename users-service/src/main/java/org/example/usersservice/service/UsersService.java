@@ -1,6 +1,7 @@
 package org.example.usersservice.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.usersservice.dto.users.UpdateBalanceResultDto;
 import org.example.usersservice.dto.users.UserBalanceDto;
 import org.example.usersservice.dto.users.UserVerificationDto;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UsersService {
 
     private final UsersRepository usersRepository;
@@ -85,11 +87,13 @@ public class UsersService {
 
     public UpdateBalanceResultDto updateUserBalance(Long id, Double price) {
         if (id == null) {
+            log.error("user id should be not null to update balance");
             return UpdateBalanceResultDto.builder().build();
         }
         Double userBalance = usersRepository.findBalanceByUserId(id);
         Double newBalance = userBalance - price;
-        if (price <= userBalance) {
+        if (price > userBalance) {
+            log.error("user id:'%d' balance is less than price".formatted(id));
             return UpdateBalanceResultDto.builder().build();
         }
         return UpdateBalanceResultDto.builder()

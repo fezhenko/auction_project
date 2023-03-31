@@ -5,6 +5,7 @@ import org.example.apigateway.client.dto.CredentialsDto;
 import org.example.apigateway.client.dto.UserVerificationDto;
 import org.example.apigateway.dto.CreateUserDto;
 import org.example.apigateway.dto.UpdateBalanceResultDto;
+import org.example.apigateway.dto.auction.FinalPriceDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,5 +35,6 @@ public interface UserClient {
 
     @RequestMapping(method = RequestMethod.PATCH, value = "/{userId}/balance",
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    UpdateBalanceResultDto updateUserBalance(@PathVariable("userId") Long userId, Double finalPrice);
+    UpdateBalanceResultDto updateUserBalance(@PathVariable("userId") Long userId,
+                                             @RequestBody @Valid FinalPriceDto finalPrice);
 }
