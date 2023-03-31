@@ -166,4 +166,10 @@ public class AuctionController {
         }
         return ResponseEntity.ok(buyerEmail);
     }
+
+    @Hidden
+    @PatchMapping("/{auctionId}/pay")
+    private void updateIsPayedToTrue(@PathVariable("auctionId") Long auctionId) {
+        auctionService.updateIsPayedToTrue(auctionId);
+    }
 }

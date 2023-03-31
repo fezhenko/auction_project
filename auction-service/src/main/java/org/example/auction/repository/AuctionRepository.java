@@ -64,4 +64,10 @@ public interface AuctionRepository extends Repository<Auction, Long> {
             "         join buyers b on a.buyer_id = b.id " +
             "where a.auction_id = :id;")
     String findBuyerEmailByAuctionId(@Param("id") Long id);
+
+    @Modifying
+    @Query("update auctions " +
+            "set is_payed = true " +
+            "where auction_id = :auctionId;")
+    void updateIsPayedToTrue(@Param("auctionId") Long auctionId);
 }

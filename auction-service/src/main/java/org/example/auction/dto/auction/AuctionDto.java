@@ -11,7 +11,7 @@ import java.util.Date;
 @Value
 @Jacksonized
 @Builder
-@JsonPropertyOrder({"id", "status", "item", "prices", "auctionDate", "createdAt"})
+@JsonPropertyOrder({"id", "auctionDate", "status", "item", "prices", "isPayed", "createdAt"})
 public class AuctionDto {
     @JsonProperty("id")
     Long auctionId;
@@ -22,5 +22,6 @@ public class AuctionDto {
     AuctionItemDto itemDto;
     @JsonProperty("prices")
     PriceDto priceDto;
+    Boolean isPayed;
     Date createdAt;
 }

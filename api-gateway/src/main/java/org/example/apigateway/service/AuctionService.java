@@ -16,7 +16,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -24,11 +23,10 @@ import java.util.List;
 @AllArgsConstructor
 public class AuctionService {
     private final AuctionsClient auctionsClient;
-    private final HashSet<Long> payedAuctions;
     private final UserClient userClient;
     private final SellerClient sellerClient;
 
-    @Scheduled(zone = "ECT", cron = "* * * * * 0-7")
+    @Scheduled(zone = "ECT", cron = "*/10 * * * * 0-7")
     private void updateUserBalance() {
         List<AuctionDto> auctions = auctionsClient.getAllAuctions();
         List<AuctionDto> todayAuctions = auctions.stream()
@@ -36,20 +34,11 @@ public class AuctionService {
                 .filter(auction -> auction.getPriceDto().getBuyer() != null)
                 .filter(auction -> DateUtils.isSameDay(auction.getAuctionDate(), Calendar.getInstance().getTime()))
                 .filter(auction -> auction.getAuctionState().equals("FINISHED"))
+                .filter(auction -> !auction.getIsPayed())
                 .toList();
-        if (payedAuctions.isEmpty()) {
-            todayAuctions.forEach(
-                    this::updateBuyerBalanceAfterAuctionFinish
-            );
-        } else {
-            todayAuctions.forEach(
-                auction -> {
-                    if (!payedAuctions.contains(auction.getAuctionId())) {
-                        updateBuyerBalanceAfterAuctionFinish(auction);
-                    }
-                }
-            );
-        }
+        todayAuctions.forEach(
+                this::updateBuyerBalanceAfterAuctionFinish
+        );
     }
 
     private void updateBuyerBalanceAfterAuctionFinish(AuctionDto auction) {
@@ -57,7 +46,7 @@ public class AuctionService {
         AppUserDto user = userClient.findUserByEmail(buyer.getEmail());
         FinalPriceDto finalPrice = FinalPriceDto.builder().finalPrice(auction.getPriceDto().getFinalPrice()).build();
         userClient.updateUserBalance(user.getId(), finalPrice);
-        payedAuctions.add(auction.getAuctionId());
+        auctionsClient.setIsPayedToTrue(auction.getAuctionId());
     }
 
     public CreateSellerResultDto createAuction(CreateSellerDto sellerDto) {

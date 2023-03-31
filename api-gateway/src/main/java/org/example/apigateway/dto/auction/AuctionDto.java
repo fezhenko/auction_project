@@ -22,5 +22,6 @@ public class AuctionDto {
     AuctionItemDto itemDto;
     @JsonProperty("prices")
     PriceDto priceDto;
+    Boolean isPayed;
     Date createdAt;
 }

@@ -18,4 +18,7 @@ public interface AuctionsClient {
     @RequestMapping(method = RequestMethod.GET, value = "/{auctionId}/buyer",
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     BuyerEmailDto getBuyerEmailByAuctionId(@PathVariable("auctionId") Long auctionId);
+
+    @RequestMapping(method = RequestMethod.PATCH, value = "/{auctionId}/pay")
+    void setIsPayedToTrue(@PathVariable("auctionId") Long auctionId);
 }

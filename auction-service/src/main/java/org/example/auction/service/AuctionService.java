@@ -179,8 +179,15 @@ public class AuctionService {
             log.error("buyer email for auction with id:'%d' is null".formatted(id));
             return BuyerEmailDto.builder().build();
         } else {
-            log.info("buyer email for auction with id:'%d' is '%s'".formatted(id, email));
             return BuyerEmailDto.builder().email(email).build();
         }
+    }
+
+    public void updateIsPayedToTrue(Long auctionId) {
+        if (auctionId == null) {
+            log.error("auction id is null");
+        }
+        auctionRepository.updateIsPayedToTrue(auctionId);
+        log.info("auction with id:'%d' has been payed".formatted(auctionId));
     }
 }
