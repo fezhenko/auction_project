@@ -86,4 +86,8 @@ public interface AuctionRepository extends Repository<Auction, Long> {
             "left join items i on a.auction_id = i.auction_id " +
             "where seller_id = :sellerId;")
     List<Auction> findAuctionsBySellerId(@Param("sellerId") Long sellerId);
+
+    @Modifying
+    @Query("delete from auctions where seller_id = :sellerId")
+    void deleteAuctionBySellerId(@Param("sellerId") Long sellerId);
 }

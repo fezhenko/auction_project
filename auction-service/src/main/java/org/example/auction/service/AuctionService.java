@@ -214,4 +214,8 @@ public class AuctionService {
         }
         return auctionRepository.findAuctionsBySellerId(sellerId);
     }
+
+    public void deleteAuctionBySellerId(Long sellerId) {
+        auctionRepository.deleteAuctionBySellerId(sellerId);
+    }
 }

@@ -2,6 +2,8 @@ package org.example.auction.service;
 
 import org.example.auction.dto.auction.CreateAuctionDto;
 import org.example.auction.model.Auction;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -22,12 +24,22 @@ import java.util.List;
 public class AuctionServiceTest {
     @Autowired
     private AuctionService auctionService;
+    private CreateAuctionDto createAuctionBySellerId;
+
+    @BeforeEach()
+    public void createNewAuction() {
+        //create an auction
+        createAuctionBySellerId = CreateAuctionDto.builder().sellerId(777_777L).build();
+    }
+
+    @AfterEach
+    public void deleteTestAuctions() {
+        auctionService.deleteAuctionBySellerId(createAuctionBySellerId.getSellerId());
+    }
 
     @Test
     @DisplayName("check auction can be created by seller id")
     public void testCreateAuctionHappyPath() {
-        //create an auction
-        CreateAuctionDto createAuctionBySellerId = CreateAuctionDto.builder().sellerId(777_777L).build();
         //test creating auction
         auctionService.createAuction(createAuctionBySellerId);
         List<Auction> auctions = auctionService.findAuctionsBySellerId(createAuctionBySellerId.getSellerId());
