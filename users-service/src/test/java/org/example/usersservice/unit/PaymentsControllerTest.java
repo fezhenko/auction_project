@@ -1,4 +1,4 @@
-package org.example.usersservice;
+package org.example.usersservice.unit;
 
 import lombok.SneakyThrows;
 import org.example.usersservice.controller.PaymentsController;
@@ -27,10 +27,8 @@ import java.util.List;
 @WebMvcTest(PaymentsController.class)
 public class PaymentsControllerTest {
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private PaymentService paymentService;
     @MockBean
@@ -80,7 +78,7 @@ public class PaymentsControllerTest {
                         payment.getCardNumber(),
                         payment.getExpirationDate(),
                         payment.getAmount()
-            );
+                );
     }
 
 }

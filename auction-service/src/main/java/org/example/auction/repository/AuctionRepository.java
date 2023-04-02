@@ -22,6 +22,10 @@ public interface AuctionRepository extends Repository<Auction, Long> {
             "where a.auction_id = :id;")
     Auction findAuctionById(@Param("id") Long id);
 
+    @Modifying
+    @Query(value = "insert into auctions (seller_id) values (:sellerId);")
+    void createAuction(@Param("sellerId") Long sellerId);
+
     @Query("update auctions set current_price = :currentPrice where auction_id = :id;")
     @Modifying
     void updateAuctionPrice(@Param("id") Long id, @Param("currentPrice") Double currentPrice);
@@ -76,4 +80,10 @@ public interface AuctionRepository extends Repository<Auction, Long> {
             "set is_payed = true " +
             "where auction_id = :auctionId;")
     void updateIsPayedToTrue(@Param("auctionId") Long auctionId);
+
+    @Query("select a.*, i.description " +
+            "from auctions a " +
+            "left join items i on a.auction_id = i.auction_id " +
+            "where seller_id = :sellerId;")
+    List<Auction> findAuctionsBySellerId(@Param("sellerId") Long sellerId);
 }

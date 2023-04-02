@@ -2,6 +2,8 @@ package org.example.auction.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.auction.dto.auction.CreateAuctionDto;
+import org.example.auction.dto.auction.CreateAuctionResultDto;
 import org.example.auction.dto.auction.UserEmailDto;
 import org.example.auction.dto.auction.UpdateAuctionResultDto;
 import org.example.auction.model.Auction;
@@ -28,6 +30,16 @@ public class AuctionService {
 
     public Auction findAuctionById(Long id) {
         return auctionRepository.findAuctionById(id);
+    }
+
+    public CreateAuctionResultDto createAuction(CreateAuctionDto createAuctionDto) {
+        if (createAuctionDto.getSellerId() == null) {
+            log.error("auction cannot be created due to seller id is null");
+            return CreateAuctionResultDto.builder().message("auction cannot be created due to seller id is null").build();
+        }
+        auctionRepository.createAuction(createAuctionDto.getSellerId());
+        log.info("auction has been created for sellerId:'%d'".formatted(createAuctionDto.getSellerId()));
+        return CreateAuctionResultDto.builder().build();
     }
 
     public UpdateAuctionResultDto updateAuctionPrice(Long id, Double currentPrice) {
@@ -194,5 +206,12 @@ public class AuctionService {
         }
         auctionRepository.updateIsPayedToTrue(auctionId);
         log.info("auction with id:'%d' has been payed".formatted(auctionId));
+    }
+
+    public List<Auction> findAuctionsBySellerId(Long sellerId) {
+        if (sellerId == null) {
+            return null;
+        }
+        return auctionRepository.findAuctionsBySellerId(sellerId);
     }
 }
