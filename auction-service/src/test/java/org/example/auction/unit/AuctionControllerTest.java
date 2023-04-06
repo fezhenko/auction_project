@@ -1,4 +1,4 @@
-package org.example.auction;
+package org.example.auction.unit;
 
 import org.example.auction.model.Auction;
 import org.example.auction.service.AuctionService;

@@ -1,7 +1,8 @@
-package org.example.auction.service;
+package org.example.auction.integration.service;
 
 import org.example.auction.dto.auction.CreateAuctionDto;
 import org.example.auction.model.Auction;
+import org.example.auction.service.AuctionService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,6 +54,5 @@ public class AuctionServiceTest {
             assertEquals(0, auction.getMinimalBid());
             assertFalse(auction.getIsPayed());
         });
-
     }
 }
