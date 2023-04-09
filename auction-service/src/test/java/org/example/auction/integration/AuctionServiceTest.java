@@ -1,5 +1,6 @@
 package org.example.auction.integration;
 
+import lombok.AllArgsConstructor;
 import org.example.auction.dto.auction.AddItemToAuctionDto;
 import org.example.auction.dto.auction.AuctionResultDto;
 import org.example.auction.dto.seller.CreateSellerDto;
@@ -17,28 +18,30 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@AllArgsConstructor
 public class AuctionServiceTest {
 
     @Autowired
-    AuctionService auctionService;
-    @Autowired
-    SellerService sellerService;
-
+    private SellerService sellerService;
+    private final AuctionService auctionService;
     private Auction auction;
 
     @BeforeEach
     public void createSellerAndAuction() {
         CreateSellerDto sellerDto = CreateSellerDto.builder().email("testSeller123123@gmail.com").build();
         sellerService.createSeller(sellerDto);
+        auction = auctionService.findAuctionBySellerEmail("testSeller123123@gmail.com");
     }
 
     @Test
     public void testItemAddedToAuctionSuccessfully() {
-        auction = auctionService.findAuctionBySellerEmail("testSeller123123@gmail.com");
+        //given
         AddItemToAuctionDto item =
             AddItemToAuctionDto.builder().itemId(77L).price(1_000_000D).email("testSeller123123@gmail.com").build();
+        //when
         AuctionResultDto result = auctionService.addItemToAuction(auction.getAuctionId(), item);
         auction = auctionService.findAuctionBySellerEmail("testSeller123123@gmail.com");
+        //then
         Assertions.assertNotNull(result);
         Assertions.assertEquals(item.getItemId(), auction.getItemId());
         Assertions.assertEquals(item.getPrice(), auction.getStartPrice());

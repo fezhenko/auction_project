@@ -6,7 +6,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.auction.dto.auction.AddItemToAuctionDto;
 import org.example.auction.dto.auction.AuctionResultDto;
@@ -19,7 +19,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class AuctionService {
 
