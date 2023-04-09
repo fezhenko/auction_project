@@ -26,5 +26,4 @@ public interface SellerRepository extends Repository<Seller, Long> {
             "where auction_id = :auctionId;")
     @Modifying
     void deleteSellerData(@Param("auctionId") Long auctionId);
-
 }

@@ -1,7 +1,7 @@
 package org.example.auction.model;
 
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -11,7 +11,7 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-@Value
+@Data
 @Builder
 @Table("auctions")
 public class Auction {

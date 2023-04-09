@@ -11,15 +11,12 @@ import java.util.List;
 
 public interface AuctionRepository extends Repository<Auction, Long> {
 
-    @Query("select a.*, i.description " +
-            "from auctions a " +
-            "left join items i on a.auction_id = i.auction_id;")
+    @Query("select a.* from auctions a;")
     List<Auction> findAllAuctions();
 
-    @Query("select a.*, i.description " +
-            "from auctions a " +
-            "left join items i on a.auction_id = i.auction_id " +
-            "where a.auction_id = :id;")
+    @Query("select a.* " +
+        "from auctions a " +
+        "where a.auction_id = :id;")
     Auction findAuctionById(@Param("id") Long id);
 
     @Modifying
@@ -64,30 +61,35 @@ public interface AuctionRepository extends Repository<Auction, Long> {
                                  @Param("auctionId") Long auctionId);
 
     @Query("select email " +
-            "from auctions a " +
-            "         join buyers b on a.buyer_id = b.id " +
-            "where a.auction_id = :id;")
+        "from auctions a " +
+        "         join buyers b on a.buyer_id = b.id " +
+        "where a.auction_id = :id;")
     String findBuyerEmailByAuctionId(@Param("id") Long id);
 
     @Query("select email " +
-            "from auctions a " +
-            "         join sellers s on a.seller_id = s.id " +
-            "where a.auction_id = :id;")
+        "from auctions a " +
+        "         join sellers s on a.seller_id = s.id " +
+        "where a.auction_id = :id;")
     String findSellerEmailByAuctionId(@Param("id") Long id);
 
     @Modifying
     @Query("update auctions " +
-            "set is_payed = true " +
-            "where auction_id = :auctionId;")
+        "set is_payed = true " +
+        "where auction_id = :auctionId;")
     void updateIsPayedToTrue(@Param("auctionId") Long auctionId);
 
-    @Query("select a.*, i.description " +
-            "from auctions a " +
-            "left join items i on a.auction_id = i.auction_id " +
-            "where seller_id = :sellerId;")
-    List<Auction> findAuctionsBySellerId(@Param("sellerId") Long sellerId);
-
     @Modifying
-    @Query("delete from auctions where seller_id = :sellerId")
-    void deleteAuctionBySellerId(@Param("sellerId") Long sellerId);
+    @Query("update auctions " +
+        "set item_id     = :itemId, " +
+        "    start_price = :startPrice, " +
+        "    minimal_bid = :minBid " +
+        "where auction_id = :auctionId;")
+    void addItemToAuction(@Param("auctionId") Long auctionId, @Param("itemId") Long itemId,
+                          @Param("startPrice") Double startPrice, @Param("minBid") Double minimalBid);
+
+    @Query("select a.* " +
+        "from auctions a " +
+        "         join sellers s on a.auction_id = s.auction_id " +
+        "where s.email = :sellerEmail;")
+    Auction findAuctionBySellerEmail(@Param("sellerEmail") String email);
 }

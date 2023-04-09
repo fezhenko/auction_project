@@ -1,0 +1,39 @@
+-- create trigger to update item_id, start_price, minimal_bid after creating an item
+-- create function update_item_id_for_auction()
+--     returns trigger
+-- as
+-- $$
+-- begin
+--     update auctions
+--     set item_id = new.id, start_price = new.price, minimal_bid = (new.price * 0.05)
+--     where auctions.auction_id = new.auction_id
+--       and new.item_state = 'ON_SELL'
+--       and auctions.auction_state = 'PLANNED';
+--     return new;
+-- end;
+-- $$ language plpgsql;
+-- create trigger insert_item_id_to_auction
+--     after insert
+--     on items
+--     for each row
+-- execute procedure update_item_id_for_auction();
+--
+-- --
+-- create function update_auctions_if_item_updated()
+--     returns trigger
+-- as
+-- $$
+-- begin
+--     update auctions
+--     set item_id     = new.id,
+--         start_price = new.price,
+--         minimal_bid = (new.price * 0.05)
+--     where auctions.auction_id = new.auction_id;
+--     return new;
+-- end;
+-- $$ language plpgsql;
+-- create trigger update_auctions_if_item_updated
+--     after update
+--     on items
+--     for each row
+-- execute procedure update_auctions_if_item_updated();

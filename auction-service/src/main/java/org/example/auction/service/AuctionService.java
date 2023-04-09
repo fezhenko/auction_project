@@ -1,28 +1,26 @@
 package org.example.auction.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.auction.dto.auction.AddItemToAuctionDto;
+import org.example.auction.dto.auction.AuctionResultDto;
 import org.example.auction.dto.auction.CreateAuctionDto;
 import org.example.auction.dto.auction.CreateAuctionResultDto;
 import org.example.auction.dto.auction.UserEmailDto;
-import org.example.auction.dto.auction.UpdateAuctionResultDto;
 import org.example.auction.model.Auction;
+import org.example.auction.model.Seller;
 import org.example.auction.repository.AuctionRepository;
+import org.example.auction.repository.SellerRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class AuctionService {
 
     private final AuctionRepository auctionRepository;
+    private final SellerRepository sellerRepository;
 
     public List<Auction> findAllAuctions() {
         return auctionRepository.findAllAuctions();
@@ -32,6 +30,7 @@ public class AuctionService {
         return auctionRepository.findAuctionById(id);
     }
 
+    public AuctionResultDto updateAuctionPrice(Long id, Double currentPrice) {
     public CreateAuctionResultDto createAuction(CreateAuctionDto createAuctionDto) {
         if (createAuctionDto.getSellerId() == null) {
             log.error("auction cannot be created due to seller id is null");
@@ -47,40 +46,40 @@ public class AuctionService {
         Auction auction = auctionRepository.findAuctionById(id);
         if (auction.getStartPrice() == 0) {
             log.error("current price cannot be updated until item add to auction");
-            return UpdateAuctionResultDto.builder()
-                    .message("current price cannot be updated until item add to auction").build();
+            return AuctionResultDto.builder()
+                .message("current price cannot be updated until item add to auction").build();
         }
         if (currentPrice < auction.getStartPrice()) {
             log.error("current price: %s is less than start price: %s"
-                    .formatted(currentPrice, auction.getStartPrice()));
-            return UpdateAuctionResultDto.builder()
-                    .message("current price: %s is less than start price: %s"
-                            .formatted(currentPrice, auction.getStartPrice()))
-                    .build();
+                .formatted(currentPrice, auction.getStartPrice()));
+            return AuctionResultDto.builder()
+                .message("current price: %s is less than start price: %s"
+                    .formatted(currentPrice, auction.getStartPrice()))
+                .build();
         }
         if ((currentPrice - auction.getStartPrice()) < auction.getMinimalBid()) {
             log.error("current price: %s doesn't match with minimal bid: %s"
-                    .formatted(currentPrice, auction.getMinimalBid()));
-            return UpdateAuctionResultDto.builder()
-                    .message("current price: %s doesn't match with minimal bid: %s"
-                            .formatted(currentPrice, auction.getMinimalBid()))
-                    .build();
+                .formatted(currentPrice, auction.getMinimalBid()));
+            return AuctionResultDto.builder()
+                .message("current price: %s doesn't match with minimal bid: %s"
+                    .formatted(currentPrice, auction.getMinimalBid()))
+                .build();
         }
         auctionRepository.updateAuctionPrice(id, currentPrice);
         auctionRepository.updateLastUpdatedTime(id);
-        return UpdateAuctionResultDto.builder().build();
+        return AuctionResultDto.builder().build();
     }
 
     public void deleteAuction(Long id) {
         auctionRepository.deleteAuction(id);
     }
 
-    public UpdateAuctionResultDto updateAuctionStartDate(Long id, Date auctionDate) {
+    public AuctionResultDto updateAuctionStartDate(Long id, Date auctionDate) {
         Auction auction = auctionRepository.findAuctionById(id);
         if (auction == null) {
             log.error("auction with '%s' doesn't exist".formatted(id));
-            return UpdateAuctionResultDto.builder()
-                    .message("auction with id:'%s' doesn't exist".formatted(id)).build();
+            return AuctionResultDto.builder()
+                .message("auction with id:'%s' doesn't exist".formatted(id)).build();
         }
 
         LocalDateTime auctionDateToLocalDate = auctionDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -89,55 +88,55 @@ public class AuctionService {
 
         if (auction.getAuctionDate() == null && compareDateResult <= 0) {
             log.error("auction date can be updated with feature date only, now date:'%s'".formatted(newAuctionDate));
-            return UpdateAuctionResultDto.builder()
-                    .message("auction date can be updated with feature date only, now date:'%s'"
-                            .formatted(newAuctionDate)).build();
+            return AuctionResultDto.builder()
+                .message("auction date can be updated with feature date only, now date:'%s'"
+                    .formatted(newAuctionDate)).build();
         }
         if (auction.getAuctionDate() != null && compareDateResult <= 0) {
             log.error("auction date can be updated with feature date only, now date:'%s'".formatted(newAuctionDate));
-            return UpdateAuctionResultDto.builder()
-                    .message("auction date can be updated with feature date only, now date:'%s'"
-                            .formatted(newAuctionDate)).build();
+            return AuctionResultDto.builder()
+                .message("auction date can be updated with feature date only, now date:'%s'"
+                    .formatted(newAuctionDate)).build();
         }
         auctionRepository.updateAuctionDate(id, newAuctionDate);
-        return UpdateAuctionResultDto.builder().build();
+        return AuctionResultDto.builder().build();
     }
 
-    public UpdateAuctionResultDto updateAuctionState(Long auctionId, String status) {
+    public AuctionResultDto updateAuctionState(Long auctionId, String status) {
         Auction auction = auctionRepository.findAuctionById(auctionId);
         if (auction == null) {
             log.error("auction with '%s' doesn't exist".formatted(auctionId));
-            return UpdateAuctionResultDto.builder()
-                    .message("auction with id:'%s' doesn't exist".formatted(auctionId)).build();
+            return AuctionResultDto.builder()
+                .message("auction with id:'%s' doesn't exist".formatted(auctionId)).build();
         }
         if (auction.getAuctionState().equals("FINISHED") &&
-                (status.equalsIgnoreCase("IN_PROGRESS") || status.equalsIgnoreCase("PLANNED"))
+            (status.equalsIgnoreCase("IN_PROGRESS") || status.equalsIgnoreCase("PLANNED"))
         ) {
             log.error("auctions with 'FINISHED' status cannot be updated by '%s' status".formatted(status));
-            return UpdateAuctionResultDto.builder()
-                    .message("auctions with 'FINISHED' status cannot be updated by '%s' status".formatted(status))
-                    .build();
+            return AuctionResultDto.builder()
+                .message("auctions with 'FINISHED' status cannot be updated by '%s' status".formatted(status))
+                .build();
         }
         if (auction.getAuctionState().equals("IN_PROGRESS") && status.equalsIgnoreCase("PLANNED")
         ) {
             log.error("auctions with 'IN_PROGRESS' status cannot be updated by '%s' status".formatted(status));
-            return UpdateAuctionResultDto.builder()
-                    .message("auctions with 'IN_PROGRESS' status cannot be updated by '%s' status".formatted(status))
-                    .build();
+            return AuctionResultDto.builder()
+                .message("auctions with 'IN_PROGRESS' status cannot be updated by '%s' status".formatted(status))
+                .build();
         }
         auctionRepository.updateAuctionState(auctionId, status.toUpperCase());
-        return UpdateAuctionResultDto.builder().build();
+        return AuctionResultDto.builder().build();
     }
 
-    public UpdateAuctionResultDto updateAuctionItem(Long id, Long itemId) {
+    public AuctionResultDto updateAuctionItem(Long id, Long itemId) {
         Auction auction = auctionRepository.findAuctionById(id);
         if (auction == null) {
             log.error("auction with '%s' doesn't exist".formatted(id));
-            return UpdateAuctionResultDto.builder()
-                    .message("auction with id:'%s' doesn't exist".formatted(id)).build();
+            return AuctionResultDto.builder()
+                .message("auction with id:'%s' doesn't exist".formatted(id)).build();
         }
         auctionRepository.updateAuctionItem(id, itemId);
-        return UpdateAuctionResultDto.builder().build();
+        return AuctionResultDto.builder().build();
     }
 
     @Scheduled(zone = "ECT", cron = "3 * * * * 0-6")
@@ -154,8 +153,8 @@ public class AuctionService {
                 }
                 if ((plannedTime - currentDate) > 0 && auction.getAuctionState().equals("PLANNED")) {
                     log.info("Auction '%d' will be started in '%d' minutes".formatted(
-                                    auction.getAuctionId(), convertMillisecondsToMinutes(plannedTime - currentDate)
-                            )
+                            auction.getAuctionId(), convertMillisecondsToMinutes(plannedTime - currentDate)
+                        )
                     );
                 }
             }
@@ -206,6 +205,31 @@ public class AuctionService {
         }
         auctionRepository.updateIsPayedToTrue(auctionId);
         log.info("auction with id:'%d' has been payed".formatted(auctionId));
+    }
+
+    public AuctionResultDto addItemToAuction(Long auctionId, AddItemToAuctionDto itemToAuctionDto) {
+        if (auctionId == null) {
+            log.error("auction id is null");
+            return AuctionResultDto.builder().message("auction id is null").build();
+        }
+        Auction auction = auctionRepository.findAuctionById(auctionId);
+        if (auction.getItemId() != null) {
+            log.error("auction with id:'%d' already has item".formatted(auctionId));
+            return AuctionResultDto.builder()
+                .message("auction with id:'%d' already has item".formatted(auctionId)).build();
+        }
+        Seller seller = sellerRepository.findSellerById(auction.getSellerId());
+        if (seller.getEmail().equals(itemToAuctionDto.getEmail())) {
+            auctionRepository.addItemToAuction(auctionId, itemToAuctionDto.getItemId(), itemToAuctionDto.getPrice(),
+                itemToAuctionDto.getPrice() * 0.05);
+            return AuctionResultDto.builder().build();
+        }
+        log.error("seller email doesn't match with item owner");
+        return AuctionResultDto.builder().message("seller email doesn't match with item owner").build();
+    }
+
+    public Auction findAuctionBySellerEmail(String email) {
+        return auctionRepository.findAuctionBySellerEmail(email);
     }
 
     public List<Auction> findAuctionsBySellerId(Long sellerId) {

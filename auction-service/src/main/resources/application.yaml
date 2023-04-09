@@ -13,15 +13,3 @@ management:
 
 server:
   port: 8081
-
-feign:
-  client:
-    config:
-      domain:
-        connectTimeout: 5000
-        readTimeout: 3000
-
-services:
-  exchange-service:
-    url: 'https://api.apilayer.com/exchangerates_data'
-    api-key: 'dZ0VERSnNCWKLJ0XBHtTswYviUbmg0hk'
