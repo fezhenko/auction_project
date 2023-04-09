@@ -23,7 +23,7 @@ public interface ItemRepository extends Repository<Item, Long> {
 
     @Modifying
     @Query("insert into items (price, owner_id) values (:price, :owner_id);")
-    void createItem(@Param("owner_id") Long owner_id, @Param("price") Double itemPrice);
+    void createItem(@Param("owner_id") Long ownerId, @Param("price") Double itemPrice);
 
     @Modifying
     @Query("insert into items (price, owner_id, description) values (:price, :owner_id, :description);")
