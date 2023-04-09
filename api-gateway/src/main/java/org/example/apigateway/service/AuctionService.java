@@ -89,4 +89,8 @@ public class AuctionService {
             .build();
         return auctionsClient.addItemToAuction(auctionId, itemToAuction);
     }
+
+    public List<AuctionDto> findAllAuction() {
+        return auctionsClient.getAllAuctions();
+    }
 }

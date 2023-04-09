@@ -1,7 +1,10 @@
 package org.example.apigateway.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.example.apigateway.dto.auction.AuctionDto;
 import org.example.apigateway.dto.items.AddItemDto;
 import org.example.apigateway.dto.items.ItemResultDto;
 import org.example.apigateway.dto.seller.CreateSellerResultDto;
@@ -11,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,10 +30,23 @@ public class AuctionController {
 
     private final AuctionService auctionService;
 
+    @GetMapping
+    private ResponseEntity<List<AuctionDto>> findAllAuctions(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        if (token.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        List<AuctionDto> auctions = auctionService.findAllAuction();
+        if (auctions.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(auctions);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     private ResponseEntity<CreateSellerResultDto> createAuction(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         if (token.isEmpty()) {
             return ResponseEntity.badRequest().body(CreateSellerResultDto.builder().message("Invalid token").build());
         }
