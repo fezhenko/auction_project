@@ -42,36 +42,6 @@ CREATE TABLE IF NOT EXISTS sellers
     FOREIGN KEY (auction_id) REFERENCES auctions (auction_id)
 );
 
-CREATE TABLE IF NOT EXISTS currencies
-(
-    id       BIGSERIAL NOT NULL UNIQUE,
-    currency json      NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS categories
-(
-    id   BIGSERIAL NOT NULL UNIQUE,
-    name VARCHAR(300),
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS items
-(
-    id            BIGSERIAL NOT NULL UNIQUE,
-    description   VARCHAR(300),
-    price         INTEGER   NOT NULL,
-    currency      BIGSERIAL NOT NULL,
-    item_category BIGSERIAL NOT NULL,
-    auction_id    BIGSERIAL NOT NULL,
-    item_state    VARCHAR   NOT NULL CHECK (item_state in ('SOLD', 'ON_SELL')),
-    created_at    TIMESTAMP NOT NULL DEFAULT now(),
-    PRIMARY KEY (id),
-    FOREIGN KEY (auction_id) REFERENCES auctions (auction_id),
-    FOREIGN KEY (currency) REFERENCES currencies (id),
-    FOREIGN KEY (item_category) REFERENCES categories (id)
-);
-
 CREATE TABLE IF NOT EXISTS chat
 (
     id         BIGSERIAL    NOT NULL UNIQUE,

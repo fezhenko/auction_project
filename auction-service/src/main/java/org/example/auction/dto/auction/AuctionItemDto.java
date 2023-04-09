@@ -11,7 +11,5 @@ import org.springframework.data.relational.core.mapping.Embedded;
 public class AuctionItemDto {
     @Embedded.Nullable
     Long id;
-    @Embedded.Nullable
-    String description;
     Long seller;
 }
