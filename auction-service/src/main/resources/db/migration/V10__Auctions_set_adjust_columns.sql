@@ -1,13 +1,7 @@
 alter table auctions
-    alter column auction_date drop not null;
-
-alter table auctions
-    alter column auction_state drop not null;
-
-alter table auctions
-    alter column auction_state set default 'PLANNED';
-
-alter table auctions
+    alter column auction_date drop not null,
+    alter column auction_state drop not null,
+    alter column auction_state set default 'PLANNED',
     alter column item_id set default null;
 
 create function seller_insert_into_auction()

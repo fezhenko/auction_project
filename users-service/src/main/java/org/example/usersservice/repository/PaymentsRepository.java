@@ -39,6 +39,4 @@ public interface PaymentsRepository extends Repository<Payment, Long> {
     void updatePaymentInformationById(@Param("paymentId") Long paymentId,
                                       @Param("cardNumber") String cardNumber,
                                       @Param("expirationDate") String expirationDate);
-
-
 }

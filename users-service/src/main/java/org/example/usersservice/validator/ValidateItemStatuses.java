@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Documented
 @Constraint(validatedBy = ItemStatusValidator.class)
 public @interface ValidateItemStatuses {
-    String message() default "Invalid status, use on of values: 'ON_SELL', 'SOLD'";
+    String message() default "Invalid status, allowed values: 'ON_SELL', 'SOLD'";
 
     Class<?>[] groups() default {};
 

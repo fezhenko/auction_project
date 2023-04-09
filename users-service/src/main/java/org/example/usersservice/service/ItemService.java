@@ -61,10 +61,10 @@ public class ItemService {
     public UpdateItemResultDto deleteItem(Long id) {
         Item item = itemRepository.findItemById(id);
         if (item == null) {
-            log.error("item id:'%s' doesn't exist".formatted(id));
-            return UpdateItemResultDto.builder().message("item id:'%s' doesn't exist".formatted(id)).build();
+            log.error("item id:'%d' doesn't exist".formatted(id));
+            return UpdateItemResultDto.builder().message("item id:'%d' doesn't exist".formatted(id)).build();
         }
-        itemRepository.deleteItemByAuctionId(id);
+        itemRepository.deleteItemById(id);
         return UpdateItemResultDto.builder().build();
     }
 }
