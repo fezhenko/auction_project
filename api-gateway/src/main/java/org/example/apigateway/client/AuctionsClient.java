@@ -1,7 +1,9 @@
 package org.example.apigateway.client;
 
+import org.example.apigateway.dto.auction.AddItemToAuctionDto;
 import org.example.apigateway.dto.auction.AuctionDto;
 import org.example.apigateway.dto.auction.UserEmailDto;
+import org.example.apigateway.dto.items.ItemResultDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,4 +27,7 @@ public interface AuctionsClient {
 
     @RequestMapping(method = RequestMethod.PATCH, value = "/{auctionId}/pay")
     void setIsPayedToTrue(@PathVariable("auctionId") Long auctionId);
+
+    @RequestMapping(method = RequestMethod.POST, value = "/{auctionId}/item")
+    ItemResultDto addItemToAuction(@PathVariable("auctionId") Long auctionId, AddItemToAuctionDto itemToAuction);
 }

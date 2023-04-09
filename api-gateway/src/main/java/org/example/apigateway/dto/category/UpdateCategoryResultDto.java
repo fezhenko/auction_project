@@ -1,12 +1,12 @@
-package org.example.auction.dto.auction;
+package org.example.apigateway.dto.category;
 
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
 @Value
-@Builder
 @Jacksonized
-public class UpdateAuctionResultDto {
+@Builder
+public class UpdateCategoryResultDto {
     String message;
 }

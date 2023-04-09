@@ -3,7 +3,6 @@ $$
 BEGIN
     delete from buyers where auction_id = old.auction_id;
     delete from sellers where auction_id = old.auction_id;
-    delete from items where auction_id = old.auction_id;
     return old;
 END
 $$ language plpgsql;
