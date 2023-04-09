@@ -1,58 +1,52 @@
 package org.example.auction.integration.service;
 
-import org.example.auction.dto.auction.CreateAuctionDto;
+import lombok.AllArgsConstructor;
+import org.example.auction.dto.auction.AddItemToAuctionDto;
+import org.example.auction.dto.auction.AuctionResultDto;
+import org.example.auction.dto.seller.CreateSellerDto;
 import org.example.auction.model.Auction;
 import org.example.auction.service.AuctionService;
+import org.example.auction.service.SellerService;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
-
-
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@AllArgsConstructor
 public class AuctionServiceTest {
-    @Autowired
-    private AuctionService auctionService;
-    private CreateAuctionDto createAuctionBySellerId;
+    private final SellerService sellerService;
+    private final AuctionService auctionService;
+    private Auction auction;
 
-    @BeforeEach()
-    public void createNewAuction() {
-        //create an auction
-        createAuctionBySellerId = CreateAuctionDto.builder().sellerId(777_777L).build();
-    }
-
-    @AfterEach
-    public void deleteTestAuctions() {
-        auctionService.deleteAuctionBySellerId(createAuctionBySellerId.getSellerId());
+    @BeforeEach
+    public void createSellerAndAuction() {
+        CreateSellerDto sellerDto = CreateSellerDto.builder().email("testSeller123123@gmail.com").build();
+        sellerService.createSeller(sellerDto);
+        auction = auctionService.findAuctionBySellerEmail("testSeller123123@gmail.com");
     }
 
     @Test
-    @DisplayName("check auction can be created by seller id")
-    public void testCreateAuctionHappyPath() {
-        //test creating auction
-        auctionService.createAuction(createAuctionBySellerId);
-        List<Auction> auctions = auctionService.findAuctionsBySellerId(createAuctionBySellerId.getSellerId());
-        //verify the creation
-        auctions.forEach(auction -> {
-            assertNotNull(auction);
-            assertNotNull(auction.getAuctionId());
-            assertEquals("PLANNED", auction.getAuctionState());
-            assertEquals(0, auction.getStartPrice());
-            assertEquals(0, auction.getCurrentPrice());
-            assertEquals(0, auction.getMinimalBid());
-            assertFalse(auction.getIsPayed());
-        });
+    public void testItemAddedToAuctionSuccessfully() {
+        //given
+        AddItemToAuctionDto item =
+            AddItemToAuctionDto.builder().itemId(77L).price(1_000_000D).email("testSeller123123@gmail.com").build();
+        //when
+        AuctionResultDto result = auctionService.addItemToAuction(auction.getAuctionId(), item);
+        auction = auctionService.findAuctionBySellerEmail("testSeller123123@gmail.com");
+        //then
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(item.getItemId(), auction.getItemId());
+        Assertions.assertEquals(item.getPrice(), auction.getStartPrice());
+        Assertions.assertEquals(item.getPrice() * 0.05, auction.getMinimalBid());
+    }
+
+    @AfterEach
+    public void deleteSellerAndAuction() {
+        auctionService.deleteAuction(auction.getAuctionId());
     }
 }

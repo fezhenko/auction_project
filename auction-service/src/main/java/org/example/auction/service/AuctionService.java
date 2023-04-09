@@ -1,5 +1,11 @@
 package org.example.auction.service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.auction.dto.auction.AddItemToAuctionDto;
@@ -30,7 +36,6 @@ public class AuctionService {
         return auctionRepository.findAuctionById(id);
     }
 
-    public AuctionResultDto updateAuctionPrice(Long id, Double currentPrice) {
     public CreateAuctionResultDto createAuction(CreateAuctionDto createAuctionDto) {
         if (createAuctionDto.getSellerId() == null) {
             log.error("auction cannot be created due to seller id is null");
@@ -41,8 +46,7 @@ public class AuctionService {
         return CreateAuctionResultDto.builder().build();
     }
 
-    public UpdateAuctionResultDto updateAuctionPrice(Long id, Double currentPrice) {
-
+    public AuctionResultDto updateAuctionPrice(Long id, Double currentPrice) {
         Auction auction = auctionRepository.findAuctionById(id);
         if (auction.getStartPrice() == 0) {
             log.error("current price cannot be updated until item add to auction");
@@ -236,7 +240,7 @@ public class AuctionService {
         if (sellerId == null) {
             return null;
         }
-        return auctionRepository.findAuctionsBySellerId(sellerId);
+        return auctionRepository.findAuctionBySellerId(sellerId);
     }
 
     public void deleteAuctionBySellerId(Long sellerId) {

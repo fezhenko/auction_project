@@ -92,4 +92,11 @@ public interface AuctionRepository extends Repository<Auction, Long> {
         "         join sellers s on a.auction_id = s.auction_id " +
         "where s.email = :sellerEmail;")
     Auction findAuctionBySellerEmail(@Param("sellerEmail") String email);
+
+    @Query("select * from auctions where seller_id = :id")
+    List<Auction> findAuctionBySellerId(@Param("id") Long sellerId);
+
+    @Modifying
+    @Query("delete from auctions where seller_id = :id")
+    void deleteAuctionBySellerId(@Param("id") Long sellerId);
 }
