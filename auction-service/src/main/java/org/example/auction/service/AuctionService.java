@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.auction.dto.auction.AddItemToAuctionDto;
 import org.example.auction.dto.auction.AuctionResultDto;
+import org.example.auction.dto.auction.CreateAuctionDto;
+import org.example.auction.dto.auction.CreateAuctionResultDto;
 import org.example.auction.dto.auction.UserEmailDto;
 import org.example.auction.model.Auction;
 import org.example.auction.model.Seller;
@@ -34,8 +36,17 @@ public class AuctionService {
         return auctionRepository.findAuctionById(id);
     }
 
-    public AuctionResultDto updateAuctionPrice(Long id, Double currentPrice) {
+    public CreateAuctionResultDto createAuction(CreateAuctionDto createAuctionDto) {
+        if (createAuctionDto.getSellerId() == null) {
+            log.error("auction cannot be created due to seller id is null");
+            return CreateAuctionResultDto.builder().message("auction cannot be created due to seller id is null").build();
+        }
+        auctionRepository.createAuction(createAuctionDto.getSellerId());
+        log.info("auction has been created for sellerId:'%d'".formatted(createAuctionDto.getSellerId()));
+        return CreateAuctionResultDto.builder().build();
+    }
 
+    public AuctionResultDto updateAuctionPrice(Long id, Double currentPrice) {
         Auction auction = auctionRepository.findAuctionById(id);
         if (auction.getStartPrice() == 0) {
             log.error("current price cannot be updated until item add to auction");
@@ -223,5 +234,16 @@ public class AuctionService {
 
     public Auction findAuctionBySellerEmail(String email) {
         return auctionRepository.findAuctionBySellerEmail(email);
+    }
+
+    public List<Auction> findAuctionsBySellerId(Long sellerId) {
+        if (sellerId == null) {
+            return null;
+        }
+        return auctionRepository.findAuctionBySellerId(sellerId);
+    }
+
+    public void deleteAuctionBySellerId(Long sellerId) {
+        auctionRepository.deleteAuctionBySellerId(sellerId);
     }
 }

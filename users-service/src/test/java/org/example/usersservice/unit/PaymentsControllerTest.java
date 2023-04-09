@@ -27,10 +27,8 @@ import java.util.List;
 @WebMvcTest(PaymentsController.class)
 public class PaymentsControllerTest {
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private PaymentService paymentService;
     @MockBean
@@ -41,18 +39,18 @@ public class PaymentsControllerTest {
     @SneakyThrows
     public void testFindAllPayments() {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/payments")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers
-                        .status()
-                        .isOk());
+                .get("/api/v1/payments")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers
+                .status()
+                .isOk());
         BDDMockito.then(paymentService)
-                .should()
-                .findPayments();
+            .should()
+            .findPayments();
         final List<Payment> users = new ArrayList<>();
         BDDMockito.then(paymentsConverter)
-                .should()
-                .toDto(users);
+            .should()
+            .toDto(users);
     }
 
     @Test
@@ -60,26 +58,26 @@ public class PaymentsControllerTest {
     @SneakyThrows
     public void testCreatingNewPayment() {
         CreatePaymentDto payment = CreatePaymentDto.builder()
-                .userId(123123L)
-                .cardNumber("0000111122223333")
-                .expirationDate("02/22")
-                .amount(11.99d)
-                .build();
+            .userId(123123L)
+            .cardNumber("0000111122223333")
+            .expirationDate("02/22")
+            .amount(11.99d)
+            .build();
         mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/payments")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(MAPPER.writeValueAsString(payment))
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers
-                        .status()
-                        .isCreated());
+                .post("/api/v1/payments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(MAPPER.writeValueAsString(payment))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers
+                .status()
+                .isCreated());
         BDDMockito.then(paymentService)
-                .should()
-                .createPayment(
-                        payment.getUserId(),
-                        payment.getCardNumber(),
-                        payment.getExpirationDate(),
-                        payment.getAmount()
+            .should()
+            .createPayment(
+                payment.getUserId(),
+                payment.getCardNumber(),
+                payment.getExpirationDate(),
+                payment.getAmount()
             );
     }
 

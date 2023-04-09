@@ -1,5 +1,9 @@
 package org.example.apigateway.service;
 
+
+import java.util.Calendar;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
@@ -10,19 +14,16 @@ import org.example.apigateway.client.UserClient;
 import org.example.apigateway.client.dto.AppUserDto;
 import org.example.apigateway.dto.auction.AddItemToAuctionDto;
 import org.example.apigateway.dto.auction.AuctionDto;
-import org.example.apigateway.dto.auction.UserEmailDto;
 import org.example.apigateway.dto.auction.FinalPriceDto;
+import org.example.apigateway.dto.auction.UserEmailDto;
 import org.example.apigateway.dto.items.AddItemDto;
 import org.example.apigateway.dto.items.ItemDto;
 import org.example.apigateway.dto.items.ItemResultDto;
-import org.example.apigateway.dto.seller.CreateSellerResultDto;
 import org.example.apigateway.dto.seller.CreateSellerDto;
+import org.example.apigateway.dto.seller.CreateSellerResultDto;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
-
-import java.util.Calendar;
-import java.util.List;
 
 @Service
 @Slf4j

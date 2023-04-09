@@ -19,6 +19,10 @@ public interface AuctionRepository extends Repository<Auction, Long> {
         "where a.auction_id = :id;")
     Auction findAuctionById(@Param("id") Long id);
 
+    @Modifying
+    @Query(value = "insert into auctions (seller_id) values (:sellerId);")
+    void createAuction(@Param("sellerId") Long sellerId);
+
     @Query("update auctions set current_price = :currentPrice where auction_id = :id;")
     @Modifying
     void updateAuctionPrice(@Param("id") Long id, @Param("currentPrice") Double currentPrice);
@@ -88,4 +92,11 @@ public interface AuctionRepository extends Repository<Auction, Long> {
         "         join sellers s on a.auction_id = s.auction_id " +
         "where s.email = :sellerEmail;")
     Auction findAuctionBySellerEmail(@Param("sellerEmail") String email);
+
+    @Query("select * from auctions where seller_id = :id")
+    List<Auction> findAuctionBySellerId(@Param("id") Long sellerId);
+
+    @Modifying
+    @Query("delete from auctions where seller_id = :id")
+    void deleteAuctionBySellerId(@Param("id") Long sellerId);
 }
