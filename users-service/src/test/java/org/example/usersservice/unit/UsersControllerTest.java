@@ -1,4 +1,4 @@
-package org.example.usersservice;
+package org.example.usersservice.unit;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

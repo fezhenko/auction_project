@@ -34,12 +34,12 @@ public class Item {
     @Column("categoryName")
     String categoryName;
     @NotNull
-    @Column("auction_id")
-    Long auctionId;
-    @NotNull
     @Column("item_state")
     String itemState;
     @NotNull
     @Column("created_at")
     Date createdAt;
+    @NotNull
+    @Column("owner_id")
+    Long ownerId;
 }

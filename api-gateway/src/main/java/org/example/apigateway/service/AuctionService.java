@@ -26,22 +26,26 @@ public class AuctionService {
     private final UserClient userClient;
     private final SellerClient sellerClient;
 
-    @Scheduled(zone = "ECT", cron = "*/10 * * * * 0-7")
+    @Scheduled(zone = "ECT", cron = "*/60 * * * * 0-7")
     private void updateUserBalance() {
         List<AuctionDto> auctions = auctionsClient.getAllAuctions();
-        List<AuctionDto> todayAuctions = auctions.stream()
+        if (auctions == null) {
+            log.info("list of auctions is empty");
+        } else {
+            List<AuctionDto> todayAuctions = auctions.stream()
                 .filter(auction -> auction.getAuctionDate() != null)
                 .filter(auction -> auction.getPriceDto().getBuyer() != null)
                 .filter(auction -> DateUtils.isSameDay(auction.getAuctionDate(), Calendar.getInstance().getTime()))
                 .filter(auction -> auction.getAuctionState().equals("FINISHED"))
                 .filter(auction -> !auction.getIsPayed())
                 .toList();
-        todayAuctions.forEach(
-            auction -> {
-                updateBuyerBalanceAfterAuctionFinish(auction);
-                updateSellerBalanceAfterAuctionFinish(auction);
-            }
-        );
+            todayAuctions.forEach(
+                auction -> {
+                    updateBuyerBalanceAfterAuctionFinish(auction);
+                    updateSellerBalanceAfterAuctionFinish(auction);
+                }
+            );
+        }
     }
 
     private void updateBuyerBalanceAfterAuctionFinish(AuctionDto auction) {
@@ -52,10 +56,8 @@ public class AuctionService {
         log.info("user id:'%d' balance has been updated".formatted(user.getId()));
         auctionsClient.setIsPayedToTrue(auction.getAuctionId());
         log.info("auction id:'%d' has been payed by buyer:'%d'"
-                .formatted(auction.getAuctionId(), auction.getPriceDto().getBuyer()));
+            .formatted(auction.getAuctionId(), auction.getPriceDto().getBuyer()));
     }
-
-
 
     private void updateSellerBalanceAfterAuctionFinish(AuctionDto auction) {
         UserEmailDto seller = auctionsClient.getSellerEmailByAuctionId(auction.getAuctionId());
@@ -63,7 +65,7 @@ public class AuctionService {
         FinalPriceDto finalPrice = FinalPriceDto.builder().finalPrice(auction.getPriceDto().getFinalPrice()).build();
         userClient.updateUserBalance(user.getId(), "seller", finalPrice);
         log.info("user id:'%d' balance has been updated after selling an item on auction:'%d'"
-                .formatted(user.getId(), auction.getAuctionId()));
+            .formatted(user.getId(), auction.getAuctionId()));
     }
 
     public CreateSellerResultDto createAuction(CreateSellerDto sellerDto) {

@@ -1,16 +1,17 @@
 package org.example.usersservice.service;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
+import org.example.usersservice.dto.item.CreateItemDto;
+import org.example.usersservice.dto.item.CreateItemResultDto;
 import org.example.usersservice.dto.item.UpdateItemResultDto;
 import org.example.usersservice.model.Category;
 import org.example.usersservice.model.Item;
 import org.example.usersservice.repository.CategoryRepository;
 import org.example.usersservice.repository.ItemRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -27,17 +28,17 @@ public class ItemService {
         return itemRepository.findItemById(id);
     }
 
-    public UpdateItemResultDto createItem(Long userId, Double price, String description) {
-        if (userId == null) {
+    public CreateItemResultDto createItem(CreateItemDto item) {
+        if (item.getOwnerId() == null) {
             log.error("user doesn't exist");
-            return UpdateItemResultDto.builder().message("user doesn't exist").build();
+            return CreateItemResultDto.builder().message("user doesn't exist").build();
         }
-        if (description != null) {
-            itemRepository.createItem(userId, price, description);
-            return UpdateItemResultDto.builder().build();
+        if (item.getDescription() == null) {
+            itemRepository.createItem(item.getOwnerId(), item.getPrice());
+            return CreateItemResultDto.builder().build();
         }
-        itemRepository.createItem(userId, price);
-        return UpdateItemResultDto.builder().build();
+        itemRepository.createItem(item.getOwnerId(), item.getPrice(), item.getDescription());
+        return CreateItemResultDto.builder().build();
     }
 
     public UpdateItemResultDto updateItem(

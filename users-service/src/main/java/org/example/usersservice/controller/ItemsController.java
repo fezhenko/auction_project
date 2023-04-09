@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.example.usersservice.converter.ItemConverter;
 import org.example.usersservice.dto.item.CreateItemDto;
+import org.example.usersservice.dto.item.CreateItemResultDto;
 import org.example.usersservice.dto.item.ItemDto;
 import org.example.usersservice.dto.item.UpdateItemDto;
 import org.example.usersservice.dto.item.UpdateItemResultDto;
@@ -72,11 +73,10 @@ public class ItemsController {
                     @ApiResponse(responseCode = "400", description = "invalid body")
             })
     @PostMapping
-    private ResponseEntity<UpdateItemResultDto> createItem(
+    private ResponseEntity<CreateItemResultDto> createItem(
             @RequestBody @Valid CreateItemDto createItemDto
     ) {
-        UpdateItemResultDto result = itemService.createItem(
-                createItemDto.getAuctionId(), createItemDto.getPrice(), createItemDto.getDescription());
+        CreateItemResultDto result = itemService.createItem(createItemDto);
         if (result.getMessage() == null) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }

@@ -11,14 +11,11 @@ import java.util.List;
 
 public interface AuctionRepository extends Repository<Auction, Long> {
 
-    @Query("select a.*, i.description " +
-            "from auctions a " +
-            "left join items i on a.auction_id = i.auction_id;")
+    @Query("select a.* from auctions a;")
     List<Auction> findAllAuctions();
 
-    @Query("select a.*, i.description " +
+    @Query("select a.* " +
             "from auctions a " +
-            "left join items i on a.auction_id = i.auction_id " +
             "where a.auction_id = :id;")
     Auction findAuctionById(@Param("id") Long id);
 

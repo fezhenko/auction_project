@@ -41,7 +41,6 @@ public interface AuctionConverter {
                 .itemDto(
                         AuctionItemDto.builder()
                                 .id(auction.getItemId())
-                                .description(auction.getItemDescription())
                                 .seller(auction.getSellerId())
                                 .build()
                 )
