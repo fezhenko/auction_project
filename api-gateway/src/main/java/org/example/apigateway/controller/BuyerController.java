@@ -67,11 +67,6 @@ public class BuyerController {
             return ResponseEntity.badRequest().body(result);
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (user.getUsername() == null) {
-            MakeBidResultDto result = MakeBidResultDto.builder()
-                    .message("User with '%s' is not exist".formatted(user.getUsername())).build();
-            return ResponseEntity.badRequest().body(result);
-        }
         MakeBidResultDto makeBidResultDto = bidService.makeBidToAuction(user.getUsername(), createBidDto.getAmount());
         if (makeBidResultDto.getMessage() == null) {
             return ResponseEntity.accepted().build();

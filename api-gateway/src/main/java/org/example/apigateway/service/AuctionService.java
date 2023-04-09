@@ -4,15 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.example.apigateway.client.AuctionsClient;
+import org.example.apigateway.client.ItemClient;
 import org.example.apigateway.client.SellerClient;
 import org.example.apigateway.client.UserClient;
 import org.example.apigateway.client.dto.AppUserDto;
+import org.example.apigateway.dto.auction.AddItemToAuctionDto;
 import org.example.apigateway.dto.auction.AuctionDto;
 import org.example.apigateway.dto.auction.UserEmailDto;
 import org.example.apigateway.dto.auction.FinalPriceDto;
+import org.example.apigateway.dto.items.AddItemDto;
+import org.example.apigateway.dto.items.ItemDto;
+import org.example.apigateway.dto.items.ItemResultDto;
 import org.example.apigateway.dto.seller.CreateSellerResultDto;
 import org.example.apigateway.dto.seller.CreateSellerDto;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -25,6 +31,7 @@ public class AuctionService {
     private final AuctionsClient auctionsClient;
     private final UserClient userClient;
     private final SellerClient sellerClient;
+    private final ItemClient itemClient;
 
     @Scheduled(zone = "ECT", cron = "*/60 * * * * 0-7")
     private void updateUserBalance() {
@@ -68,11 +75,22 @@ public class AuctionService {
             .formatted(user.getId(), auction.getAuctionId()));
     }
 
-    public CreateSellerResultDto createAuction(CreateSellerDto sellerDto) {
-        CreateSellerResultDto result = sellerClient.createNewSeller(sellerDto);
-        if (result == null) {
-            return CreateSellerResultDto.builder().build();
-        }
-        return result;
+    public CreateSellerResultDto createAuction(User user) {
+        CreateSellerDto seller = CreateSellerDto.builder().email(user.getUsername()).build();
+        return sellerClient.createNewSeller(seller);
+    }
+
+    public ItemResultDto addItemToAuction(User user, Long auctionId, AddItemDto addItemDto) {
+        ItemDto item = itemClient.findItem(addItemDto.getItemId());
+        AddItemToAuctionDto itemToAuction = AddItemToAuctionDto.builder()
+            .email(user.getUsername())
+            .itemId(item.getId())
+            .price(item.getPrice())
+            .build();
+        return auctionsClient.addItemToAuction(auctionId, itemToAuction);
+    }
+
+    public List<AuctionDto> findAllAuction() {
+        return auctionsClient.getAllAuctions();
     }
 }
