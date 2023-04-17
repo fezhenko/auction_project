@@ -28,11 +28,14 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class AuctionController {
 
+    /**
+     * endpoints to work with auctions as buyer and seller
+     */
     private final AuctionService auctionService;
 
     @GetMapping
     private ResponseEntity<List<AuctionDto>> findAllAuctions(
-        @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        @RequestHeader(HttpHeaders.AUTHORIZATION) final String token) {
         if (token.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
@@ -46,11 +49,13 @@ public class AuctionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     private ResponseEntity<CreateSellerResultDto> createAuction(
-        @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        @RequestHeader(HttpHeaders.AUTHORIZATION) final String token) {
         if (token.isEmpty()) {
-            return ResponseEntity.badRequest().body(CreateSellerResultDto.builder().message("Invalid token").build());
+            return ResponseEntity.badRequest().body(CreateSellerResultDto
+                .builder().message("Invalid token").build());
         }
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) SecurityContextHolder.getContext()
+            .getAuthentication().getPrincipal();
         CreateSellerResultDto result = auctionService.createAuction(user);
         if (result.getMessage() == null) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -61,18 +66,25 @@ public class AuctionController {
     @PostMapping("/{auctionId}/item")
     @ResponseStatus(HttpStatus.OK)
     private ResponseEntity<ItemResultDto> addItemToAuction(
-        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-        @PathVariable("auctionId") Long auctionId,
-        @RequestBody @Valid AddItemDto item) {
+        @RequestHeader(HttpHeaders.AUTHORIZATION) final String token,
+        @PathVariable("auctionId") final Long auctionId,
+        @RequestBody @Valid final AddItemDto item) {
         if (token.isEmpty()) {
-            ItemResultDto result = ItemResultDto.builder().message("Invalid token").build();
+            ItemResultDto result = ItemResultDto.builder()
+                .message("Invalid token").build();
             return ResponseEntity.badRequest().body(result);
         }
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        ItemResultDto result = auctionService.addItemToAuction(user, auctionId, item);
+        User user = (User) SecurityContextHolder.getContext()
+            .getAuthentication().getPrincipal();
+        ItemResultDto result =
+            auctionService.addItemToAuction(user, auctionId, item);
         if (result == null) {
             return ResponseEntity.ok().build();
         }
         return null;
     }
+
+    //todo:set auction date
+    //todo:create BidController
+
 }
