@@ -1,5 +1,7 @@
 package org.example.auction.service;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.auction.model.Auction;
@@ -9,8 +11,6 @@ import org.example.auction.repository.AuctionRepository;
 import org.example.auction.repository.BuyerRepository;
 import org.example.auction.repository.SellerRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -29,7 +29,7 @@ public class BuyerService {
     }
 
     public void createBuyer(String email, Long auctionId) {
-        Auction auction = auctionRepository.findAuctionById(auctionId);
+        Auction auction = auctionRepository.findAuctionByAuctionId(auctionId);
         if (isBuyerTheSeller(auction)) {
             log.error("seller cannot be buyer at the same time");
         } else {
@@ -39,11 +39,11 @@ public class BuyerService {
     }
 
     public void deleteBuyer(Long id) {
-        buyerRepository.deleteBuyer(id);
+        buyerRepository.deleteBuyerById(id);
     }
 
     private Boolean isBuyerTheSeller(Auction auction) {
-        Seller seller = sellerRepository.findSellerById(auction.getSellerId());
+        Seller seller = sellerRepository.findSellersBySellerId(auction.getSellerId());
         Buyer buyer = buyerRepository.findBuyerById(auction.getBuyerId());
         return buyer.getEmail().equals(seller.getEmail());
     }

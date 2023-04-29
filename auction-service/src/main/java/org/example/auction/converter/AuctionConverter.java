@@ -7,11 +7,13 @@ import org.example.auction.model.Auction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Mapper
+@Component
 public interface AuctionConverter {
     @Mapping(source = "List<Auction>", target = "List<AuctionDto>", qualifiedByName = "AuctionListToDto")
     @Named("AuctionListToDto")
@@ -49,5 +51,4 @@ public interface AuctionConverter {
                 .createdAt(auction.getCreatedAt())
                 .build();
     }
-
 }

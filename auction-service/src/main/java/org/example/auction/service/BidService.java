@@ -1,21 +1,27 @@
 package org.example.auction.service;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.auction.dto.bid.UpdateBidResultDto;
+import org.example.auction.exceptions.bid.AddBidToNotStartedAuctionException;
+import org.example.auction.exceptions.bid.BidAmountIsZeroException;
+import org.example.auction.exceptions.bid.BidAmountLessThanCurrentPrice;
+import org.example.auction.exceptions.bid.BidDoesNotExistException;
+import org.example.auction.exceptions.buyer.BuyerDoesNotExistException;
 import org.example.auction.model.Auction;
 import org.example.auction.model.Bid;
+import org.example.auction.model.Buyer;
 import org.example.auction.repository.AuctionRepository;
 import org.example.auction.repository.BidRepository;
 import org.example.auction.repository.BuyerRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @AllArgsConstructor
 @Slf4j
 public class BidService {
+
     private final BidRepository bidRepository;
     private final BuyerRepository buyerRepository;
     private final AuctionRepository auctionRepository;
@@ -25,51 +31,51 @@ public class BidService {
     }
 
     public Bid findBidById(Long bidId) {
-        return bidRepository.findBidById(bidId);
+        return bidRepository.findBidByBidId(bidId);
     }
 
-    public UpdateBidResultDto createBid(Double amount, String email) {
+    public void createBid(Long auctionId, Double amount, String email) {
         if (amount < 0) {
             log.error("bid amount should be more than zero");
-            return UpdateBidResultDto.builder().message("bid amount should be more than zero").build();
+            throw new BidAmountIsZeroException("bid amount should be more than zero");
         }
-        Long buyerId = buyerRepository.findBuyerByEmail(email);
-        if (buyerId == null) {
-            log.error("bid with buyer id null is not allowed");
-            return UpdateBidResultDto.builder().message("bid with buyer id null is not allowed").build();
+        Buyer buyer = buyerRepository.findBuyerByEmail(email);
+        if (buyer == null) {
+            log.error("buyer with specified email does not exist");
+            throw new BuyerDoesNotExistException("buyer with specified email:'%s' does not exist".formatted(email));
         }
-        Long auctionId = buyerRepository.findAuctionByBuyerId(buyerId);
-        Auction auction = auctionRepository.findAuctionById(auctionId);
+        Auction auction = auctionRepository.findAuctionByAuctionId(auctionId);
         if (auction.getAuctionState().equals("PLANNED") || auction.getAuctionState().equals("FINISHED")) {
             log.error("auction with id '%d' in not in progress, bid is canceled".formatted(auctionId));
-            return UpdateBidResultDto.builder().message("buyer with '%s' email does not exist".formatted(email)).build();
+            throw new AddBidToNotStartedAuctionException("auction with id '%d' in not in progress, bid is canceled".formatted(auctionId));
         }
         if (amount > auction.getCurrentPrice()) {
-            bidRepository.createBid(amount, buyerId);
-            auctionRepository.updateBuyerIdForAuction(amount, buyerId, auctionId);
+            bidRepository.createBid(amount, buyer.getId());
+            auctionRepository.updateBuyerIdForAuction(amount, buyer.getId(), auctionId);
+            return;
         }
-        return UpdateBidResultDto.builder().build();
+        throw new BidAmountLessThanCurrentPrice(
+                "bid amount: %s less than current price: %s".formatted(amount, auction.getCurrentPrice())
+        );
     }
 
-    public UpdateBidResultDto updateBid(Double amount, Long bidId) {
-        if (bidRepository.findBidById(bidId) == null) {
+    public void updateBid(Double amount, Long bidId) {
+        if (bidRepository.findBidByBidId(bidId) == null) {
             log.error("bid with id:'%d' doesn't exist".formatted(bidId));
-            return UpdateBidResultDto.builder().message("bid with id:'%d' doesn't exist".formatted(bidId)).build();
+            throw new BidDoesNotExistException("bid with id:'%d' doesn't exist".formatted(bidId));
         }
         if (amount < 0) {
             log.error("bid amount should be more than zero");
-            return UpdateBidResultDto.builder().message("bid amount should be more than zero").build();
+            throw new BidAmountIsZeroException("bid amount should be more than zero");
         }
         bidRepository.updateBidById(amount, bidId);
-        return UpdateBidResultDto.builder().build();
     }
 
-    public UpdateBidResultDto deleteBid(Long bidId) {
-        if (bidRepository.findBidById(bidId) == null) {
+    public void deleteBid(Long bidId) {
+        if (bidRepository.findBidByBidId(bidId) == null) {
             log.error("bid with id:'%d' doesn't exist".formatted(bidId));
-            return UpdateBidResultDto.builder().message("bid with id:'%d' doesn't exist".formatted(bidId)).build();
+            throw new BidDoesNotExistException("bid with id:'%d' doesn't exist".formatted(bidId));
         }
-        bidRepository.deleteBidById(bidId);
-        return UpdateBidResultDto.builder().build();
+        bidRepository.deleteBidByBidId(bidId);
     }
 }

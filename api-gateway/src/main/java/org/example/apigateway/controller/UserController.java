@@ -12,10 +12,8 @@ import org.example.apigateway.client.dto.CredentialsDto;
 import org.example.apigateway.client.dto.VerificationResultDto;
 import org.example.apigateway.converter.UserConverter;
 import org.example.apigateway.dto.CreateUserDto;
-import org.example.apigateway.dto.CreateUserResultDto;
 import org.example.apigateway.dto.UserDto;
 import org.example.apigateway.service.UserService;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -36,6 +33,7 @@ import java.util.List;
 @SecurityScheme(type = SecuritySchemeType.HTTP, bearerFormat = "JWT")
 @Slf4j
 public class UserController {
+
     private final UserService userService;
     private final UserConverter userConverter;
     private final Jwt jwt;
@@ -53,10 +51,7 @@ public class UserController {
 
     @Tag(name = "Users")
     @GetMapping("/users")
-    private ResponseEntity<List<UserDto>> findAllUsers(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        if (token.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
+    private ResponseEntity<List<UserDto>> findAllUsers() {
         List<AppUserDto> users = userService.findAllUsers();
         return ResponseEntity.ok(userConverter.toDto(users));
     }
@@ -64,14 +59,9 @@ public class UserController {
     @Tag(name = "Users")
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    private ResponseEntity<CreateUserResultDto> createUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                                           @RequestBody @Valid CreateUserDto createUserDto) {
-        if (token.isEmpty()) {
-            CreateUserResultDto result = CreateUserResultDto.builder().message("Invalid token").build();
-            return ResponseEntity.badRequest().body(result);
-        }
-        CreateUserResultDto result = userService.createUser(createUserDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    private void createUser(
+            @RequestBody @Valid CreateUserDto createUserDto
+    ) {
+        userService.createUser(createUserDto);
     }
-
 }

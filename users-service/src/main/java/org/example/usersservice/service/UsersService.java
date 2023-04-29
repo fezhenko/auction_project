@@ -5,10 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.usersservice.dto.users.UpdateBalanceResultDto;
 import org.example.usersservice.dto.users.UserBalanceDto;
 import org.example.usersservice.dto.users.UserVerificationDto;
+import org.example.usersservice.exceptions.UserBalanceIsLessThanPriceException;
+import org.example.usersservice.exceptions.UserIdIsNullException;
 import org.example.usersservice.model.AppUser;
 import org.example.usersservice.model.Payment;
 import org.example.usersservice.repository.UsersRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,11 +35,8 @@ public class UsersService {
     }
 
     public void updateFieldsByUserId(
-            Long userId,
-            String email,
-            String firstname,
-            String lastname,
-            String phoneNumber) {
+            Long userId, String email, String firstname, String lastname, String phoneNumber
+    ) {
         usersRepository.updateFieldsByUserId(userId, email, firstname, lastname, phoneNumber);
     }
 
@@ -57,12 +57,7 @@ public class UsersService {
     }
 
     public Payment updatePaymentInformation(Long userId, Long paymentId, String cardNumber, String expirationDate) {
-        return usersRepository.updatePaymentInformationByUserId(
-                userId,
-                paymentId,
-                cardNumber,
-                expirationDate
-        );
+        return usersRepository.updatePaymentInformationByUserId(userId, paymentId, cardNumber, expirationDate);
     }
 
     public UserVerificationDto verifyUser(String email) {
@@ -85,24 +80,30 @@ public class UsersService {
         return UserBalanceDto.builder().balance(usersRepository.getCurrentUserBalance(userId)).build();
     }
 
+    @Transactional(readOnly = true)
     public UpdateBalanceResultDto updateUserBalance(Long id, String userType, Double price) {
         if (id == null) {
             log.error("user id should be not null to update balance");
-            return UpdateBalanceResultDto.builder().build();
+            throw new UserIdIsNullException("user id should be not null to update balance");
         }
         Double userBalance = usersRepository.findBalanceByUserId(id);
         double newBalance = 0.0000;
-        if (userType.equals("seller")) {
-            newBalance = userBalance + price;
-        }
-        if (userType.equals("buyer")) {
-            newBalance = userBalance - price;
-            if (price > userBalance) {
-                log.error("user id:'%d' balance is less than price".formatted(id));
-                return UpdateBalanceResultDto.builder().build();
+        switch (userType) {
+            case "seller": {
+                newBalance = userBalance + price;
+                usersRepository.updateUserBalanceAfterAuctionFinish(id, newBalance);
+                break;
+            }
+            case "buyer": {
+                if (price > userBalance) {
+                    log.error("user id:'%d' balance is less than price".formatted(id));
+                    throw new UserBalanceIsLessThanPriceException("user id:'%d' balance is less than price".formatted(id));
+                }
+                newBalance = userBalance - price;
+                usersRepository.updateUserBalanceAfterAuctionFinish(id, newBalance);
+                break;
             }
         }
-        return UpdateBalanceResultDto.builder()
-                .balance(usersRepository.updateUserBalanceAfterAuctionFinish(id, newBalance)).build();
+        return UpdateBalanceResultDto.builder().balance(newBalance).build();
     }
 }

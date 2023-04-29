@@ -7,7 +7,6 @@ import org.example.apigateway.client.dto.CredentialsDto;
 import org.example.apigateway.client.dto.UserVerificationDto;
 import org.example.apigateway.client.dto.VerificationResultDto;
 import org.example.apigateway.dto.CreateUserDto;
-import org.example.apigateway.dto.CreateUserResultDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,13 +27,12 @@ public class UserService {
         return VerificationResultDto.builder().isValid(false).build();
     }
 
-    public CreateUserResultDto createUser(CreateUserDto createUserDto) {
+    public void createUser(CreateUserDto createUserDto) {
         CreateUserDto userWithEncodedPassword = CreateUserDto.builder()
                 .email(createUserDto.getEmail())
                 .password(passwordEncoder.encode(createUserDto.getPassword()))
                 .role(createUserDto.getRole()).build();
         userClient.createUser(userWithEncodedPassword);
-        return CreateUserResultDto.builder().build();
     }
 
     public AppUserDto findUserByEmail(String email) {

@@ -14,6 +14,8 @@ import javax.validation.constraints.NotNull;
 @Jacksonized
 public class CreateBidDtoWithUserEmail {
     @NotNull
+    Long auctionId;
+    @NotNull
     @Email
     String email;
     @DecimalMin(value = "0.001", message = "Please enter a valid amount more than 0")

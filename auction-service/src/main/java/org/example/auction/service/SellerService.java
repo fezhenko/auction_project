@@ -1,14 +1,14 @@
 package org.example.auction.service;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.auction.dto.seller.CreateSellerDto;
-import org.example.auction.dto.seller.CreateSellerResultDto;
+import org.example.auction.exceptions.seller.UserEmailIsNullException;
 import org.example.auction.model.Seller;
 import org.example.auction.repository.SellerRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -21,20 +21,23 @@ public class SellerService {
     }
 
     public Seller findSellerById(Long id) {
-        return sellerRepository.findSellerById(id);
+        return sellerRepository.findSellersBySellerId(id);
     }
 
-    public CreateSellerResultDto createSeller(CreateSellerDto sellerDto) {
+    public void createSeller(CreateSellerDto sellerDto) {
         if (sellerDto.getEmail() == null) {
             log.error("user email cannot be null");
-            return CreateSellerResultDto.builder().message("user email cannot be null").build();
+            throw new UserEmailIsNullException("user email cannot be null");
         }
         sellerRepository.createSeller(sellerDto.getEmail());
         log.info("user with email: '%s' created auction".formatted(sellerDto.getEmail()));
-        return CreateSellerResultDto.builder().build();
     }
 
     public void deleteSellerById(Long id) {
-        sellerRepository.deleteSellerData(id);
+        sellerRepository.deleteSellerBySellerId(id);
+    }
+
+    public Seller findSellerByEmail(String sellerEmail) {
+        return sellerRepository.findSellerByEmail(sellerEmail);
     }
 }

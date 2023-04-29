@@ -20,24 +20,30 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final JwtFilter jwtFilter;
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
-        http
-                .httpBasic().disable()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.httpBasic()
+                .disable()
+                .csrf()
+                .disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeHttpRequests(request -> request
-                        .antMatchers("/api/v1/auth").permitAll()
-                        .antMatchers("/api/v1/users/**").hasAnyRole("ADMIN")
-                        .antMatchers("/api/v1/bids/**").hasAnyRole("ADMIN", "USER")
-                        .antMatchers("/swagger-ui/index.html").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests(request -> request.antMatchers("/api/v1/auth")
+                        .permitAll()
+                        .antMatchers("/api/v1/users/**")
+                        .hasAnyRole("ADMIN")
+                        .antMatchers("/api/v1/bids/**")
+                        .hasAnyRole("ADMIN", "USER")
+                        .antMatchers("/swagger-ui/index.html")
+                        .hasRole("ADMIN")
+                        .anyRequest()
+                        .authenticated())
                 .formLogin()
                 .and()
                 .authenticationProvider(authenticationProvider())

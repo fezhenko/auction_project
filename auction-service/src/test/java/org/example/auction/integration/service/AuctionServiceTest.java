@@ -2,7 +2,6 @@ package org.example.auction.integration.service;
 
 import lombok.AllArgsConstructor;
 import org.example.auction.dto.auction.AddItemToAuctionDto;
-import org.example.auction.dto.auction.AuctionResultDto;
 import org.example.auction.dto.seller.CreateSellerDto;
 import org.example.auction.model.Auction;
 import org.example.auction.service.AuctionService;
@@ -36,10 +35,9 @@ public class AuctionServiceTest {
         AddItemToAuctionDto item =
             AddItemToAuctionDto.builder().itemId(77L).price(1_000_000D).email("testSeller123123@gmail.com").build();
         //when
-        AuctionResultDto result = auctionService.addItemToAuction(auction.getAuctionId(), item);
+        auctionService.addItemToAuction(auction.getAuctionId(), item);
         auction = auctionService.findAuctionBySellerEmail("testSeller123123@gmail.com");
         //then
-        Assertions.assertNotNull(result);
         Assertions.assertEquals(item.getItemId(), auction.getItemId());
         Assertions.assertEquals(item.getPrice(), auction.getStartPrice());
         Assertions.assertEquals(item.getPrice() * 0.05, auction.getMinimalBid());

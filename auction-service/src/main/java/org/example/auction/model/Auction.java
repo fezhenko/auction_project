@@ -29,8 +29,6 @@ public class Auction {
     Long sellerId;
     @Column("item_id")
     Long itemId;
-    @Column("description")
-    String itemDescription;
     @Column("start_price")
     @DecimalMin(value = "0.001", message = "Please enter a valid amount more than 0")
     Double startPrice;

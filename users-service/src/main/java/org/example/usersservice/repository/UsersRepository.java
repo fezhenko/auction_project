@@ -4,12 +4,12 @@ import org.example.usersservice.model.AppUser;
 import org.example.usersservice.model.Payment;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface UsersRepository extends Repository<AppUser, Long> {
+public interface UsersRepository extends CrudRepository<AppUser, Long> {
     @Query("SELECT * FROM users")
     List<AppUser> findUsers();
 

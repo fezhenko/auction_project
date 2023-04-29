@@ -1,17 +1,18 @@
 package org.example.usersservice.controller;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.example.usersservice.converter.ItemConverter;
 import org.example.usersservice.dto.item.CreateItemDto;
-import org.example.usersservice.dto.item.CreateItemResultDto;
 import org.example.usersservice.dto.item.ItemDto;
 import org.example.usersservice.dto.item.UpdateItemDto;
-import org.example.usersservice.dto.item.UpdateItemResultDto;
 import org.example.usersservice.model.Item;
 import org.example.usersservice.service.ItemService;
 import org.springframework.http.HttpStatus;
@@ -23,16 +24,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/items")
 @Tag(name = "Items")
 @AllArgsConstructor
 public class ItemsController {
+
     private final ItemService itemService;
     private final ItemConverter itemConverter;
 
@@ -51,6 +51,7 @@ public class ItemsController {
         }
         return ResponseEntity.ok(itemConverter.toDto(items));
     }
+
     @Operation(summary = "find item by id")
     @ApiResponses(
             value = {
@@ -66,6 +67,7 @@ public class ItemsController {
         }
         return ResponseEntity.ok(itemConverter.toDto(item));
     }
+
     @Operation(summary = "create new item")
     @ApiResponses(
             value = {
@@ -73,15 +75,13 @@ public class ItemsController {
                     @ApiResponse(responseCode = "400", description = "invalid body")
             })
     @PostMapping
-    private ResponseEntity<CreateItemResultDto> createItem(
+    @ResponseStatus(HttpStatus.CREATED)
+    private void createItem(
             @RequestBody @Valid CreateItemDto createItemDto
     ) {
-        CreateItemResultDto result = itemService.createItem(createItemDto);
-        if (result.getMessage() == null) {
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        }
-        return ResponseEntity.badRequest().body(result);
+        itemService.createItem(createItemDto);
     }
+
     @Operation(summary = "update item by id")
     @ApiResponses(
             value = {
@@ -89,19 +89,17 @@ public class ItemsController {
                     @ApiResponse(responseCode = "204", description = "no content")
             })
     @PatchMapping("/{itemId}")
-    private ResponseEntity<UpdateItemResultDto> updateItem(
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    private void updateItem(
             @PathVariable("itemId") Long id,
             @RequestBody @Valid UpdateItemDto updateItemDto
     ) {
-        UpdateItemResultDto result = itemService.updateItem(
+        itemService.updateItem(
                 id, updateItemDto.getDescription(), updateItemDto.getItemStatus(), updateItemDto.getPrice(),
                 updateItemDto.getItemCategory()
         );
-        if (result.getMessage() == null) {
-            return ResponseEntity.accepted().build();
-        }
-        return ResponseEntity.badRequest().body(result);
     }
+
     @Operation(summary = "delete item by id")
     @ApiResponses(
             value = {
@@ -109,12 +107,8 @@ public class ItemsController {
                     @ApiResponse(responseCode = "204", description = "no content")
             })
     @DeleteMapping("/{itemId}")
-    private ResponseEntity<UpdateItemResultDto> deleteItem(@PathVariable("itemId") Long id) {
-        UpdateItemResultDto result = itemService.deleteItem(id);
-        if (result.getMessage() == null) {
-            return ResponseEntity.accepted().build();
-        }
-        return ResponseEntity.badRequest().body(result);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    private void deleteItem(@PathVariable("itemId") Long id) {
+        itemService.deleteItem(id);
     }
-
 }
