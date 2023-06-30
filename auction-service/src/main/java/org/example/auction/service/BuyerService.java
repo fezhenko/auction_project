@@ -25,7 +25,7 @@ public class BuyerService {
     }
 
     public Buyer findBuyerById(Long id) {
-        return buyerRepository.findBuyerById(id);
+        return buyerRepository.getBuyerById(id);
     }
 
     public void createBuyer(String email, Long auctionId) {
@@ -44,7 +44,7 @@ public class BuyerService {
 
     private Boolean isBuyerTheSeller(Auction auction) {
         Seller seller = sellerRepository.findSellersBySellerId(auction.getSellerId());
-        Buyer buyer = buyerRepository.findBuyerById(auction.getBuyerId());
+        Buyer buyer = buyerRepository.getBuyerById(auction.getBuyerId());
         return buyer.getEmail().equals(seller.getEmail());
     }
 }

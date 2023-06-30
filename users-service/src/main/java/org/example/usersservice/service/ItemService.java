@@ -24,19 +24,13 @@ public class ItemService {
     private final CategoryRepository categoryRepository;
 
     public List<Item> findAllItems() {
-        try {
-            return itemRepository.findAllItems();
-        } catch (RuntimeException exception) {
-            return null;
-        }
+
+        return itemRepository.findAllItems();
     }
 
     public Item findItemById(Long id) {
-        try {
-            return itemRepository.findItemById(id);
-        } catch (RuntimeException exception) {
-            return null;
-        }
+
+        return itemRepository.findItemById(id);
     }
 
     public void createItem(CreateItemDto item) {
@@ -52,7 +46,7 @@ public class ItemService {
     }
 
     public void updateItem(
-            Long id, String description, String itemStatus, Double price, Long itemCategory
+        Long id, String description, String itemStatus, Double price, Long itemCategory
     ) {
         Item item = itemRepository.findItemById(id);
         Category category = categoryRepository.findCategoryById(itemCategory);

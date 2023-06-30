@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.example.auction.model.Auction;
 import org.example.auction.scheduler.AuctionStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -76,6 +78,8 @@ public interface AuctionRepository extends CrudRepository<Auction, Long> {
     Auction findAuctionBySellerEmail(@Param("sellerEmail") String email);
 
     List<Auction> findAuctionsBySellerId(@Param("id") Long sellerId);
+
+    Page<Auction> getAuctionsByAuctionState(String auctionState, Pageable pageable);
 
     @Modifying
     void deleteAuctionBySellerId(Long sellerId);

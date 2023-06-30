@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.auction.exceptions.bid.AddBidToNotStartedAuctionException;
 import org.example.auction.exceptions.bid.BidAmountIsZeroException;
-import org.example.auction.exceptions.bid.BidAmountLessThanCurrentPrice;
+import org.example.auction.exceptions.bid.BidAmountLessThanCurrentPriceException;
 import org.example.auction.exceptions.bid.BidDoesNotExistException;
 import org.example.auction.exceptions.buyer.BuyerDoesNotExistException;
 import org.example.auction.model.Auction;
@@ -54,7 +54,7 @@ public class BidService {
             auctionRepository.updateBuyerIdForAuction(amount, buyer.getId(), auctionId);
             return;
         }
-        throw new BidAmountLessThanCurrentPrice(
+        throw new BidAmountLessThanCurrentPriceException(
                 "bid amount: %s less than current price: %s".formatted(amount, auction.getCurrentPrice())
         );
     }

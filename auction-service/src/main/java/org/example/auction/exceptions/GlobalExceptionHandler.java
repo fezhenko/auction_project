@@ -13,7 +13,7 @@ import org.example.auction.exceptions.seller.SellerEmailDoesNotMatchWithOwnerEma
 import org.example.auction.exceptions.seller.SellerIdIsNullException;
 import org.example.auction.exceptions.bid.AddBidToNotStartedAuctionException;
 import org.example.auction.exceptions.bid.BidAmountIsZeroException;
-import org.example.auction.exceptions.bid.BidAmountLessThanCurrentPrice;
+import org.example.auction.exceptions.bid.BidAmountLessThanCurrentPriceException;
 import org.example.auction.exceptions.bid.BidDoesNotExistException;
 import org.example.auction.exceptions.buyer.BuyerDoesNotExistException;
 import org.example.auction.exceptions.dto.ExceptionDto;
@@ -33,6 +33,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
+
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handleNLPException(final NullPointerException nullPointerException) {
         return constructBadRequestEntityWithErrorMessage(nullPointerException);
@@ -42,7 +44,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ExceptionDto> handlePSQLException(final PSQLException psqlException) {
         log.error(psqlException.getMessage());
         return ResponseEntity.badRequest().body(
-                ExceptionDto.builder().message(psqlException.getMessage()).build()
+                ExceptionDto.builder().message(INTERNAL_SERVER_ERROR).build()
         );
     }
 
@@ -55,7 +57,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         log.error(ex.getMessage());
         return ResponseEntity.badRequest().body(
-                ExceptionDto.builder().message(ex.getLocalizedMessage()).status(status).build()
+                ExceptionDto.builder().message(INTERNAL_SERVER_ERROR).status(status).build()
         );
     }
 
@@ -144,7 +146,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handleBidAmountLessThanCurrentPrice(
-            BidAmountLessThanCurrentPrice exception
+            BidAmountLessThanCurrentPriceException exception
     ) {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
@@ -165,6 +167,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     private ResponseEntity<ExceptionDto> constructBadRequestEntityWithErrorMessage(RuntimeException e) {
+        log.error(e.getMessage());
         return ResponseEntity.badRequest().body(
                 ExceptionDto.builder().message(e.getMessage()).status(HttpStatus.BAD_REQUEST).build()
         );

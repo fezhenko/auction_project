@@ -12,9 +12,9 @@ public interface BuyerRepository extends Repository<Buyer, Long> {
     @Query("select * from buyers")
     List<Buyer> findAll();
 
-    Buyer findBuyerById(Long id);
+    Buyer getBuyerById(Long id);
 
-    Buyer findBuyerByAuctionId(Long auctionId);
+    Buyer getBuyerByAuctionId(Long auctionId);
 
     @Modifying
     @Query("insert into buyers (email, auction_id) " +

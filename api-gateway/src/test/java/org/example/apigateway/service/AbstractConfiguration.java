@@ -1,4 +1,4 @@
-package org.example.apigateway.controller;
+package org.example.apigateway.service;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,6 +9,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@ActiveProfiles("application")
-public abstract class ControllersAbstractConfiguration {
+@ActiveProfiles("test")
+public abstract class AbstractConfiguration {
 }

@@ -3,12 +3,16 @@ package org.example.auction.service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DateUtils;
+import org.example.auction.converter.AuctionConverter;
 import org.example.auction.dto.auction.AddItemToAuctionDto;
+import org.example.auction.dto.auction.AuctionDto;
 import org.example.auction.dto.auction.CreateAuctionDto;
 import org.example.auction.exceptions.auction.AuctionDateUpdatedByPastDateException;
 import org.example.auction.exceptions.auction.AuctionDoesNotExistException;
@@ -17,12 +21,25 @@ import org.example.auction.exceptions.auction.CurrentPriceDoesNotMatchWithMinima
 import org.example.auction.exceptions.auction.CurrentPriceLessThanStartPriceException;
 import org.example.auction.exceptions.auction.ItemAlreadyExistException;
 import org.example.auction.exceptions.auction.ItemIsNotAddedToAuctionException;
+import org.example.auction.exceptions.buyer.BuyerDoesNotExistException;
 import org.example.auction.exceptions.seller.SellerEmailDoesNotMatchWithOwnerEmailException;
 import org.example.auction.exceptions.seller.SellerIdIsNullException;
 import org.example.auction.model.Auction;
+import org.example.auction.model.Buyer;
 import org.example.auction.model.Seller;
 import org.example.auction.repository.AuctionRepository;
+import org.example.auction.repository.BuyerRepository;
 import org.example.auction.repository.SellerRepository;
+import org.example.auction.scheduler.AuctionStatus;
+import org.example.auction.scheduler.UserType;
+import org.example.auction.scheduler.client.ItemClient;
+import org.example.auction.scheduler.client.UserClient;
+import org.example.auction.scheduler.client.dto.AppUserDto;
+import org.example.auction.scheduler.client.dto.FinalPriceDto;
+import org.example.auction.scheduler.client.dto.UpdateItemDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +49,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AuctionService {
 
+    private static final String FINISHED = "FINISHED";
+
     private final AuctionRepository auctionRepository;
+    private final AuctionConverter auctionConverter;
     private final SellerRepository sellerRepository;
+    private final BuyerRepository buyerRepository;
+    private final ItemClient itemClient;
+    private final UserClient userClient;
 
     public List<Auction> findAllAuctions() {
         return (List<Auction>) auctionRepository.findAll();
@@ -174,5 +197,116 @@ public class AuctionService {
 
     public void deleteAuctionBySellerId(Long sellerId) {
         auctionRepository.deleteAuctionBySellerId(sellerId);
+    }
+
+    public void finishAuction() {
+        List<Auction> auctionsList = (List<Auction>) auctionRepository.findAll();
+        long currentDate = System.currentTimeMillis();
+
+        auctionsList.stream()
+            .filter(auction -> auction.getAuctionDate() != null)
+            .filter(auction -> {
+                long plannedTime = auction.getAuctionDate().getTime();
+                return (currentDate - plannedTime) >= 21600000 &&
+                    auction.getAuctionState().equals(AuctionStatus.IN_PROGRESS.name());
+            })
+            .forEach(auction -> {
+                log.info("auction with id:'%d' finished".formatted(auction.getAuctionId()));
+                auctionRepository.updateAuctionStateBySchedule(AuctionStatus.FINISHED,
+                    auction.getAuctionId());
+                auctionRepository.updateAuctionFinalPrice(auction.getCurrentPrice(), auction.getAuctionId());
+                auctionRepository.updateLastUpdatedTime(auction.getAuctionId());
+                itemClient.updateItemStatus(auction.getItemId(), UpdateItemDto.builder()
+                    .itemStatus("SOLD").build());
+            });
+    }
+
+    public void startAuction() {
+        List<Auction> auctionsList = (List<Auction>) auctionRepository.findAll();
+        long currentDate = System.currentTimeMillis();
+
+        auctionsList.stream()
+            .filter(auction -> auction.getAuctionDate() != null)
+            .forEach(auction -> {
+                long plannedTime = auction.getAuctionDate().getTime();
+                if ((plannedTime - currentDate) <= 0 &&
+                    auction.getAuctionState().equals(AuctionStatus.PLANNED.name())) {
+                    log.info("auction with id:'%d' starts now".formatted(auction.getAuctionId()));
+                    auctionRepository.updateAuctionStateBySchedule(AuctionStatus.IN_PROGRESS, auction.getAuctionId());
+                    auctionRepository.updateLastUpdatedTime(auction.getAuctionId());
+                }
+                if ((plannedTime - currentDate) > 0 &&
+                    auction.getAuctionState().equals(AuctionStatus.PLANNED.name())) {
+                    log.info("Auction '%d' will be started in '%d' minutes".formatted(
+                        auction.getAuctionId(),
+                        convertMillisecondsToMinutes(plannedTime - currentDate)
+                    ));
+                }
+            });
+    }
+
+    public void updateUserBalance(List<Auction> auctionsPage) {
+
+        List<AuctionDto> auctions = auctionConverter.toDto(auctionsPage);
+
+        if (auctions.isEmpty()) {
+            log.info("list of auctions is empty");
+        } else {
+            List<AuctionDto> todayAuctions = auctions.stream()
+                .filter(auction -> auction.getAuctionDate() != null)
+                .filter(auction -> auction.getPriceDto().getBuyer() != null)
+                .filter(auction -> DateUtils.isSameDay(auction.getAuctionDate(), Calendar.getInstance().getTime()))
+                .filter(auction -> !auction.getIsPayed()).toList();
+            todayAuctions.forEach(auction -> {
+                updateBuyerBalanceAfterAuctionFinish(auction);
+                updateSellerBalanceAfterAuctionFinish(auction);
+            });
+        }
+    }
+
+    private void updateBuyerBalanceAfterAuctionFinish(AuctionDto auction) {
+        Buyer buyer = buyerRepository.getBuyerByAuctionId(auction.getAuctionId());
+        if (buyer == null) {
+            log.error("Auction with id: %d does not have buyer".formatted(auction.getAuctionId()));
+            throw new BuyerDoesNotExistException(
+                "Auction with id: %d does not have buyer".formatted(auction.getAuctionId()));
+        }
+        AppUserDto user = userClient.findUserByEmail(buyer.getEmail());
+        FinalPriceDto finalPrice = FinalPriceDto.builder().finalPrice(auction.getPriceDto().getFinalPrice()).build();
+        userClient.updateUserBalance(user.getId(), org.example.auction.scheduler.UserType.BUYER.name(), finalPrice);
+        log.info("user id:'%d' balance has been updated".formatted(user.getId()));
+        auctionRepository.updateIsPayedToTrue(auction.getAuctionId());
+        log.info("auction id:'%d' has been payed by buyer:'%d'".formatted(auction.getAuctionId(),
+            auction.getPriceDto().getBuyer()));
+    }
+
+    public void updateSellerBalanceAfterAuctionFinish(AuctionDto auction) {
+        Seller seller = sellerRepository.findSellerByAuctionId(auction.getAuctionId());
+        AppUserDto user = userClient.findUserByEmail(seller.getEmail());
+        FinalPriceDto finalPrice = FinalPriceDto.builder().finalPrice(auction.getPriceDto().getFinalPrice()).build();
+        userClient.updateUserBalance(user.getId(), UserType.SELLER.name(), finalPrice);
+        log.info("user id:'%d' balance has been updated after selling an item on auction:'%d'".formatted(user.getId(),
+            auction.getAuctionId()));
+    }
+
+    public void updateUserBalance() {
+        int pageSize = 50;
+        int pageNumber = 0;
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Auction> page;
+        do {
+            page = auctionRepository.getAuctionsByAuctionState(FINISHED, pageable);
+
+            List<Auction> auctions = page.getContent();
+            updateUserBalance(auctions);
+
+            pageNumber++;
+            pageable = PageRequest.of(pageNumber, pageSize);
+        } while (page.hasNext());
+    }
+
+    private int convertMillisecondsToMinutes(long milliseconds) {
+        return (int) ((milliseconds / (1000 * 60)) % 60);
     }
 }

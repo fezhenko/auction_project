@@ -1,5 +1,8 @@
 package org.example.auction.converter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.example.auction.dto.auction.AuctionDto;
 import org.example.auction.dto.auction.AuctionItemDto;
 import org.example.auction.dto.auction.PriceDto;
@@ -7,13 +10,8 @@ import org.example.auction.model.Auction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Mapper
-@Component
 public interface AuctionConverter {
     @Mapping(source = "List<Auction>", target = "List<AuctionDto>", qualifiedByName = "AuctionListToDto")
     @Named("AuctionListToDto")

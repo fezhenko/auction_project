@@ -2,11 +2,12 @@ package org.example.apigateway.controller;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.apigateway.converter.BuyerConverter;
 import org.example.apigateway.dto.bid.CreateBidDto;
 import org.example.apigateway.dto.buyer.CreateBuyerDto;
-import org.example.apigateway.dto.buyer.CreateBuyerWithUserEmailDto;
 import org.example.apigateway.service.BidService;
 import org.example.apigateway.service.BuyerService;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping("/api/v1/buyers")
 @AllArgsConstructor
@@ -28,8 +27,8 @@ import javax.validation.Valid;
 public class BuyerController {
 
     private final BuyerService buyerService;
-
     private final BidService bidService;
+    private final BuyerConverter buyerConverter;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -38,10 +37,7 @@ public class BuyerController {
     ) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         buyerService.createBuyer(
-                CreateBuyerWithUserEmailDto.builder()
-                        .userEmail(user.getUsername())
-                        .auctionId(createBuyerDto.getAuctionId())
-                        .build()
+            buyerConverter.toCreateBuyerWithUserEmailDto(createBuyerDto, user)
         );
     }
 

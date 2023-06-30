@@ -31,8 +31,7 @@ public class AuctionService {
     public AuctionDto createAuction(User user) throws CreateAuctionException, UserEmailIsNullException {
         try {
             CreateSellerDto createSellerRequest = CreateSellerDto.builder().email(user.getUsername()).build();
-            sellerClient.createNewSeller(createSellerRequest);
-            SellerDto seller = sellerClient.findSellerIdByEmail(createSellerRequest.getEmail());
+            SellerDto seller = sellerClient.createNewSeller(createSellerRequest);
             return auctionsClient.createAuction(seller.getSellerId());
         } catch (Exception exception) {
             throw new CreateAuctionException("Auction creation fails, please try again later");

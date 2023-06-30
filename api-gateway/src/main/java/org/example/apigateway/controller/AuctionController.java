@@ -2,6 +2,8 @@ package org.example.apigateway.controller;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -28,14 +30,20 @@ public class AuctionController {
     private final AuctionService auctionService;
 
     @GetMapping
-    private ResponseEntity<List<AuctionDto>> findAllAuctions() {
-        List<AuctionDto> auctions = auctionService.findAllAuction();
-        if (auctions.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.ok(auctions);
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Success"),
+        @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    private List<AuctionDto> findAllAuctions() {
+        return auctionService.findAllAuction();
     }
 
+
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Successfully created"),
+        @ApiResponse(responseCode = "400", description = "Request body is not correct"),
+        @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @SneakyThrows
@@ -44,6 +52,11 @@ public class AuctionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(auctionService.createAuction(user));
     }
 
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully added"),
+        @ApiResponse(responseCode = "204", description = "Item is not found"),
+        @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
     @PostMapping("/{auctionId}/item")
     @ResponseStatus(HttpStatus.OK)
     private void addItemToAuction(

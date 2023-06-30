@@ -224,7 +224,7 @@
                     <failurePriority>${pmd.failurePriority}</failurePriority>
                     <failOnViolation>true</failOnViolation>
                     <rulesets>
-                        <ruleset>codequality/pmd-ruleset.xml</ruleset>
+                        <ruleset>../../auction_project/codequality/pmd-ruleset.xml</ruleset>
                     </rulesets>
                 </configuration>
                 <executions>
@@ -277,7 +277,7 @@
                     <effort>Max</effort>
                     <threshold>Low</threshold>
                     <failOnError>true</failOnError>
-                    <includeFilterFiles>codequality/spotbug.xml</includeFilterFiles>
+                    <includeFilterFiles>../../auction_project/codequality/spotbug.xml</includeFilterFiles>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -310,8 +310,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${checkstyle.maven.plugin.version}</version>
                 <configuration>
-                    <configLocation>codequality/checkstyle.xml</configLocation>
-                    <headerLocation>codequality/LICENSE.txt</headerLocation>
+                    <configLocation>../../auction_project/codequality/checkstyle.xml</configLocation>
                 </configuration>
             </plugin>
             <plugin>
@@ -321,7 +320,7 @@
                 <configuration>
                     <effort>Max</effort>
                     <threshold>Low</threshold>
-                    <includeFilterFile>codequality/spotbug.xml</includeFilterFile>
+                    <includeFilterFile>../../auction_project/codequality/spotbug.xml</includeFilterFile>
                 </configuration>
             </plugin>
             <plugin>

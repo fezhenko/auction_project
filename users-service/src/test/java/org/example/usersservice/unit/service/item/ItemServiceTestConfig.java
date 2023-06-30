@@ -1,4 +1,4 @@
-package org.example.usersservice.integration.item;
+package org.example.usersservice.unit.service.item;
 
 import org.example.usersservice.repository.CategoryRepository;
 import org.example.usersservice.repository.ItemRepository;

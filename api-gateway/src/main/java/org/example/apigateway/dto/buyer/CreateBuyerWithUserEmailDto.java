@@ -15,7 +15,7 @@ public class CreateBuyerWithUserEmailDto {
     @NotNull
     @Email
     @JsonProperty("email")
-    String userEmail;
+    String username;
     @NotNull
     Long auctionId;
 }
