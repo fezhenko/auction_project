@@ -1,5 +1,6 @@
 package org.example.usersservice.model;
 
+import lombok.Builder;
 import lombok.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
@@ -12,6 +13,7 @@ import java.util.Date;
 
 @Value
 @Table("items")
+@Builder
 public class Item {
     @Id
     @Column("id")

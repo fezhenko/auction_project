@@ -1,10 +1,10 @@
 package org.example.auction.converter;
 
+import java.util.List;
+
 import org.example.auction.dto.seller.SellerDto;
 import org.example.auction.model.Seller;
 import org.mapstruct.Mapper;
-
-import java.util.List;
 
 @Mapper
 public interface SellerConverter {

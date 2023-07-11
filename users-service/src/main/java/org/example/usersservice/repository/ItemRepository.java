@@ -1,13 +1,14 @@
 package org.example.usersservice.repository;
 
 
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
 import org.example.usersservice.model.Item;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 public interface ItemRepository extends Repository<Item, Long> {
     @Query("select i.*, cur.currency as currencyValue, cat.name as categoryName from items i " +
@@ -47,4 +48,6 @@ public interface ItemRepository extends Repository<Item, Long> {
     @Modifying
     @Query("delete from items where id = :id")
     void deleteItemById(@Param("id") Long id);
+
+    List<Item> findItemByOwnerId(@NotNull Long ownerId);
 }

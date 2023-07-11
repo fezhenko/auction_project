@@ -1,14 +1,16 @@
 package org.example.auction.controller;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.auction.converter.SellerConverter;
 import org.example.auction.dto.seller.CreateSellerDto;
-import org.example.auction.dto.seller.CreateSellerResultDto;
 import org.example.auction.dto.seller.SellerDto;
 import org.example.auction.model.Seller;
 import org.example.auction.service.SellerService;
@@ -22,9 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/sellers")
@@ -73,12 +72,8 @@ public class SellerController {
             })
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<CreateSellerResultDto> createSeller(@RequestBody @Valid CreateSellerDto sellerDto) {
-        CreateSellerResultDto result = sellerService.createSeller(sellerDto);
-        if (result.getMessage() == null) {
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        }
-        return ResponseEntity.badRequest().body(result);
+    public void createSeller(@RequestBody @Valid CreateSellerDto sellerDto) {
+        sellerService.createSeller(sellerDto);
     }
 
     @Hidden
@@ -94,5 +89,10 @@ public class SellerController {
         sellerService.deleteSellerById(id);
     }
 
-
+    @Hidden
+    @GetMapping("/{email}")
+    public ResponseEntity<SellerDto> findSellerByEmail(@PathVariable("email") String sellerEmail) {
+        Seller seller = sellerService.findSellerByEmail(sellerEmail);
+        return ResponseEntity.status(HttpStatus.CREATED).body(sellerConverter.toDto(seller));
+    }
 }

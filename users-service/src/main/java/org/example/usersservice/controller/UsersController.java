@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.example.usersservice.converter.UsersConverter;
 import org.example.usersservice.dto.users.FinalPriceDto;
 import org.example.usersservice.dto.users.AppUserDto;
@@ -243,13 +244,11 @@ public class UsersController {
 
     @Hidden
     @PatchMapping("/{userId}/balance")
+    @SneakyThrows
     private ResponseEntity<UpdateBalanceResultDto> updateUserBalanceAfterAuctionFinish(
             @PathVariable("userId") Long id, @RequestParam(value = "userType") String userType,
             @RequestBody @Valid FinalPriceDto finalPrice) {
         UpdateBalanceResultDto result = usersService.updateUserBalance(id, userType, finalPrice.getFinalPrice());
-        if (result.getBalance() == null) {
-            return ResponseEntity.badRequest().build();
-        }
         return ResponseEntity.ok(result);
     }
 

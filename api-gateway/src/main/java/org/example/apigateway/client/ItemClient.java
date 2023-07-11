@@ -2,7 +2,6 @@ package org.example.apigateway.client;
 
 import org.example.apigateway.dto.items.CreateItemAdjustedDto;
 import org.example.apigateway.dto.items.ItemDto;
-import org.example.apigateway.dto.items.ItemResultDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface ItemClient {
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
-    ItemResultDto createItem(CreateItemAdjustedDto createItemAdjustedDto);
+    void createItem(CreateItemAdjustedDto createItemAdjustedDto);
 
     @RequestMapping(method = RequestMethod.GET, value = "/{itemId}", consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
