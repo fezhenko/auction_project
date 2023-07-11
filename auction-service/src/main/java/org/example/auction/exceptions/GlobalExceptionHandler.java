@@ -36,13 +36,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
 
     @ExceptionHandler
-    public ResponseEntity<ExceptionDto> handleNLPException(final NullPointerException nullPointerException) {
-        return constructBadRequestEntityWithErrorMessage(nullPointerException);
-    }
-
-    @ExceptionHandler
     public ResponseEntity<ExceptionDto> handlePSQLException(final PSQLException psqlException) {
-        log.error(psqlException.getMessage());
         return ResponseEntity.badRequest().body(
                 ExceptionDto.builder().message(INTERNAL_SERVER_ERROR).build()
         );
@@ -55,7 +49,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             MethodArgumentNotValidException ex,
             @NonNull HttpHeaders headers, @NonNull HttpStatus status, @NonNull WebRequest request
     ) {
-        log.error(ex.getMessage());
         return ResponseEntity.badRequest().body(
                 ExceptionDto.builder().message(INTERNAL_SERVER_ERROR).status(status).build()
         );
@@ -165,9 +158,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
 
-
     private ResponseEntity<ExceptionDto> constructBadRequestEntityWithErrorMessage(RuntimeException e) {
-        log.error(e.getMessage());
         return ResponseEntity.badRequest().body(
                 ExceptionDto.builder().message(e.getMessage()).status(HttpStatus.BAD_REQUEST).build()
         );

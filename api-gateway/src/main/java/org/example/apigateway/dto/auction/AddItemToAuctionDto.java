@@ -1,10 +1,11 @@
 package org.example.apigateway.dto.auction;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Jacksonized
@@ -17,4 +18,8 @@ public class AddItemToAuctionDto {
     @NotNull
     @Min(0)
     Double price;
+
+    public static AddItemToAuctionDto of(String email, long itemId, double price) {
+        return AddItemToAuctionDto.builder().email(email).itemId(itemId).price(price).build();
+    }
 }

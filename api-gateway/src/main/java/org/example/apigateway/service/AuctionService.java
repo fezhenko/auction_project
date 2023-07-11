@@ -1,8 +1,6 @@
 package org.example.apigateway.service;
 
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.apigateway.client.AuctionsClient;
@@ -18,6 +16,8 @@ import org.example.apigateway.exceptions.CreateAuctionException;
 import org.example.apigateway.exceptions.UserEmailIsNullException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -40,8 +40,8 @@ public class AuctionService {
 
     public void addItemToAuction(User user, Long auctionId, AddItemDto addItemDto) {
         ItemDto item = itemClient.findItem(addItemDto.getItemId());
-        AddItemToAuctionDto itemToAuction = AddItemToAuctionDto.builder().email(user.getUsername()).itemId(item.getId()).price(item.getPrice()).build();
-        auctionsClient.addItemToAuction(auctionId, itemToAuction);
+        auctionsClient.addItemToAuction(auctionId,
+                AddItemToAuctionDto.of(user.getUsername(), item.getId(), item.getPrice()));
     }
 
     public List<AuctionDto> findAllAuction() {
