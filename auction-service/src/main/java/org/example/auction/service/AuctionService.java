@@ -1,12 +1,5 @@
 package org.example.auction.service;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
@@ -43,6 +36,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -59,7 +59,7 @@ public class AuctionService {
     private final UserClient userClient;
 
     public List<Auction> findAllAuctions() {
-        return (List<Auction>) auctionRepository.findAll();
+        return auctionRepository.findAll();
     }
 
     public Auction findAuctionById(Long id) {

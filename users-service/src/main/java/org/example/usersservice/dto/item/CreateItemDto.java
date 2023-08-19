@@ -1,11 +1,11 @@
 package org.example.usersservice.dto.item;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
+
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
-
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotNull;
 
 @Value
 @Builder

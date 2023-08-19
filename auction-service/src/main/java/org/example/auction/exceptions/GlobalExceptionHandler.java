@@ -1,7 +1,6 @@
 package org.example.auction.exceptions;
 
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import org.example.auction.exceptions.auction.AuctionDateUpdatedByPastDateException;
 import org.example.auction.exceptions.auction.AuctionDoesNotExistException;
 import org.example.auction.exceptions.auction.AuctionStatusCannotBeUpdatedException;
@@ -9,14 +8,14 @@ import org.example.auction.exceptions.auction.CurrentPriceDoesNotMatchWithMinima
 import org.example.auction.exceptions.auction.CurrentPriceLessThanStartPriceException;
 import org.example.auction.exceptions.auction.ItemAlreadyExistException;
 import org.example.auction.exceptions.auction.ItemIsNotAddedToAuctionException;
-import org.example.auction.exceptions.seller.SellerEmailDoesNotMatchWithOwnerEmailException;
-import org.example.auction.exceptions.seller.SellerIdIsNullException;
 import org.example.auction.exceptions.bid.AddBidToNotStartedAuctionException;
 import org.example.auction.exceptions.bid.BidAmountIsZeroException;
 import org.example.auction.exceptions.bid.BidAmountLessThanCurrentPriceException;
 import org.example.auction.exceptions.bid.BidDoesNotExistException;
 import org.example.auction.exceptions.buyer.BuyerDoesNotExistException;
 import org.example.auction.exceptions.dto.ExceptionDto;
+import org.example.auction.exceptions.seller.SellerEmailDoesNotMatchWithOwnerEmailException;
+import org.example.auction.exceptions.seller.SellerIdIsNullException;
 import org.example.auction.exceptions.seller.UserEmailIsNullException;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpHeaders;
@@ -30,7 +29,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
-@Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final String INTERNAL_SERVER_ERROR = "Internal Server Error";

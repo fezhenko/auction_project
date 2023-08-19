@@ -1,7 +1,5 @@
 package org.example.usersservice.service;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.usersservice.dto.item.CreateItemDto;
@@ -14,11 +12,14 @@ import org.example.usersservice.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 @Slf4j
 @Transactional
 public class ItemService {
+    private static final String ITEM_DOES_NOT_EXIST = "item id:'%s' doesn't exist";
 
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
@@ -46,13 +47,13 @@ public class ItemService {
     }
 
     public void updateItem(
-        Long id, String description, String itemStatus, Double price, Long itemCategory
+            Long id, String description, String itemStatus, Double price, Long itemCategory
     ) {
         Item item = itemRepository.findItemById(id);
         Category category = categoryRepository.findCategoryById(itemCategory);
         if (item == null) {
-            log.error("item id:'%s' doesn't exist".formatted(id));
-            throw new ItemIsNullException("item id:'%s' doesn't exist".formatted(id));
+            log.error(ITEM_DOES_NOT_EXIST.formatted(id));
+            throw new ItemIsNullException(ITEM_DOES_NOT_EXIST.formatted(id));
         }
         if (category == null) {
             log.info("category id:'%s' doesn't exist".formatted(itemCategory));
@@ -66,7 +67,7 @@ public class ItemService {
         Item item = itemRepository.findItemById(id);
         if (item == null) {
             log.error("item id:'%d' doesn't exist".formatted(id));
-            throw new ItemIsNullException("item id:'%s' doesn't exist".formatted(id));
+            throw new ItemIsNullException(ITEM_DOES_NOT_EXIST.formatted(id));
         }
         itemRepository.deleteItemById(id);
     }

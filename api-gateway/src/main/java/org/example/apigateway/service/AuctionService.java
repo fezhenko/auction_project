@@ -2,7 +2,6 @@ package org.example.apigateway.service;
 
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.example.apigateway.client.AuctionsClient;
 import org.example.apigateway.client.ItemClient;
 import org.example.apigateway.client.SellerClient;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@Slf4j
 @AllArgsConstructor
 public class AuctionService {
 

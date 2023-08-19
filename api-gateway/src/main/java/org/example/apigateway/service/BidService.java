@@ -1,7 +1,5 @@
 package org.example.apigateway.service;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.example.apigateway.client.BidsClient;
 import org.example.apigateway.client.UserClient;
 import org.example.apigateway.converter.UserConverter;
@@ -10,9 +8,10 @@ import org.example.apigateway.dto.bid.CreateBidDtoWithUserEmail;
 import org.example.apigateway.exceptions.UserBalanceIsNotEnoughException;
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
+
 @Service
 @AllArgsConstructor
-@Slf4j
 public class BidService {
     private final BidsClient bidsClient;
     private final UserClient userClient;

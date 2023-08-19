@@ -1,10 +1,7 @@
 package org.example.apigateway.controller;
 
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import javax.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.example.apigateway.converter.BuyerConverter;
 import org.example.apigateway.dto.bid.CreateBidDto;
 import org.example.apigateway.dto.buyer.CreateBuyerDto;
@@ -19,11 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import lombok.AllArgsConstructor;
+
 @RestController
 @RequestMapping("/api/v1/buyers")
 @AllArgsConstructor
 @SecurityScheme(type = SecuritySchemeType.HTTP, bearerFormat = "JWT")
-@Slf4j
 public class BuyerController {
 
     private final BuyerService buyerService;
@@ -32,7 +32,7 @@ public class BuyerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private void enrollToAuction(
+    public void enrollToAuction(
             @RequestBody @Valid CreateBuyerDto createBuyerDto
     ) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -43,7 +43,7 @@ public class BuyerController {
 
     @PostMapping("/bids")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    private void makeBidToAuction(
+    public void makeBidToAuction(
             @RequestBody @Valid CreateBidDto createBidDto
     ) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

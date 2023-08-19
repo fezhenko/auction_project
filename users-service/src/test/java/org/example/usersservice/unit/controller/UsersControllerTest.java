@@ -1,7 +1,8 @@
 package org.example.usersservice.unit.controller;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.example.usersservice.controller.UsersController;
 import org.example.usersservice.converter.UsersConverter;
 import org.example.usersservice.dto.users.CreateUserDto;
@@ -22,13 +23,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.SneakyThrows;
 
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest({UsersController.class, UsersConverter.class})
-@Slf4j
 public class UsersControllerTest {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 

@@ -1,23 +1,25 @@
 package org.example.auction.repository;
 
-import java.sql.Timestamp;
-import java.util.List;
-
 import org.example.auction.model.Auction;
 import org.example.auction.scheduler.AuctionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
-public interface AuctionRepository extends CrudRepository<Auction, Long> {
+import java.sql.Timestamp;
+import java.util.List;
+
+public interface AuctionRepository extends Repository<Auction, Long> {
 
     Auction findAuctionByAuctionId(Long id);
 
+    List<Auction> findAll();
+
     @Modifying
-    @Query(value = "insert into auctions (seller_id) values (:sellerId);")
+    @Query(value = "insert into auctions (seller_id) values (:sellerId)")
     void createAuction(@Param("sellerId") Long sellerId);
 
     @Query("update auctions set current_price = :currentPrice where auction_id = :id;")
@@ -58,23 +60,23 @@ public interface AuctionRepository extends CrudRepository<Auction, Long> {
 
     @Modifying
     @Query("update auctions " +
-        "set is_payed = true " +
-        "where auction_id = :auctionId;")
+            "set is_payed = true " +
+            "where auction_id = :auctionId;")
     void updateIsPayedToTrue(@Param("auctionId") Long auctionId);
 
     @Modifying
     @Query("update auctions " +
-        "set item_id     = :itemId, " +
-        "    start_price = :startPrice, " +
-        "    minimal_bid = :minBid " +
-        "where auction_id = :auctionId;")
+            "set item_id     = :itemId, " +
+            "    start_price = :startPrice, " +
+            "    minimal_bid = :minBid " +
+            "where auction_id = :auctionId;")
     void addItemToAuction(@Param("auctionId") Long auctionId, @Param("itemId") Long itemId,
                           @Param("startPrice") Double startPrice, @Param("minBid") Double minimalBid);
 
     @Query("select a.* " +
-        "from auctions a " +
-        "         join sellers s on a.auction_id = s.auction_id " +
-        "where s.email = :sellerEmail;")
+            "from auctions a " +
+            "         join sellers s on a.auction_id = s.auction_id " +
+            "where s.email = :sellerEmail;")
     Auction findAuctionBySellerEmail(@Param("sellerEmail") String email);
 
     List<Auction> findAuctionsBySellerId(@Param("id") Long sellerId);
