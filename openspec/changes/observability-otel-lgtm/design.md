@@ -40,14 +40,9 @@
    - Tests set `management.tracing.sampling.probability=1.0` in their test configuration. Boot's default is 0.1, which would make in-memory span assertions flaky.
    - `opentelemetry-logback-appender-1.0` isn't in the Boot 4.2.0 BOM. Its version is pinned in the root `dependencyManagement` to the OpenTelemetry instrumentation release built on SDK 1.68.0.
 5. **Logs.** `opentelemetry-logback-appender-1.0` is registered in `logback-spring.xml` and installed against the Boot-managed `OpenTelemetry` bean at startup. It's a no-op while log export is disabled. The console pattern keeps Boot's correlation field (`logging.pattern.correlation`), so `traceId`/`spanId` appear locally even without Loki.
-6. **OpenTelemetry semantic conventions for HTTP and JVM telemetry.** This follows the configuration shown in Spring's post "OpenTelemetry with Spring Boot" (2025-11-18). Each service gets an `OpenTelemetryConfiguration` (`@Configuration(proxyBeanMethods = false)`) that registers:
-   - `OpenTelemetryServerRequestObservationConvention`, so HTTP server spans and metrics use OTel names, such as `http.server.request.duration`, instead of Boot's `http.server.requests`;
-   - `ProcessorMetrics`, `JvmMemoryMetrics`, `JvmThreadMetrics` and `ClassLoaderMetrics`, built with the `OpenTelemetryJvm*MeterConventions`, which replace Boot's default JVM binders;
-   - `OpenTelemetryJvmCpuMeterConventions`.
-
-   The `otel-lgtm` Grafana and standard OTel dashboards then recognize the data without renaming.
-   - Trade-off: metric names differ from Boot's defaults. Nothing in the repo depends on the old names, and the custom `outbox.oldest.unpublished.age` gauge is unaffected.
-   - The class is repeated in the three services, because `commons` holds no configuration classes (owner decision in `commons-module`). It's about 30 lines of bean declarations with no logic.
+6. **OpenTelemetry semantic conventions through one property.** Each service sets `management.observations.conventions: open-telemetry`. That property exists in the Boot 4.2.0 metadata (`SemanticConventions` enum: `MICROMETER` (the default), `OPEN_TELEMETRY`). With it, Boot's JVM and system metrics auto-configuration builds its binders with the OTel JVM meter conventions, and the Web MVC observation auto-configuration registers `OpenTelemetryServerRequestObservationConvention`. HTTP server telemetry is then named `http.server.request.duration`, and JVM meters use the `jvm.*` semconv names. The `otel-lgtm` Grafana and standard OTel dashboards recognize them.
+   - Rejected: the hand-written `OpenTelemetryConfiguration` from Spring's "OpenTelemetry with Spring Boot" post (2025-11-18, written for Boot 4.0). In Boot 4.2 the property does the same thing, and the beans would be repeated in all three services, because `commons` holds no configuration classes.
+   - Trade-off: metric names differ from Boot's defaults (`http.server.requests`). Nothing in the repo depends on the old names, and the custom `outbox.oldest.unpublished.age` gauge is unaffected.
 7. **Local stack as an override file**, `docker-compose.observability.yml`, used with `docker compose -f docker-compose.yml -f docker-compose.observability.yml --profile app up --build`.
    - It adds `lgtm` (`grafana/otel-lgtm:0.41.1`, pinned).
    - Ports: `127.0.0.1:3000` (Grafana), and `127.0.0.1:4317` and `127.0.0.1:4318` (for IDE runs).

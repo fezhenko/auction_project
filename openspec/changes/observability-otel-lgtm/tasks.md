@@ -2,15 +2,15 @@
 
 ## 1. OpenTelemetry starter, export off by default (one commit)
 
-- [ ] 1.1 Add `spring-boot-starter-opentelemetry` to api-gateway, auction-service and users-service. Set `spring.application.name` in each `application.yaml`, set the three export switches to `false`, and keep the correlation pattern on the console. Set `management.tracing.sampling.probability=1.0` in each module's test configuration. Verify, per service, a context test:
+- [ ] 1.1 Add `spring-boot-starter-opentelemetry` to api-gateway, auction-service and users-service. Set `spring.application.name` in each `application.yaml`, set the three export switches to `false`, and keep the correlation pattern on the console. Set `management.tracing.sampling.probability=1.0` in each module's test configuration. Boot disables tracing in tests by default, so every span, trace-header or log-correlation test in this change (1.2, 2.x, 3.x, 4.1) uses `@AutoConfigureTracing`, and meter tests use `@AutoConfigureMetrics`. Verify, per service, a context test:
   - with defaults, no OTLP span, metric or log exporter bean exists, and the captured startup output contains no OTLP errors;
   - with the switches `true`, the exporter beans exist;
   - with the switches `true` and every OTLP endpoint set to `http://127.0.0.1:1` (nothing listening), a gateway request still succeeds within 1 s ("Collector down while export is enabled").
 - [ ] 1.2 Verify a gateway test where a log line written during a request contains the request's trace id and span id.
-- [ ] 1.3 Add `OpenTelemetryConfiguration` to each service (design decision 6). Verify, per service, a test with a `SimpleMeterRegistry`:
+- [ ] 1.3 Set `management.observations.conventions: open-telemetry` in each service's `application.yaml`. Verify, per service, a test with `@AutoConfigureMetrics` and a `SimpleMeterRegistry`:
   - after one HTTP request, a timer `http.server.request.duration` exists and no `http.server.requests` timer exists;
-  - the JVM meters carry the OTel `jvm.*` names (for example a thread-count meter under the OTel name).
-  Confirm the exact JVM names against the Micrometer conventions at apply time.
+  - the JVM meters carry the OTel `jvm.*` names, with no duplicate binders registered.
+  Confirm the exact JVM names against Micrometer 1.18 at apply time.
 - [ ] 1.4 Verify `./mvnw clean verify` is green, then commit.
 
 ## 2. Propagation over HTTP and Kafka (one commit)

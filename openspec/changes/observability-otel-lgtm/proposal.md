@@ -14,7 +14,7 @@ When a bid fails or a settlement is rejected, the only evidence is three separat
   - over HTTP, from the client to the gateway and on through Feign to the services;
   - over Kafka, through Spring Kafka observation on the template and the listener;
   - **through the outbox:** the finish transaction stores the current W3C `traceparent` in the outbox row, and the relay sends it as a record header. The settlement in users-service then continues the trace of the finish job that produced it.
-- HTTP server telemetry and JVM metrics use OpenTelemetry semantic-convention names (for example `http.server.request.duration`). This is done through a small `OpenTelemetryConfiguration` per service, as in Spring's "OpenTelemetry with Spring Boot" post, so Grafana and standard OTel dashboards recognize them.
+- HTTP server telemetry and JVM metrics use OpenTelemetry semantic-convention names (for example `http.server.request.duration`), set with Boot 4.2's `management.observations.conventions: open-telemetry`, so Grafana and standard OTel dashboards recognize them.
 - Every log line carries `traceId` and `spanId`.
 - `docker-compose.observability.yml` adds `grafana/otel-lgtm` (Grafana, Tempo, Loki, Prometheus and an OTel collector in one image). Grafana is on `127.0.0.1:3000`, and OTLP on `127.0.0.1:4317/4318` for IDE runs. The override also enables export with 100% sampling.
 - The README gets an "Observability" section: how to start the stack and find a trace in Grafana.
