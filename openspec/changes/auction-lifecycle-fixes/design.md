@@ -35,7 +35,7 @@
    - 400 for a past date.
    The gateway never needs to look up the seller.
    - Rejected: fix `GET /{id}/seller` and check in the gateway. That's an extra round trip and a second copy of the rule.
-4. **Item ownership is checked in the gateway**, which can resolve both sides: the caller's user id from users-service `GET /api/v1/users/validate?email=`, and the item's `ownerId`, added to the users-service item response and the gateway `ItemDto`. auction-service additionally rejects item attach or replace unless the auction is PLANNED (409). Every auction that reaches IN_PROGRESS therefore has an item.
+4. **Item ownership is checked in the gateway**, which can resolve both sides: the caller's user id from users-service `GET /api/v1/users/validate?email=`, and the item's `ownerId`, added to the shared `commons` `ItemDto` that users-service returns and the gateway reads. auction-service additionally rejects item attach or replace unless the auction is PLANNED (409). Every auction that reaches IN_PROGRESS therefore has an item.
 5. **Join compares the joiner, and is idempotent.**
    - `createBuyer(email, auctionId)` compares `email` with the auction's seller email (409 on a match).
    - It inserts with `ON CONFLICT (auction_id, email) DO NOTHING`, backed by a unique index from `V19`, which also serves the (email, auctionId) lookup.

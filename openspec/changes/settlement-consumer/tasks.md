@@ -45,8 +45,8 @@
 
 ## 4. Remove `isPayed` (one commit, BREAKING)
 
-- [ ] 4.1 Add `V22__drop_auctions_is_payed.sql`. Remove `isPayed` from the auction-service model, DTO, converter and repository, the `PATCH /api/v1/auctions/{id}/pay` endpoint, and the test builders (`AuctionUtil`). Verify: an auction-service IT where the auction JSON has no `isPayed` and `/pay` returns 404 or 405.
-- [ ] 4.2 Remove `isPayed` from the gateway `AuctionDto` and `AuctionsClient.setPayed`, and update `AuctionControllerTest`. Verify: the gateway JSON round-trip test (from `boot42-upgrade`) is updated and passes without the field.
+- [ ] 4.1 Add `V22__drop_auctions_is_payed.sql`. Remove `isPayed` from the auction-service model, converter and repository, from the shared `commons` `AuctionDto`, from the `PATCH /api/v1/auctions/{id}/pay` endpoint, and from the test builders (`AuctionUtil`). Verify: an auction-service IT where the auction JSON has no `isPayed` and `/pay` returns 404 or 405.
+- [ ] 4.2 Remove the gateway's `AuctionsClient.setPayed`, and update `AuctionControllerTest` for the `commons` `AuctionDto` without `isPayed`. Verify: the gateway JSON round-trip test (from `boot42-upgrade`) is updated and passes without the field.
 - [ ] 4.3 Verify `./mvnw clean verify` is green, then commit.
 
 ## 5. README (one commit)

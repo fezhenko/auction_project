@@ -16,7 +16,7 @@
 
 ## 3. Items: ownership and auction state (one commit)
 
-- [ ] 3.1 Expose the item owner id in the users-service item response and in the gateway `ItemDto`. Verify: a users-service IT where `GET /api/v1/items/{id}` includes `ownerId`.
+- [ ] 3.1 Expose the item owner id through the shared `commons` `ItemDto`, used by users-service and the gateway. Verify: a users-service IT where `GET /api/v1/items/{id}` includes `ownerId`.
 - [ ] 3.2 In the gateway, reject attaching an item the caller doesn't own (403) or that isn't ON_SELL (409). In auction-service, reject item attach or replace unless the auction is PLANNED (409). Verify:
   - gateway tests for owner, not-owner and sold item;
   - an auction-service IT for "Owner attaches own item", asserting start price = item price and minimal bid = 5% of it;

@@ -16,7 +16,7 @@ Every 4xx and 5xx response that api-gateway, auction-service or users-service pr
 - **THEN** the response is HTTP 400 with a body `{"status": 400, "message": …}`
 
 #### Scenario: Business error on auction-service
-- **WHEN** a client asks auction-service for an auction that does not exist
+- **WHEN** a client sends auction-service `PATCH /api/v1/auctions/{auctionId}/state` for an auction id that does not exist
 - **THEN** the response status and the body's `status` field are the same integer, and the body has a non-empty `message`
 
 #### Scenario: Error raised in the gateway

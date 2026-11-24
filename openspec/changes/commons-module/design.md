@@ -22,10 +22,11 @@
 
 ## Decisions
 
-1. **`commons` is a plain library.** It's a jar module whose `pom` depends only on API jars:
+1. **`commons` is a plain library.** It's a jar module whose `pom` depends only on these, with versions from the Boot BOM:
    - `jakarta.validation-api`
    - `com.fasterxml.jackson.core:jackson-annotations` (the annotations Jackson 3 still uses)
-   - `io.swagger.core.v3:swagger-annotations`, if DTOs carry `@Schema`
+   - `tools.jackson.core:jackson-databind` (`provided`). Lombok `@Jacksonized` with `jacksonVersion += 3` generates `@JsonDeserialize`/`@JsonPOJOBuilder` from `tools.jackson.databind.annotation`. Every service already has databind at runtime.
+   - `io.swagger.core.v3:swagger-annotations-jakarta`, if DTOs carry `@Schema`. It's the artifact springdoc brings, so the classes aren't on the classpath twice.
    - Lombok (`provided`)
 
    It has no Spring dependencies, so a service never gets beans or auto-configuration from it. It has no `application.yaml` and no `db/migration`, so decision D (no shared classpath roots) still holds. The quality gates run on it like any other module.

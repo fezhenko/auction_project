@@ -2,7 +2,7 @@
 
 ## 1. Event record, topics, schema and fixtures in commons (one commit)
 
-- [ ] 1.1 Add `org.example.commons.kafka.Topics` (`AUCTION_FINISHED`, `AUCTION_FINISHED_DLT`) and the record `org.example.commons.event.AuctionFinishedEvent` with the v1 fields. A compact constructor rejects a half-set `buyerEmail`/`finalPrice` pair and a negative `finalPrice`. Verify: unit tests for the constructor checks.
+- [ ] 1.1 Add `org.example.commons.kafka.Topics` (`AUCTION_FINISHED`, `AUCTION_FINISHED_DLT`) and the record `org.example.commons.event.AuctionFinishedEvent` with the v1 fields. Annotate the record with `@JsonIgnoreProperties(ignoreUnknown = true)`, so ignoring unknown fields doesn't depend on mapper configuration. A compact constructor rejects a half-set `buyerEmail`/`finalPrice` pair and a negative `finalPrice`. Verify: unit tests for the constructor checks.
 - [ ] 1.2 Add `commons/src/main/resources/auction-finished/v1/schema.json` (draft 2020-12, `additionalProperties: true`, `if/then` for the `buyerEmail`/`finalPrice` pair, `finalPrice` 0..2147483647, `occurredAt` RFC 3339 with `Z`). Add the fixtures `sold.json` and `unsold.json` under `commons/src/test/resources/auction-finished/v1/`, and enable the `test-jar` goal. Verify: `./mvnw -pl commons package` produces the jar with the schema and a `-tests.jar` with the fixtures.
 - [ ] 1.3 Add `AuctionFinishedContractTest`, which checks:
   - both fixtures validate;

@@ -34,6 +34,8 @@ No Flyway migration is added by this change.
 
 ## Risks / Trade-offs
 
+- [The JSON Schema validator may still be built on Jackson 2] → Check at apply time. If it is, users-service accepts Jackson 2 at runtime for validation only (Boot 4.2 still manages `jackson-2-bom`). Otherwise pick a validator built on Jackson 3. Either way, the validator stays out of `commons`' compile classpath.
+
 - [Someone edits the shared record and the fixtures together, and breaks the wire] → The `commons/README.md` evolution rule (additive only), plus a test that fails when a v1 schema property is removed or retyped. That's a stored copy of the v1 property list, compared against the schema.
 - [The schema and the Java record drift apart] → A `commons` test serializes the record built from each fixture's values and compares it with the fixture JSON, then deserializes each fixture into the record.
 - [Emails change for a user between finish and settlement] → Accepted. The window is seconds, and the consumer records it as an unknown user instead of guessing.

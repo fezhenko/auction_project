@@ -2,10 +2,10 @@
 
 ## 1. Module and shared error body (one commit)
 
-- [ ] 1.1 Add module `commons` (jar, API-only dependencies per design decision 1) to the root `<modules>` before the services, and add it as a dependency of api-gateway, auction-service and users-service. Add `commons/README.md` with the scope rule: wire DTOs, error DTO, event contract and topic names only; no entities, Feign clients or configuration classes. Verify: `./mvnw -pl commons verify` runs Checkstyle, PMD and SpotBugs on it, and `commons` has no `src/main/resources/application.yaml` or `db/migration`.
+- [ ] 1.1 Add module `commons` (jar; dependencies per design decision 1: validation API, jackson-annotations, `jackson-databind` provided, `swagger-annotations-jakarta`, Lombok provided) to the root `<modules>` before the services, and add it as a dependency of api-gateway, auction-service and users-service. Add `commons/README.md` with the scope rule: wire DTOs, error DTO, event contract and topic names only; no entities, Feign clients or configuration classes. Verify: `./mvnw -pl commons verify` runs Checkstyle, PMD and SpotBugs on it, and `commons` has no `src/main/resources/application.yaml` or `db/migration`.
 - [ ] 1.2 Add `org.example.commons.error.ErrorDto` (`int status`, `String message`). Switch every exception handler in the three services to it, and delete `ErrorMessageDto` and both `ExceptionDto` classes. Unexpected exceptions return a generic message. Verify, per service, a test for each `api-errors` scenario:
   - users-service invalid email → 400 `{status, message}`;
-  - auction-service unknown auction → matching `status`;
+  - auction-service `PATCH /api/v1/auctions/{id}/state` with an unknown id → matching `status` (the `GET` by id keeps its existing 204);
   - gateway insufficient balance → 400 `{status, message}`;
   - an unexpected exception → a body with only `status` and `message`, and no class name or stack trace.
 - [ ] 1.3 Update the README if it documents an error format. Verify: `grep -n errorMessage README.md` returns nothing.
