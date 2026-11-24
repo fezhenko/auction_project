@@ -1,0 +1,41 @@
+schema: spec-driven
+
+context: |
+  Project: auction_project, a portfolio microservices system (no production traffic).
+  Modules (Maven multi-module, root pom.xml):
+    - api-gateway: Spring MVC + Spring Security (JWT) + OpenFeign clients to the two services.
+      It is NOT Spring Cloud Gateway. It is the only public entry point.
+    - auction-service: auctions, bids, sellers, buyers. Schedulers start/finish auctions.
+    - users-service: users, balances, items, categories, payments, currencies (OpenFeign client
+      to an external exchange-rate API).
+  Persistence: one PostgreSQL database per service, Spring Data JDBC, Flyway SQL migrations under
+  src/main/resources/db/migration. Applied migrations are never edited; changes go in new V<n> files.
+  Money: stored as INTEGER whole units (auctions.final_price, users.balance, items.price). No currency
+  on auctions or balances.
+  Code quality gates: Checkstyle, PMD and SpotBugs run in the build (rulesets in codequality/).
+  Violations are fixed in code, never by loosening rules.
+  Modernization target (see openspec/changes/): Java 21, Spring Boot 4.2.x, Spring Cloud 2026.0.x,
+  Kafka (KRaft) with a transactional outbox in auction-service and an idempotent settlement consumer
+  in users-service, Testcontainers integration tests, Dockerfile per service, one-command compose.
+
+rules:
+  proposal:
+    - Call out every deviation from the owner's original brief in its own "Deviations from brief" line.
+    - Include a Non-goals section.
+    - Keep each change small enough to land as one or a few commits on the modernization branch.
+  specs:
+    - Describe externally observable behavior (HTTP, events, data invariants), not class names.
+    - Delivery guarantees are worded as at-least-once delivery with deduplication. Never claim exactly-once.
+  design:
+    - List the alternatives considered and why each was rejected.
+    - Name every Flyway migration the change adds and what it does.
+  tasks:
+    - Group tasks so that each group is one commit (one task or less per commit).
+    - Every commit ends with `mvn clean verify` green on the target JDK; include that check in each group.
+    - If behavior visible in the README changes, the same change updates the README so its claims match the code.
+
+operations:
+  apply:
+    guidance:
+      - Run `mvn clean verify` before each commit and report the result.
+      - Never print, quote or commit secret values; secrets come from environment variables only.
