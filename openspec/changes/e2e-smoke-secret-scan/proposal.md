@@ -1,6 +1,6 @@
 # Proposal: e2e-smoke-secret-scan
 
-Order: 11 of 12. Depends on: `auction-lifecycle-fixes`, `settlement-consumer` and `docker-compose-app`.
+Order: 12 of 13. Depends on: `auction-lifecycle-fixes`, `settlement-consumer` and `docker-compose-app`.
 
 ## Why
 

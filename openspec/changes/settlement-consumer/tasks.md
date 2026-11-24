@@ -7,7 +7,7 @@
   - the outer transaction with the deduplication insert;
   - the nested savepoint with the three conditional updates, in ascending user-id order;
   - outcome and reason recording.
-  Verify ITs, each driven by a `sold.json` or `unsold.json` fixture from `contracts`:
+  Verify ITs, each driven by a `sold.json` or `unsold.json` fixture from the `commons` test-jar:
   - successful settlement;
   - same event twice;
   - different event for a settled auction;

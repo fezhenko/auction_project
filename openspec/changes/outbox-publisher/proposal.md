@@ -1,6 +1,6 @@
 # Proposal: outbox-publisher
 
-Order: 8 of 12. Depends on: `runtime-startup` (Clock, duration), `testcontainers-postgres`, `auction-lifecycle-fixes` (atomic bids, winner in `buyer_id`) and `auction-finished-contract`.
+Order: 9 of 13. Depends on: `runtime-startup` (Clock, duration), `testcontainers-postgres`, `auction-lifecycle-fixes` (atomic bids, winner in `buyer_id`) and `auction-finished-contract`.
 
 ## Why
 
@@ -55,5 +55,5 @@ None. `auction-finished-event` from the previous change is used as-is.
   - new outbox repository, relay and purge components;
   - new migration `V21__create_event_outbox.sql`;
   - `ItemClient` usage removed from finish.
-- Test dependencies: `testcontainers-kafka`, and the `contracts` module (test scope).
+- Test dependencies: `testcontainers-kafka` and the `commons` test-jar (fixtures). The payload is built from the shared `AuctionFinishedEvent` record, and the topic name comes from `Topics`.
 - New properties: `outbox.relay.*` and `outbox.purge.*`.

@@ -14,6 +14,10 @@ context: |
   on auctions or balances.
   Code quality gates: Checkstyle, PMD and SpotBugs run in the build (rulesets in codequality/).
   Violations are fixed in code, never by loosening rules.
+  Shared code (from change commons-module): a plain-jar `commons` module holds ONLY wire DTOs shared by
+  the gateway and a service, the shared ErrorDto {status, message}, the AuctionFinished event record with
+  its v1 JSON schema (fixtures in its test-jar), and Kafka topic names. Never put persistence entities,
+  Feign client interfaces or Spring configuration classes in commons.
   Modernization target (see openspec/changes/): Java 21, Spring Boot 4.2.x, Spring Cloud 2026.0.x,
   Kafka (KRaft) with a transactional outbox in auction-service and an idempotent settlement consumer
   in users-service, Testcontainers integration tests, Dockerfile per service, one-command compose.

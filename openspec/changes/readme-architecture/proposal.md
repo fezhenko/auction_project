@@ -1,6 +1,6 @@
 # Proposal: readme-architecture
 
-Order: 12 of 12. Depends on: every previous change.
+Order: 13 of 13. Depends on: every previous change.
 
 ## Why
 
@@ -15,6 +15,7 @@ The earlier changes each kept the README accurate for their own part. The README
   - auction-service → outbox table → relay → `auction.finished` → users-service consumer;
   - unreadable or invalid messages → `auction.finished.DLT`;
   - both databases and the exchange-rate API.
+- Module layout: `api-gateway`, `auction-service`, `users-service`, plus `commons`. `commons` holds the wire DTOs shared by the gateway and the services, the shared `ErrorDto`, the `AuctionFinished` event record with its v1 schema, and the topic names. It holds no entities, Feign clients or configuration classes.
 - A sequence description of the money path: bid → finish (state + outbox row in one transaction) → relay → consume → deduplicated settlement (debit, credit, item SOLD in one transaction).
 - Delivery wording, used verbatim: "At-least-once delivery; deduplicated on auctionId, so each auction is settled at most once; the dead-letter topic is not replayed automatically." The README never says "exactly-once", and never claims ordering.
 - Tech stack: Java 21, Spring Boot 4.2, Spring Cloud 2026.0 (OpenFeign), Spring Data JDBC, PostgreSQL 17, Flyway, Kafka 4 (KRaft), Testcontainers 2, jjwt, MapStruct, Lombok, springdoc, Checkstyle/PMD/SpotBugs. Each version comes from the poms at the time of writing.

@@ -1,6 +1,6 @@
 # Proposal: runtime-startup
 
-Order: 4 of 12. Depends on: `boot42-upgrade`.
+Order: 4 of 13. Depends on: `boot42-upgrade`.
 
 ## Why
 

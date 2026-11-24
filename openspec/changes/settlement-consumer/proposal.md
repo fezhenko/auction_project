@@ -1,6 +1,6 @@
 # Proposal: settlement-consumer
 
-Order: 9 of 12. Depends on: `outbox-publisher`.
+Order: 10 of 13. Depends on: `outbox-publisher`.
 
 ## Why
 
@@ -51,7 +51,7 @@ None.
   - a new settlement service and repository;
   - `UsersController` and `UsersService` (endpoint removed);
   - migration `V6__create_auction_settlements.sql`;
-  - test dependencies `testcontainers-kafka` and `contracts`.
+  - test dependency `testcontainers-kafka` and the `commons` test-jar (fixtures); runtime dependency on a JSON Schema validator (the v1 schema ships in `commons`).
 - **auction-service:**
   - scheduler, Feign clients and DTOs deleted;
   - `isPayed` removed from model, DTO, converter, repository, controller and tests;

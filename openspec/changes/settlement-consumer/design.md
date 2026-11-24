@@ -31,7 +31,7 @@
 3. **Lock order.** The two balance updates run in ascending `user_id` order, whichever is buyer or seller. Concurrent settlements of opposite trades between the same two users then can't deadlock. If a deadlock still happens, PostgreSQL aborts one transaction, which is retried as a transient failure.
 4. **Error classification with `DefaultErrorHandler`:**
    - Not retryable: `InvalidEventException` and `DeserializationException`. These go straight to the DLT.
-     - The value is consumed as a `String`, so malformed JSON never fails in the Kafka deserializer. The listener parses it, and a JSON parse failure, a schema violation or a semantic violation against `contracts` v1 all raise `InvalidEventException`.
+     - The value is consumed as a `String`, so malformed JSON never fails in the Kafka deserializer. The listener parses it, and a JSON parse failure, a schema violation or a semantic violation against the v1 schema in `commons` all raise `InvalidEventException`.
      - `ErrorHandlingDeserializer` still wraps the String and key deserializers, so even undecodable bytes reach the DLT instead of looping.
    - Retryable: everything else, with `ExponentialBackOffWithMaxRetries` (initial 1 s, multiplier 2, max interval 10 s, 5 retries), then the DLT.
    - Business rejections never throw out of the listener.
@@ -41,7 +41,7 @@
    - `auto.offset.reset=earliest`, so the first start doesn't skip events
    - ack mode `RECORD`, offset committed after the database commit
    - concurrency 3
-   - value deserialized as a String, validated against the schema, then mapped with unknown fields ignored
+   - value deserialized as a String, validated against the v1 schema from `commons`, then mapped into the shared `AuctionFinishedEvent` record with unknown fields ignored; topic names come from `Topics`
 6. **Testing retries.** Pausing the PostgreSQL container doesn't exercise the retry path: pgjdbc has no socket timeout by default, so the listener would just block until unpause. The retry ITs use a test-only fault injector, a `@TestConfiguration` that wraps the settlement repository and throws `TransientDataAccessResourceException` a configured number of times. The production datasource sets a bounded `socketTimeout` (30 s) and `connectTimeout`, so a real outage also surfaces as a retryable exception.
 7. **Topics.** users-service declares `NewTopic` beans for `auction.finished` (3 partitions; an idempotent duplicate of the producer's) and `auction.finished.DLT` (3 partitions). Start order between the services then doesn't matter.
 8. **Removal of `isPayed`** happens in the same commit as the entity field removal, because Spring Data JDBC selects every mapped column.

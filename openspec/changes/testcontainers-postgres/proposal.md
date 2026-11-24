@@ -1,6 +1,6 @@
 # Proposal: testcontainers-postgres
 
-Order: 5 of 12. Depends on: `runtime-startup` (Flyway at startup).
+Order: 5 of 13. Depends on: `runtime-startup` (Flyway at startup).
 
 ## Why
 

@@ -2,7 +2,7 @@
 
 ## 1. Gateway error pass-through (one commit)
 
-- [ ] 1.1 Add a `FeignException` handler to `GatewayExceptionHandler`: 4xx passes through with the downstream message, and 5xx or a connection error becomes 502. Verify: gateway tests with a mocked Feign client throwing 400, 403, 404, 409, 500 and a connection error get 400, 403, 404, 409, 502 and 502.
+- [ ] 1.1 Add a `FeignException` handler to `GatewayExceptionHandler`: 4xx passes through with the downstream `ErrorDto` body (from `commons`), and 5xx or a connection error becomes 502. Verify: gateway tests with a mocked Feign client throwing 400, 403, 404, 409, 500 and a connection error get 400, 403, 404, 409, 502 and 502.
 - [ ] 1.2 Verify `./mvnw clean verify` is green, then commit.
 
 ## 2. One auction per create (one commit)

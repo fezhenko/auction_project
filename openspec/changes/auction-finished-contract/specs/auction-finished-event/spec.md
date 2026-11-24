@@ -7,7 +7,7 @@ Defines the wire contract of the event that auction-service emits when an auctio
 ## ADDED Requirements
 
 ### Requirement: Payload conforms to the v1 schema
-Every `AuctionFinished` event value SHALL be a JSON object that validates against `contracts/auction-finished/v1/schema.json` and carries these fields:
+Every `AuctionFinished` event value SHALL be a JSON object that validates against the v1 JSON Schema (`auction-finished/v1/schema.json`) and carries these fields:
 - `eventId`: UUID string
 - `schemaVersion`: the integer 1
 - `occurredAt`: RFC 3339 timestamp in UTC with a `Z` suffix
