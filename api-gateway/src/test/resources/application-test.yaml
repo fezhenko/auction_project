@@ -1,0 +1,4 @@
+# Test-only values for the "test" profile (AbstractConfiguration uses @ActiveProfiles("test")).
+# Not a real secret: production reads jwt.secret from the JWT_SECRET environment variable.
+jwt:
+  secret: test-only-dummy-jwt-secret-not-for-production

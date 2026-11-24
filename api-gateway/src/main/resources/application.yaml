@@ -9,7 +9,7 @@ feign:
         readTimeout: 3000
 
 jwt:
-  secret: "hello@world!"
+  secret: ${JWT_SECRET}
 
 services:
   auction-service:
