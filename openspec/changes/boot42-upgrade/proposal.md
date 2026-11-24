@@ -1,6 +1,6 @@
 # Proposal: boot42-upgrade
 
-Order: 3 of 13. Depends on: `java21-boot35`.
+Order: 3 of 14. Depends on: `java21-boot35`.
 
 ## Why
 

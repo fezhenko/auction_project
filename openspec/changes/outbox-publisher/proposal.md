@@ -1,6 +1,6 @@
 # Proposal: outbox-publisher
 
-Order: 9 of 13. Depends on: `runtime-startup` (Clock, duration), `testcontainers-postgres`, `auction-lifecycle-fixes` (atomic bids, winner in `buyer_id`) and `auction-finished-contract`.
+Order: 9 of 14. Depends on: `runtime-startup` (Clock, duration), `testcontainers-postgres`, `auction-lifecycle-fixes` (atomic bids, winner in `buyer_id`) and `auction-finished-contract`.
 
 ## Why
 

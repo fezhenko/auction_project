@@ -1,6 +1,6 @@
 # Proposal: settlement-consumer
 
-Order: 10 of 13. Depends on: `outbox-publisher`.
+Order: 10 of 14. Depends on: `outbox-publisher`.
 
 ## Why
 

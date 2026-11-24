@@ -21,6 +21,9 @@ context: |
   Modernization target (see openspec/changes/): Java 21, Spring Boot 4.2.x, Spring Cloud 2026.0.x,
   Kafka (KRaft) with a transactional outbox in auction-service and an idempotent settlement consumer
   in users-service, Testcontainers integration tests, Dockerfile per service, one-command compose.
+  Observability (change observability-otel-lgtm, lowest priority): spring-boot-starter-opentelemetry, OTLP export
+  off by default, trace context carried through the outbox as traceparent, local grafana/otel-lgtm via an
+  opt-in compose override.
 
 rules:
   proposal:

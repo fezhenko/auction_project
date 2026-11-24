@@ -1,6 +1,6 @@
 # Proposal: auction-lifecycle-fixes
 
-Order: 7 of 13. Depends on: `testcontainers-postgres` and `commons-module` (shared `ErrorDto`).
+Order: 7 of 14. Depends on: `testcontainers-postgres` and `commons-module` (shared `ErrorDto`).
 
 ## Why
 

@@ -1,6 +1,6 @@
 # Proposal: docker-compose-app
 
-Order: 11 of 13. Depends on: `runtime-startup` (runnable jars, Flyway at startup), `outbox-publisher` (Kafka in compose) and `settlement-consumer`.
+Order: 11 of 14. Depends on: `runtime-startup` (runnable jars, Flyway at startup), `outbox-publisher` (Kafka in compose) and `settlement-consumer`.
 
 ## Why
 

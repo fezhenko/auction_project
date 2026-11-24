@@ -1,6 +1,6 @@
 # Proposal: java21-boot35
 
-Order: 2 of 13. Depends on: `baseline-build`.
+Order: 2 of 14. Depends on: `baseline-build`.
 
 ## Why
 

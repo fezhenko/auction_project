@@ -1,6 +1,6 @@
 # Proposal: auction-finished-contract
 
-Order: 8 of 13. Depends on: `commons-module`. It can land before or after `auction-lifecycle-fixes`.
+Order: 8 of 14. Depends on: `commons-module`. It can land before or after `auction-lifecycle-fixes`.
 
 ## Why
 
