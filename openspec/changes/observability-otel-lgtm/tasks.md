@@ -2,24 +2,26 @@
 
 ## 1. OpenTelemetry starter, export off by default (one commit)
 
-- [ ] 1.1 Add `spring-boot-starter-opentelemetry` to api-gateway, auction-service and users-service. Set `spring.application.name` in each `application.yaml`, set the three export switches to `false`, and keep the correlation pattern on the console. Verify, per service, a context test:
+- [ ] 1.1 Add `spring-boot-starter-opentelemetry` to api-gateway, auction-service and users-service. Set `spring.application.name` in each `application.yaml`, set the three export switches to `false`, and keep the correlation pattern on the console. Set `management.tracing.sampling.probability=1.0` in each module's test configuration. Verify, per service, a context test:
   - with defaults, no OTLP span, metric or log exporter bean exists, and the captured startup output contains no OTLP errors;
-  - with the switches `true`, the exporter beans exist.
+  - with the switches `true`, the exporter beans exist;
+  - with the switches `true` and every OTLP endpoint set to `http://127.0.0.1:1` (nothing listening), a gateway request still succeeds within 1 s ("Collector down while export is enabled").
 - [ ] 1.2 Verify a gateway test where a log line written during a request contains the request's trace id and span id.
 - [ ] 1.3 Verify `./mvnw clean verify` is green, then commit.
 
 ## 2. Propagation over HTTP and Kafka (one commit)
 
-- [ ] 2.1 Make sure Feign observation is active in the gateway. Verify a gateway test with a mock HTTP server:
+- [ ] 2.1 Add `io.github.openfeign:feign-micrometer` to the gateway and users-service so Feign observation is active. Verify a gateway test with a mock HTTP server:
   - the request to auction-service carries `traceparent`, with the same trace id as the gateway's server span;
   - an incoming `traceparent` on the gateway request is continued.
-- [ ] 2.2 Enable `spring.kafka.listener.observation-enabled` in users-service. Verify an IT: a record published with a known `traceparent` header is settled in a span with that trace id, asserted through `micrometer-tracing-test`'s in-memory exporter.
-- [ ] 2.3 Verify `./mvnw clean verify` is green, then commit.
+- [ ] 2.2 Configure users-service's `ExchangeClient` without the observation capability, and with an interceptor that removes `traceparent`/`tracestate`. Verify a users-service test with a mock HTTP server standing in for apilayer: a call made inside a traced request arrives with neither header.
+- [ ] 2.3 Enable `spring.kafka.listener.observation-enabled` in users-service. Verify an IT: a record published with a known `traceparent` header is settled in a span with that trace id, asserted through `micrometer-tracing-test`'s in-memory exporter.
+- [ ] 2.4 Verify `./mvnw clean verify` is green, then commit.
 
 ## 3. Trace context through the outbox (one commit)
 
 - [ ] 3.1 Add `V23__event_outbox_add_trace_parent.sql`. Store the current W3C trace context in `trace_parent` inside the finish transaction. Verify: an IT where finishing an auction under a known span leaves an outbox row whose `trace_parent` carries that trace id.
-- [ ] 3.2 Make the relay start its send span from the stored context, with `spring.kafka.template.observation-enabled=true`, and leave rows with a NULL `trace_parent` untouched. Verify these ITs:
+- [ ] 3.2 Make the relay open an `Observation` whose parent is extracted from `trace_parent`, in scope around `send(...).get()`, with `spring.kafka.template.observation-enabled=true`. Leave rows with a NULL `trace_parent` untouched. Verify, in addition to the cases below: with `@Scheduled` observation active, the send span's parent is the stored context, not the relay run. Verify these ITs:
   - the consumed record's `traceparent` header has the stored trace id;
   - an outbox row inserted before context start, simulating a restart, is published with its stored `traceparent`;
   - a NULL `trace_parent` publishes without the header.
@@ -27,7 +29,7 @@
 
 ## 4. Log export (one commit)
 
-- [ ] 4.1 Add `opentelemetry-logback-appender-1.0` and a `logback-spring.xml` that keeps Boot's console output and adds the OpenTelemetry appender, installed against the Boot `OpenTelemetry` bean. Verify a test with log export enabled and an in-memory log exporter: a log line written during a request is exported with the request's trace id.
+- [ ] 4.1 Add `opentelemetry-logback-appender-1.0`, with its version pinned in the root `dependencyManagement` to the instrumentation release built on OpenTelemetry SDK 1.68.0 (not managed by Boot), and a `logback-spring.xml` that keeps Boot's console output and adds the OpenTelemetry appender, installed against the Boot `OpenTelemetry` bean. Verify a test with log export enabled and an in-memory log exporter: a log line written during a request is exported with the request's trace id.
 - [ ] 4.2 Verify `./mvnw clean verify` is green, then commit.
 
 ## 5. Local Grafana stack and README (one commit)

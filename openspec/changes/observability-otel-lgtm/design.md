@@ -29,11 +29,16 @@
 3. **Trace context through the outbox.**
    - Migration `V23__event_outbox_add_trace_parent.sql` adds `trace_parent text NULL` to `event_outbox`.
    - In the finish transaction, the current span's context is serialized through the configured `Propagator` (W3C) into `trace_parent`.
-   - The relay creates its send span as a child of the stored context, and the template's observation injects `traceparent` into the record headers.
+   - The relay opens an `Observation` whose context is extracted from `trace_parent` (a receiver-style carrier, so the stored context becomes the parent), and keeps it in scope around `send(...).get()`. The template's observation is then created under it, and injects `traceparent` into the record headers. A span opened through the raw `Tracer` API would lose to the `@Scheduled` relay run's own observation as the current parent, so the send would attach to the relay run instead of to the finish.
    - The listener observation in users-service extracts it, so the settlement runs in the same trace.
    - Rejected: a span link instead of parent-child. It's more accurate for long delays, but Tempo shows links less clearly, and the local goal is "one trace from finish to settlement".
    - The column is nullable. Events recorded before this change, or with tracing off, publish without the header.
-4. **Kafka and Feign observation.** `spring.kafka.template.observation-enabled=true` (auction-service) and `spring.kafka.listener.observation-enabled=true` (users-service). OpenFeign's Micrometer capability is active once an `ObservationRegistry` exists; a test confirms the header is sent instead of assuming it.
+4. **Kafka and Feign observation.**
+   - `spring.kafka.template.observation-enabled=true` (auction-service) and `spring.kafka.listener.observation-enabled=true` (users-service).
+   - Feign: add `io.github.openfeign:feign-micrometer` so Spring Cloud OpenFeign registers its Micrometer observation capability. A test confirms the header is sent instead of assuming it.
+   - **Trace context never leaves the system.** users-service's `ExchangeClient` calls the external apilayer API. That client gets a per-client configuration without the observation capability, plus a request interceptor that removes `traceparent`/`tracestate`, so internal trace ids aren't sent to a third party.
+   - Tests set `management.tracing.sampling.probability=1.0` in their test configuration. Boot's default is 0.1, which would make in-memory span assertions flaky.
+   - `opentelemetry-logback-appender-1.0` isn't in the Boot 4.2.0 BOM. Its version is pinned in the root `dependencyManagement` to the OpenTelemetry instrumentation release built on SDK 1.68.0.
 5. **Logs.** `opentelemetry-logback-appender-1.0` is registered in `logback-spring.xml` and installed against the Boot-managed `OpenTelemetry` bean at startup. It's a no-op while log export is disabled. The console pattern keeps Boot's correlation field (`logging.pattern.correlation`), so `traceId`/`spanId` appear locally even without Loki.
 6. **Local stack as an override file**, `docker-compose.observability.yml`, used with `docker compose -f docker-compose.yml -f docker-compose.observability.yml --profile app up --build`.
    - It adds `lgtm` (`grafana/otel-lgtm:0.41.1`, pinned).

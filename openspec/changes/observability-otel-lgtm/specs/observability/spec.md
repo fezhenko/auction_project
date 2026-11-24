@@ -18,6 +18,13 @@ A request handled by the gateway that calls auction-service or users-service SHA
 - **WHEN** a client sends a request to the gateway with a valid `traceparent` header
 - **THEN** the gateway's span uses the trace id from that header
 
+### Requirement: Trace context does not leave the system
+Calls to external third-party services SHALL NOT carry `traceparent` or `tracestate` headers.
+
+#### Scenario: Exchange-rate call
+- **WHEN** users-service calls the external exchange-rate API while handling a traced request
+- **THEN** the outgoing request has no `traceparent` and no `tracestate` header
+
 ### Requirement: Settlement continues the trace of the finish that caused it
 When auction-service records an `AuctionFinished` event, it SHALL store the current trace context with the event. The published record SHALL carry it as a `traceparent` header. users-service SHALL process the record in a span of that same trace. This SHALL hold even when the event is published long after the finish, or after a restart.
 
