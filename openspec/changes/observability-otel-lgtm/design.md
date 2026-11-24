@@ -32,7 +32,7 @@
    - The relay opens an `Observation` whose context is extracted from `trace_parent` (a receiver-style carrier, so the stored context becomes the parent), and keeps it in scope around `send(...).get()`. The template's observation is then created under it, and injects `traceparent` into the record headers. A span opened through the raw `Tracer` API would lose to the `@Scheduled` relay run's own observation as the current parent, so the send would attach to the relay run instead of to the finish.
    - The listener observation in users-service extracts it, so the settlement runs in the same trace.
    - Rejected: a span link instead of parent-child. It's more accurate for long delays, but Tempo shows links less clearly, and the local goal is "one trace from finish to settlement".
-   - The column is nullable. Events recorded before this change, or with tracing off, publish without the header.
+   - The column is nullable. Events recorded before this change, or with tracing off, have no stored context. The relay then opens no extracted observation, and the template's sender observation still adds a `traceparent`, but from the relay run's own trace (a fresh trace id), not a stored one. The settlement of such an event is traced, just not linked to its finish.
 4. **Kafka and Feign observation.**
    - `spring.kafka.template.observation-enabled=true` (auction-service) and `spring.kafka.listener.observation-enabled=true` (users-service).
    - Feign: add `io.github.openfeign:feign-micrometer` so Spring Cloud OpenFeign registers its Micrometer observation capability. A test confirms the header is sent instead of assuming it.
@@ -40,7 +40,15 @@
    - Tests set `management.tracing.sampling.probability=1.0` in their test configuration. Boot's default is 0.1, which would make in-memory span assertions flaky.
    - `opentelemetry-logback-appender-1.0` isn't in the Boot 4.2.0 BOM. Its version is pinned in the root `dependencyManagement` to the OpenTelemetry instrumentation release built on SDK 1.68.0.
 5. **Logs.** `opentelemetry-logback-appender-1.0` is registered in `logback-spring.xml` and installed against the Boot-managed `OpenTelemetry` bean at startup. It's a no-op while log export is disabled. The console pattern keeps Boot's correlation field (`logging.pattern.correlation`), so `traceId`/`spanId` appear locally even without Loki.
-6. **Local stack as an override file**, `docker-compose.observability.yml`, used with `docker compose -f docker-compose.yml -f docker-compose.observability.yml --profile app up --build`.
+6. **OpenTelemetry semantic conventions for HTTP and JVM telemetry.** This follows the configuration shown in Spring's post "OpenTelemetry with Spring Boot" (2025-11-18). Each service gets an `OpenTelemetryConfiguration` (`@Configuration(proxyBeanMethods = false)`) that registers:
+   - `OpenTelemetryServerRequestObservationConvention`, so HTTP server spans and metrics use OTel names, such as `http.server.request.duration`, instead of Boot's `http.server.requests`;
+   - `ProcessorMetrics`, `JvmMemoryMetrics`, `JvmThreadMetrics` and `ClassLoaderMetrics`, built with the `OpenTelemetryJvm*MeterConventions`, which replace Boot's default JVM binders;
+   - `OpenTelemetryJvmCpuMeterConventions`.
+
+   The `otel-lgtm` Grafana and standard OTel dashboards then recognize the data without renaming.
+   - Trade-off: metric names differ from Boot's defaults. Nothing in the repo depends on the old names, and the custom `outbox.oldest.unpublished.age` gauge is unaffected.
+   - The class is repeated in the three services, because `commons` holds no configuration classes (owner decision in `commons-module`). It's about 30 lines of bean declarations with no logic.
+7. **Local stack as an override file**, `docker-compose.observability.yml`, used with `docker compose -f docker-compose.yml -f docker-compose.observability.yml --profile app up --build`.
    - It adds `lgtm` (`grafana/otel-lgtm:0.41.1`, pinned).
    - Ports: `127.0.0.1:3000` (Grafana), and `127.0.0.1:4317` and `127.0.0.1:4318` (for IDE runs).
    - It adds the export environment to the three services, and makes them depend on `lgtm` being healthy.

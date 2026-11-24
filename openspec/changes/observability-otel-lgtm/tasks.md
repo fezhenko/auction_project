@@ -7,7 +7,11 @@
   - with the switches `true`, the exporter beans exist;
   - with the switches `true` and every OTLP endpoint set to `http://127.0.0.1:1` (nothing listening), a gateway request still succeeds within 1 s ("Collector down while export is enabled").
 - [ ] 1.2 Verify a gateway test where a log line written during a request contains the request's trace id and span id.
-- [ ] 1.3 Verify `./mvnw clean verify` is green, then commit.
+- [ ] 1.3 Add `OpenTelemetryConfiguration` to each service (design decision 6). Verify, per service, a test with a `SimpleMeterRegistry`:
+  - after one HTTP request, a timer `http.server.request.duration` exists and no `http.server.requests` timer exists;
+  - the JVM meters carry the OTel `jvm.*` names (for example a thread-count meter under the OTel name).
+  Confirm the exact JVM names against the Micrometer conventions at apply time.
+- [ ] 1.4 Verify `./mvnw clean verify` is green, then commit.
 
 ## 2. Propagation over HTTP and Kafka (one commit)
 
@@ -21,10 +25,11 @@
 ## 3. Trace context through the outbox (one commit)
 
 - [ ] 3.1 Add `V23__event_outbox_add_trace_parent.sql`. Store the current W3C trace context in `trace_parent` inside the finish transaction. Verify: an IT where finishing an auction under a known span leaves an outbox row whose `trace_parent` carries that trace id.
-- [ ] 3.2 Make the relay open an `Observation` whose parent is extracted from `trace_parent`, in scope around `send(...).get()`, with `spring.kafka.template.observation-enabled=true`. Leave rows with a NULL `trace_parent` untouched. Verify, in addition to the cases below: with `@Scheduled` observation active, the send span's parent is the stored context, not the relay run. Verify these ITs:
+- [ ] 3.2 Make the relay open an `Observation` whose parent is extracted from `trace_parent`, in scope around `send(...).get()`, with `spring.kafka.template.observation-enabled=true`. For rows with a NULL `trace_parent`, open no extracted observation; they publish under the relay run's own trace. Verify these ITs:
+  - with `@Scheduled` observation active, the send span's parent is the stored context, not the relay run;
   - the consumed record's `traceparent` header has the stored trace id;
   - an outbox row inserted before context start, simulating a restart, is published with its stored `traceparent`;
-  - a NULL `trace_parent` publishes without the header.
+  - a row with a NULL `trace_parent` is published with a `traceparent` whose trace id differs from every stored `trace_parent` value (the relay run's trace).
 - [ ] 3.3 Verify `./mvnw clean verify` is green, then commit.
 
 ## 4. Log export (one commit)

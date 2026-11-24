@@ -36,6 +36,17 @@ When auction-service records an `AuctionFinished` event, it SHALL store the curr
 - **WHEN** auction-service restarts between recording an event and publishing it
 - **THEN** the published record still carries the `traceparent` stored at finish time
 
+### Requirement: HTTP and JVM telemetry follow OpenTelemetry semantic conventions
+Each service SHALL record HTTP server request telemetry and JVM metrics under the OpenTelemetry semantic-convention names.
+
+#### Scenario: HTTP server metric name
+- **WHEN** a service handles an HTTP request
+- **THEN** a timer named `http.server.request.duration` is recorded for it, and no `http.server.requests` timer is
+
+#### Scenario: JVM metric names
+- **WHEN** a service has started
+- **THEN** its JVM thread, memory, CPU and class-loading meters use the `jvm.*` names from the OpenTelemetry JVM semantic conventions
+
 ### Requirement: Logs are correlated with traces
 Every log line that a service writes while handling a traced operation SHALL include the current `traceId` and `spanId`.
 
