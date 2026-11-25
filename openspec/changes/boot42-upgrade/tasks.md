@@ -2,8 +2,8 @@
 
 ## 1. JSON shape safety net (one commit)
 
-- [ ] 1.1 Add JSON round-trip tests for every request and response DTO used by gateway controllers and by the Feign clients, pinning field names and the date format. Verify: the tests pass on Boot 3.5.16.
-- [ ] 1.2 Verify `./mvnw clean verify` is green, then commit.
+- [x] 1.1 Add JSON round-trip tests for every request and response DTO used by gateway controllers and by the Feign clients, pinning field names and the date format. Verify: the tests pass on Boot 3.5.16.
+- [x] 1.2 Verify `./mvnw clean verify` is green, then commit.
 
 ## 2. Boot 4.0.x through OpenRewrite (one commit)
 
