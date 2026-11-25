@@ -2,29 +2,27 @@ package org.example.apigateway.service;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 /**
  * Full gateway context. auction-service and users-service are replaced by one WireMock server on a random port,
- * so every Feign client talks to stubs and never to a live service. Stubs are reset after each test method.
- * MockMvc runs requests through the real filter chain, Spring Security and JwtFilter included.
+ * so every Feign client talks to stubs and never to a live service. Stubs are reset before each test method, and
+ * response bodies come from {@code wiremock/__files} on the test classpath. MockMvc runs requests through the real
+ * filter chain, Spring Security and JwtFilter included, and TestRestTemplate sends them through Tomcat.
  *
- * <p>Each test class gets its own context. Spring Cloud Contract stops WireMock after every test class and restarts it
- * on the same port, while a cached context would keep Feign's pooled keep-alive connections to the stopped server.
- * The next class would then fail its first request with NoHttpResponseException.
+ * <p>Each test class gets its own context, and with it its own WireMock server and Feign connection pool, so nothing
+ * carries over from one test class to the next.
  */
-@SpringBootTest(
-        webEnvironment = RANDOM_PORT,
-        properties = {
-            "services.auction-service.url=http://localhost:${wiremock.server.port}",
-            "services.users-service.url=http://localhost:${wiremock.server.port}",
-            "wiremock.reset-mappings-after-each-test=true"
-        })
-@AutoConfigureWireMock(port = 0)
+@SpringBootTest(webEnvironment = RANDOM_PORT)
+@EnableWireMock(
+        @ConfigureWireMock(
+                baseUrlProperties = {"services.auction-service.url", "services.users-service.url"},
+                filesUnderClasspath = "wiremock"))
 @AutoConfigureMockMvc
 @DirtiesContext
 @ActiveProfiles("test")

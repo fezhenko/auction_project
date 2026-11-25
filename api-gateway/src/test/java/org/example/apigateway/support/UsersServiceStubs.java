@@ -15,8 +15,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
 /**
  * WireMock stubs for the users-service endpoints the gateway calls to log a user in and to authenticate a request.
- * The bodies live in {@code __files/users-service} and follow the JSON that users-service's UsersController returns.
- * Every password hash in them is the BCrypt hash of {@link #PASSWORD}, a test-only value.
+ * The bodies live in {@code wiremock/__files/users-service} and follow the JSON that users-service's UsersController
+ * returns. Every password hash in them is the BCrypt hash of {@link #PASSWORD}, a test-only value.
  */
 public final class UsersServiceStubs {
 
