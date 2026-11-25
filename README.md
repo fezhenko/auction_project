@@ -25,15 +25,15 @@ flowchart LR
 
 Each data service owns its own PostgreSQL database. Their schemas are versioned with Flyway, and database triggers keep current prices, buyers and sellers in sync with new bids and auctions.
 
-`auction-service` and `users-service` have no authentication of their own and expose all actuator endpoints. They rely on running in an isolated network, reachable only through the gateway.
+`auction-service` and `users-service` have no authentication of their own. They rely on running in an isolated network, reachable only through the gateway. Every service, the gateway included, exposes only the `health` and `info` actuator endpoints, and `health` reports only the overall status. The gateway answers those two without a token, so container healthchecks can call them.
 
 ## Tech stack
 
-- Java 21, Spring Boot 3.5, Spring Security 6, Spring Data JDBC, Spring Cloud OpenFeign
+- Java 21, Spring Boot 4.2, Spring Security 7, Spring Data JDBC, Spring Cloud 2026.0 (OpenFeign), Jackson 3
 - PostgreSQL 13, Flyway
-- JWT (jjwt), BCrypt
+- JWT (jjwt 0.13, HMAC-SHA256), BCrypt
 - MapStruct, Lombok, springdoc-openapi (Swagger UI)
-- JUnit 5, Mockito, Spring Boot Test
+- JUnit 6, Mockito, Spring Boot Test, WireMock
 - Checkstyle, PMD and SpotBugs, which fail the Maven build on violations
 - Spotless with palantir-java-format, which fails the build on unformatted Java
 - Docker Compose for the databases, plus a GitHub Actions workflow that checks formatting and runs `./mvnw clean verify` on Temurin 21
@@ -61,7 +61,7 @@ Requirements: JDK 21, Docker, and `curl` or `wget` plus `unzip` for the Maven Wr
 
    | Variable | Used by | Purpose |
    |---|---|---|
-   | `JWT_SECRET` | api-gateway | HMAC key that signs and validates JWTs |
+   | `JWT_SECRET` | api-gateway | Secret that signs and validates JWTs with HMAC-SHA256. Its UTF-8 bytes are the key as they are, so it must be at least 32 bytes long; without it, or with a shorter one, the gateway doesn't start. Earlier versions base64-decoded it, so tokens they issued are no longer valid. |
    | `EXCHANGE_API_KEY` | users-service | API key for the [apilayer Exchange Rates Data API](https://apilayer.com/marketplace/exchangerates_data-api). Only the currency convert and symbols endpoints call it, so any non-empty value lets the service start. |
 
 4. Build the project, then run `UsersApplication`, `AuctionApplication` and `ApiGatewayApplication`, for example from your IDE:
@@ -91,7 +91,6 @@ The fixes are planned as OpenSpec changes in [`openspec/changes/`](openspec/chan
 
 ## Roadmap
 
-- Upgrade to Spring Boot 4.2
 - Replace the balance-settlement Feign call with Kafka events
 - Integration tests with Testcontainers
 - Dockerfiles and a single-command `docker compose` setup for the whole system

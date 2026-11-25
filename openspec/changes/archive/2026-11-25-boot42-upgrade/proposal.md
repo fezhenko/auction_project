@@ -24,6 +24,14 @@ Deviations from brief: the brief asked for Spring Boot 3.x and Spring Cloud 2023
 - Authentication for auction-service and users-service. They stay internal-only, which `docker-compose-app` enforces.
 - Replacing OpenFeign with HTTP interface clients.
 
+## Known behavior changes
+
+Accepted by the owner on 2026-11-25. All three come from new defaults in Jackson 3 and Spring Framework 7. Field names and values don't change.
+
+- JSON object keys are written in alphabetical order, Jackson 3's default, instead of in field declaration order. Where a DTO pins the order with `@JsonPropertyOrder` (the top level of the auction JSON), that order stays.
+- ProblemDetail error bodies in api-gateway and auction-service leave out `"type": "about:blank"`. Spring Framework 7 sets no type by default, and RFC 9457 defines a missing `type` as `about:blank`.
+- A JSON request body with content after the JSON value, such as `{...} x` or `{...}}`, is rejected with 400 in all three services. Jackson 3 turns on `FAIL_ON_TRAILING_TOKENS`; Boot 3.5 ignored the trailing content and handled the request. Valid JSON is unaffected.
+
 ## Capabilities
 
 ### New Capabilities

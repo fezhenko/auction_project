@@ -12,7 +12,7 @@ import org.example.apigateway.dto.items.AddItemDto;
 import org.example.apigateway.service.AuctionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,9 +48,7 @@ public class AuctionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @SneakyThrows
-    private ResponseEntity<AuctionDto> createAuction() {
-        User user =
-                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private ResponseEntity<AuctionDto> createAuction(@AuthenticationPrincipal(errorOnInvalidType = true) User user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(auctionService.createAuction(user));
     }
 
@@ -62,9 +60,10 @@ public class AuctionController {
             })
     @PostMapping("/{auctionId}/item")
     @ResponseStatus(HttpStatus.OK)
-    private void addItemToAuction(@PathVariable("auctionId") Long auctionId, @RequestBody @Valid AddItemDto item) {
-        User user =
-                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private void addItemToAuction(
+            @AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @PathVariable("auctionId") Long auctionId,
+            @RequestBody @Valid AddItemDto item) {
         auctionService.addItemToAuction(user, auctionId, item);
     }
 }

@@ -3,7 +3,7 @@ package org.example.auction.dto.auction;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Value
 @Jacksonized

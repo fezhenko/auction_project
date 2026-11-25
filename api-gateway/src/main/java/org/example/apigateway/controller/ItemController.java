@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.apigateway.dto.items.CreateItemDto;
 import org.example.apigateway.service.ItemService;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,9 +22,9 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private void createItem(@RequestBody @Valid CreateItemDto createItemDto) {
-        User user =
-                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private void createItem(
+            @AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @RequestBody @Valid CreateItemDto createItemDto) {
         itemService.createItem(user, createItemDto);
     }
 }

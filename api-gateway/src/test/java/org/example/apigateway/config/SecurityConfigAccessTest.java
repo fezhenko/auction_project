@@ -7,12 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -24,7 +21,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.example.apigateway.support.UsersServiceStubs.ADMIN_EMAIL;
 import static org.example.apigateway.support.UsersServiceStubs.PASSWORD;
 import static org.example.apigateway.support.UsersServiceStubs.USER_EMAIL;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,9 +43,6 @@ class SecurityConfigAccessTest extends AbstractConfiguration {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     @Autowired
     private Jwt jwt;
@@ -89,6 +82,12 @@ class SecurityConfigAccessTest extends AbstractConfiguration {
         "GET,  /swagger-ui/index.html, ANONYMOUS, LOGIN",
         "GET,  /swagger-ui/index.html, USER,      403",
         "GET,  /swagger-ui/index.html, ADMIN,     200",
+        // permitAll for GET, for container healthchecks. Every other actuator endpoint is not exposed: 404.
+        "GET,  /actuator/health,       ANONYMOUS, 200",
+        "GET,  /actuator/info,         ANONYMOUS, 200",
+        "GET,  /actuator/env,          ANONYMOUS, LOGIN",
+        "GET,  /actuator/env,          ADMIN,     404",
+        "GET,  /actuator/heapdump,     ADMIN,     404",
         // anyRequest: any authenticated caller
         "GET,  /api/v1/auctions,       ANONYMOUS, LOGIN",
         "GET,  /api/v1/auctions,       USER,      200",
@@ -122,13 +121,14 @@ class SecurityConfigAccessTest extends AbstractConfiguration {
         "/api/v1/bids/1,         USER,  404"
     })
     void deniedAndUnhandledInContainer(String path, Caller caller, int expected) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(jwt.generateToken(caller == Caller.ADMIN ? ADMIN_EMAIL : USER_EMAIL));
+        String token = jwt.generateToken(caller == Caller.ADMIN ? ADMIN_EMAIL : USER_EMAIL);
 
-        ResponseEntity<String> response =
-                restTemplate.exchange(path, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-
-        assertEquals(expected, response.getStatusCode().value());
+        tomcat().get()
+                .uri(path)
+                .headers(headers -> headers.setBearerAuth(token))
+                .exchange()
+                .expectStatus()
+                .isEqualTo(expected);
     }
 
     enum Caller {
