@@ -17,7 +17,7 @@ The root pom pins about 20 versions by hand, including Boot starters 2.7.5, `spr
 
 1. **Import the BOMs, not `spring-boot-starter-parent`.** The root pom stays its own parent, and only versions move. A parent also changes plugin defaults (resource filtering delimiters, compiler flags), which would mix two kinds of change into the baseline.
    - Rejected: keep the hand-pinned versions and bump `spring-security-test` only. That fixes one clash and leaves the drift that caused it.
-2. **Script-only Maven Wrapper** (`mvn wrapper:wrapper -Dtype=only-script`). It needs no `maven-wrapper.jar`, and the existing `*.jar` ignore rule stays valid.
+2. **Script-only Maven Wrapper** (`mvn wrapper:wrapper -Dtype=only-script`). It needs no `maven-wrapper.jar`, and the existing `*.jar` ignore rule stays valid. The distribution is pinned with `distributionSha256Sum`. The wrapper plugin does not compute it, so a Maven bump means taking the SHA-256 of a zip whose SHA-512 matches the published `.sha512`. Rule files resolve from `${maven.multiModuleProjectDirectory}`, which is the nearest directory with `.mvn/`, so `.mvn/` must stay committed. Under Maven 4 the replacement is `${session.rootDirectory}`.
 3. **Disable `AuctionItemsTest` instead of fixing it now.** A real fix needs a database, which arrives with Testcontainers in `testcontainers-postgres`. The disable reason names that change, so the gap stays visible.
 4. **Fix SpotBugs findings in code.** Excluding patterns or lowering the threshold breaks the rule that quality gates are never loosened.
 5. **Leave Checkstyle at 8.29 here, and delete the unused `checkstyle.version` property** so the pom stops claiming 10.3.3. The upgrade happens in `java21-boot35`.

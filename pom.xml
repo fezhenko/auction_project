@@ -22,9 +22,8 @@
         <spring-boot.version>2.7.18</spring-boot.version>
         <spring-cloud.version>2021.0.9</spring-cloud.version>
         <spotbugs.maven.plugin.version>4.7.1.1</spotbugs.maven.plugin.version>
-        <checkstyle.version>10.3.3</checkstyle.version>
         <checkstyle.maven.plugin.version>3.2.1</checkstyle.maven.plugin.version>
-        <checkstyle.config.location>codequality/checkstyle.xml</checkstyle.config.location>
+        <checkstyle.config.location>${maven.multiModuleProjectDirectory}/codequality/checkstyle.xml</checkstyle.config.location>
         <pmd.maven.plugin.version>3.19.0</pmd.maven.plugin.version>
         <pmd.failurePriority>2</pmd.failurePriority>
         <enforcer.maven.plugin.version>3.1.0</enforcer.maven.plugin.version>
@@ -140,7 +139,7 @@
                     <failurePriority>${pmd.failurePriority}</failurePriority>
                     <failOnViolation>true</failOnViolation>
                     <rulesets>
-                        <ruleset>../../auction_project/codequality/pmd-ruleset.xml</ruleset>
+                        <ruleset>${maven.multiModuleProjectDirectory}/codequality/pmd-ruleset.xml</ruleset>
                     </rulesets>
                 </configuration>
                 <executions>
@@ -193,7 +192,7 @@
                     <effort>Max</effort>
                     <threshold>Low</threshold>
                     <failOnError>true</failOnError>
-                    <includeFilterFiles>../../auction_project/codequality/spotbug.xml</includeFilterFiles>
+                    <includeFilterFiles>${maven.multiModuleProjectDirectory}/codequality/spotbug.xml</includeFilterFiles>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -226,7 +225,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${checkstyle.maven.plugin.version}</version>
                 <configuration>
-                    <configLocation>../../auction_project/codequality/checkstyle.xml</configLocation>
+                    <configLocation>${maven.multiModuleProjectDirectory}/codequality/checkstyle.xml</configLocation>
                 </configuration>
             </plugin>
             <plugin>
@@ -236,7 +235,7 @@
                 <configuration>
                     <effort>Max</effort>
                     <threshold>Low</threshold>
-                    <includeFilterFile>../../auction_project/codequality/spotbug.xml</includeFilterFile>
+                    <includeFilterFile>${maven.multiModuleProjectDirectory}/codequality/spotbug.xml</includeFilterFile>
                 </configuration>
             </plugin>
             <plugin>

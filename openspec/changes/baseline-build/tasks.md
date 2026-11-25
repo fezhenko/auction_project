@@ -10,10 +10,10 @@
 
 ## 2. Reproducible build from any checkout (one commit)
 
-- [ ] 2.1 Add the script-only Maven Wrapper (`mvn wrapper:wrapper -Dtype=only-script`). Verify: `./mvnw -v` prints the pinned Maven version.
-- [ ] 2.2 Replace `../../auction_project/codequality/…` with `${maven.multiModuleProjectDirectory}/codequality/…` in the build and reporting sections, and delete the unused `checkstyle.version` property. Verify: clone the branch into a folder with a different name, and `./mvnw clean verify` passes there.
-- [ ] 2.3 Add `target/`, `.env`, `*.iml` and `.DS_Store` to `.gitignore`. Verify: `git status` is clean after a full build.
-- [ ] 2.4 Verify `./mvnw clean verify` is green on JDK 17, then commit.
+- [x] 2.1 Add the script-only Maven Wrapper (`mvn wrapper:wrapper -Dtype=only-script`). Verify: `./mvnw -v` prints the pinned Maven version. Done: Maven 3.9.16 through maven-wrapper-plugin 3.3.4, with `distributionSha256Sum` taken from a zip whose SHA-512 matched Apache's published one. `.gitattributes` pins `mvnw` to LF and `*.cmd` to CRLF.
+- [x] 2.2 Replace `../../auction_project/codequality/…` with `${maven.multiModuleProjectDirectory}/codequality/…` in the build and reporting sections, and delete the unused `checkstyle.version` property. Verify: clone the branch into a folder with a different name, and `./mvnw clean verify` passes there. Done: the `checkstyle.config.location` property moved to the same base, so a build started from a module directory also finds the rules.
+- [x] 2.3 Add `target/`, `.env`, `*.iml` and `.DS_Store` to `.gitignore`. Verify: `git status` is clean after a full build.
+- [x] 2.4 Verify `./mvnw clean verify` is green on JDK 17, then commit.
 
 ## 3. Spotless formatting (two commits)
 
