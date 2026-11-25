@@ -23,8 +23,8 @@
 
 ## 5. RestTestClient in the access-rule test (one commit)
 
-- [ ] 5.1 Replace `TestRestTemplate`, deprecated for removal in Boot 4.2, with `RestTestClient` (`@AutoConfigureRestTestClient` on `AbstractConfiguration`) in the container rows of `SecurityConfigAccessTest`. This is an owner-approved exception (2026-11-25) to "the access-rule test passes unchanged": the `@CsvSource` row tables stay byte-identical, and the client's redirect policy is set explicitly. Verify: the access-rule test passes, and `git diff` shows no change to its rows.
-- [ ] 5.2 Verify `./mvnw clean verify` is green, then commit.
+- [x] 5.1 Replace `TestRestTemplate`, deprecated for removal in Boot 4.2, with `RestTestClient` in the container rows of `SecurityConfigAccessTest`. `AbstractConfiguration.tomcat()` binds it to the server port with a JDK `HttpClient` that never follows redirects; the client from `@AutoConfigureRestTestClient` can't take a request factory, and its default one follows redirects. This is an owner-approved exception (2026-11-25) to "the access-rule test passes unchanged": the `@CsvSource` row tables stay byte-identical, and the client's redirect policy is set explicitly. Verify: the access-rule test passes, and `git diff` shows no change to its rows.
+- [x] 5.2 Verify `./mvnw clean verify` is green, then commit.
 
 ## 6. JWT signing key (one commit)
 
