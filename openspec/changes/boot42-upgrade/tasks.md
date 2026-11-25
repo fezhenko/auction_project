@@ -18,8 +18,8 @@
 
 ## 4. Boot 4.2.0 and Spring Cloud 2026.0.0 (one commit)
 
-- [ ] 4.1 Bump to Boot 4.2.0, Spring Cloud 2026.0.0 and springdoc 3.2.x. Apply the 4.1 property renames and the 4.2 release-note changes. Switch Testcontainers coordinates to the 2.x artifact names in dependency management. Verify: `./mvnw dependency:tree` shows `spring-boot` 4.2.0 and `spring-cloud-openfeign-core` 5.1.0. Note from baseline-build: delete the root Testcontainers entries and the `testcontainers.version` property instead of renaming them. Explicit entries would override the Testcontainers 2.x that Boot manages. springdoc 3.2 uses swagger-core 3.0.0, which publishes the annotations as `io.swagger.core.v3:swagger-annotations` without the `-jakarta` suffix.
-- [ ] 4.2 Verify `./mvnw clean verify` is green, then commit. If it is blocked by a 4.2.0 regression, apply the 4.1.3 / 2025.1.5 fallback and note it for the PR description.
+- [x] 4.1 Bump to Boot 4.2.0, Spring Cloud 2026.0.0 and springdoc 3.2.x. Apply the 4.1 property renames and the 4.2 release-note changes. Switch Testcontainers coordinates to the 2.x artifact names in dependency management. Verify: `./mvnw dependency:tree` shows `spring-boot` 4.2.0 and `spring-cloud-openfeign-core` 5.1.0. Note from baseline-build: delete the root Testcontainers entries and the `testcontainers.version` property instead of renaming them. Explicit entries would override the Testcontainers 2.x that Boot manages. springdoc 3.2 uses swagger-core 3.0.0, which publishes the annotations as `io.swagger.core.v3:swagger-annotations` without the `-jakarta` suffix. Note from implementation: swagger-core 3 no longer brings Jackson 2 databind, so `lombok.config` keeps only `jacksonVersion += 3`; OpenRewrite's `SpringBootProperties_4_1` found nothing to rename.
+- [x] 4.2 Verify `./mvnw clean verify` is green, then commit. If it is blocked by a 4.2.0 regression, apply the 4.1.3 / 2025.1.5 fallback and note it for the PR description.
 
 ## 5. RestTestClient in the access-rule test (one commit)
 

@@ -20,8 +20,8 @@
         <!-- Spring Framework 6.1 resolves @PathVariable/@RequestParam names only from -parameters metadata. -->
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>4.0.10</spring-boot.version>
-        <spring-cloud.version>2025.1.5</spring-cloud.version>
+        <spring-boot.version>4.2.0</spring-boot.version>
+        <spring-cloud.version>2026.0.0</spring-cloud.version>
         <spotbugs.maven.plugin.version>4.10.5.0</spotbugs.maven.plugin.version>
         <spotbugs.version>4.10.5</spotbugs.version>
         <checkstyle.maven.plugin.version>3.6.0</checkstyle.maven.plugin.version>
@@ -36,10 +36,9 @@
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <lombok-mapstruct.version>0.2.0</lombok-mapstruct.version>
         <maven-surefire-plugin>3.0.0-M8</maven-surefire-plugin>
-        <!-- springdoc 3.0.x is the line for Boot 4.0; keep swagger-annotations equal to the swagger-core it uses. -->
-        <springdoc.version>3.0.3</springdoc.version>
-        <swagger-annotation.version>2.2.47</swagger-annotation.version>
-        <testcontainers.version>1.17.5</testcontainers.version>
+        <!-- springdoc 3.2.x is the line for Boot 4.2; keep swagger-annotations equal to the swagger-core it uses. -->
+        <springdoc.version>3.2.1</springdoc.version>
+        <swagger-annotation.version>3.0.0</swagger-annotation.version>
         <!-- WireMock's own Spring integration. Spring Cloud 2025.1 and later no longer manage Spring Cloud Contract. -->
         <wiremock-spring-boot.version>4.4.3</wiremock-spring-boot.version>
     </properties>
@@ -72,24 +71,6 @@
             </dependency>
             <!--tests-->
             <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>testcontainers</artifactId>
-                <version>${testcontainers.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>junit-jupiter</artifactId>
-                <version>${testcontainers.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>${testcontainers.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.wiremock.integrations</groupId>
                 <artifactId>wiremock-spring-boot</artifactId>
                 <version>${wiremock-spring-boot.version}</version>
@@ -98,7 +79,7 @@
             <!--swagger -->
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-annotations-jakarta</artifactId>
+                <artifactId>swagger-annotations</artifactId>
                 <version>${swagger-annotation.version}</version>
             </dependency>
             <dependency>

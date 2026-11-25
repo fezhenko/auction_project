@@ -19,11 +19,12 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @WebMvcTest(PaymentsController.class)
 public class PaymentsControllerTest {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    @Autowired
+    private JsonMapper jsonMapper;
 
     @Autowired
     private MockMvc mockMvc;
@@ -57,7 +58,7 @@ public class PaymentsControllerTest {
                 .build();
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(MAPPER.writeValueAsString(payment))
+                        .content(jsonMapper.writeValueAsString(payment))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
         BDDMockito.then(paymentService)
