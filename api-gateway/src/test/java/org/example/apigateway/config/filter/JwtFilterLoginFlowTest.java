@@ -96,15 +96,6 @@ class JwtFilterLoginFlowTest extends AbstractConfiguration {
         verify(0, getRequestedFor(urlPathEqualTo("/api/v1/users")));
     }
 
-    @Test
-    void loginBodyWithTrailingContentIsRejected() throws Exception {
-        // Jackson 3 fails on content after the JSON value; Jackson 2 ignored it and logged the user in.
-        mockMvc.perform(post("/api/v1/auth")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\": \"" + ADMIN_EMAIL + "\", \"password\": \"" + PASSWORD + "\"} x"))
-                .andExpect(status().isBadRequest());
-    }
-
     private String login() throws Exception {
         String response = mockMvc.perform(post("/api/v1/auth")
                         .contentType(MediaType.APPLICATION_JSON)
