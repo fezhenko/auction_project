@@ -20,7 +20,7 @@ flowchart LR
 | Service | Port | Responsibility |
 |---|---|---|
 | `api-gateway` | 8080 | Public REST API under `/api/v1`. Issues and validates JWTs, hashes passwords with BCrypt, keeps sessions stateless and enforces ADMIN / USER roles. Forwards calls to the other services through OpenFeign clients. |
-| `auction-service` | 8081 | Auctions, bids, buyers and sellers. Scheduled jobs are meant to move auctions from `PLANNED` to `IN_PROGRESS` to `FINISHED`, mark the sold item in `users-service` and request balance settlement. Today finishing and settlement do not complete (see [Known limitations](#known-limitations)). |
+| `auction-service` | 8081 | Auctions, bids, buyers and sellers. A scheduled job starts `PLANNED` auctions once their start date has passed. The finish job tries to finish `IN_PROGRESS` auctions six hours after their start date and mark the item `SOLD`, but the failing item call rolls the finish back. A third job requests balance settlement, which currently changes no balances (see [Known limitations](#known-limitations)). |
 | `users-service` | 8082 | Users and balances, payments, items and categories, and currencies with conversion through the apilayer Exchange Rates Data API. |
 
 Each data service owns its own PostgreSQL database. Their schemas are versioned with Flyway, and database triggers keep current prices, buyers and sellers in sync with new bids and auctions.
@@ -82,11 +82,12 @@ Each service serves Swagger UI at `/swagger-ui/index.html`. On the gateway, that
 
 The fixes are planned as OpenSpec changes in [`openspec/changes/`](openspec/changes/).
 
-- Creating an auction through the gateway fails. auction-service's `POST /api/v1/sellers` returns no body, so the gateway reads a null seller and answers "Auction creation fails, please try again later". Fixed in `auction-lifecycle-fixes`.
-- The gateway can't set an auction's start date, so auctions created through it never start. Only auction-service itself has `PATCH /api/v1/auctions/{id}/date`. Fixed in `auction-lifecycle-fixes`.
-- Joining and bidding through the gateway fail. Joining throws before the first bid, because the self-join check reads the auction's leading buyer, which is still empty. A successful bid still answers "balance is not enough", because the gateway's bid path has no `return` after placing it. Fixed in `auction-lifecycle-fixes`.
-- Finishing an auction rolls back. Inside its database transaction, the finish job asks users-service to mark the item `SOLD`. That request carries no price, users-service writes `NULL` into the `NOT NULL` `items.price` column and fails, and the whole finish is rolled back. Fixed in `outbox-publisher`, which takes the call out of the transaction, and `settlement-consumer`, which marks the item sold.
-- Balance settlement does nothing. auction-service sends the user type as `BUYER` / `SELLER`, users-service expects `buyer` / `seller`, so it logs a warning and leaves the balance unchanged, and the auction is marked as paid anyway. Fixed in `settlement-consumer`, which moves settlement to Kafka events.
+- Creating an auction through the gateway fails. auction-service's `POST /api/v1/sellers` returns no body, so the gateway reads a null seller and answers "Auction creation fails, please try again later". Fixed in [`auction-lifecycle-fixes`](openspec/changes/auction-lifecycle-fixes/proposal.md).
+- The gateway can't set an auction's start date, so auctions created through it never start. Only auction-service itself has `PATCH /api/v1/auctions/{id}/date`. Fixed in [`auction-lifecycle-fixes`](openspec/changes/auction-lifecycle-fixes/proposal.md).
+- Joining and bidding through the gateway fail. Joining throws before the first bid, because the self-join check reads the auction's leading buyer, which is still empty. A successful bid still answers "balance is not enough", because the gateway's bid path has no `return` after placing it. Fixed in [`auction-lifecycle-fixes`](openspec/changes/auction-lifecycle-fixes/proposal.md).
+- Finishing an auction rolls back. Inside its database transaction, the finish job asks users-service to mark the item `SOLD`. That request carries no price, users-service writes `NULL` into the `NOT NULL` `items.price` column and fails, and the whole finish is rolled back. Fixed in [`outbox-publisher`](openspec/changes/outbox-publisher/proposal.md), which takes the call out of the transaction, and [`settlement-consumer`](openspec/changes/settlement-consumer/proposal.md), which marks the item sold.
+- Balance settlement does nothing. auction-service sends the user type as `BUYER` / `SELLER`, users-service expects `buyer` / `seller`, so it logs a warning and leaves the balance unchanged, and the auction is marked as paid anyway. The balance update also runs in a read-only transaction. Fixed in [`settlement-consumer`](openspec/changes/settlement-consumer/proposal.md), which moves settlement to Kafka events.
+- `AuctionItemsTest` is disabled: it can't resolve its constructor parameters, and it needs a manually migrated database. [`testcontainers-postgres`](openspec/changes/testcontainers-postgres/proposal.md) replaces it with a self-contained integration test.
 
 ## Roadmap
 
