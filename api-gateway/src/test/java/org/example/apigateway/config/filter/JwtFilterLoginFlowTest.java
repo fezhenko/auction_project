@@ -1,6 +1,5 @@
 package org.example.apigateway.config.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.apigateway.client.dto.AuthResultDto;
 import org.example.apigateway.service.AbstractConfiguration;
 import org.example.apigateway.support.UsersServiceStubs;
@@ -10,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.ObjectMapper;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
@@ -71,6 +71,15 @@ class JwtFilterLoginFlowTest extends AbstractConfiguration {
                 // then: JwtFilter does not authenticate the caller, so form login sends it to /login
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrlPattern("**/login"));
+    }
+
+    @Test
+    void loginBodyWithTrailingContentIsRejected() throws Exception {
+        // Jackson 3 fails on content after the JSON value; Jackson 2 ignored it and logged the user in.
+        mockMvc.perform(post("/api/v1/auth")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\": \"" + ADMIN_EMAIL + "\", \"password\": \"" + PASSWORD + "\"} x"))
+                .andExpect(status().isBadRequest());
     }
 
     private String login() throws Exception {

@@ -3,8 +3,6 @@ package org.example.usersservice.converter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.usersservice.dto.currency.CurrencyDto;
 import org.example.usersservice.dto.currency.FullCurrencyInfoDto;
 import org.example.usersservice.model.Currency;
@@ -12,6 +10,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @Mapper
 @Component
@@ -19,9 +19,8 @@ public interface CurrencyConverter {
 
     @Mapping(source = "Currency", target = "FullCurrencyInfoDto", qualifiedByName = "CurrencyToDto")
     @Named("CurrencyToDto")
-    default List<FullCurrencyInfoDto> toDto(List<Currency> currencies)
-            throws RuntimeException, JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
+    default List<FullCurrencyInfoDto> toDto(List<Currency> currencies) throws RuntimeException {
+        ObjectMapper objectMapper = new JsonMapper();
         List<FullCurrencyInfoDto> currenciesList = new ArrayList<>();
         for (Currency currency : currencies) {
             FullCurrencyInfoDto fullCurrencyInfoDto = FullCurrencyInfoDto.builder()

@@ -1,7 +1,8 @@
 package org.example.apigateway.service;
 
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.wiremock.spring.ConfigureWireMock;
@@ -24,6 +25,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
                 baseUrlProperties = {"services.auction-service.url", "services.users-service.url"},
                 filesUnderClasspath = "wiremock"))
 @AutoConfigureMockMvc
+@AutoConfigureTestRestTemplate
 @DirtiesContext
 @ActiveProfiles("test")
 public abstract class AbstractConfiguration {}

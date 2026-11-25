@@ -225,7 +225,7 @@ class ControllerDtoJsonTest {
     /**
      * The body Spring MVC's exception handling writes for 400, 404, 405 and 415. ProblemDetail gets its JSON shape from
      * a Jackson mixin that the auto-configured mapper registers. The gateway only writes this body, so only that
-     * direction is checked.
+     * direction is checked. Since Spring Framework 7 the default type, "about:blank", is left out, as RFC 9457 allows.
      */
     @Test
     void problemDetailOfGatewayExceptionHandler() throws IOException {
@@ -234,7 +234,6 @@ class ControllerDtoJsonTest {
 
         assertThat(problemDetail.write(problem)).isStrictlyEqualToJson("""
                 {
-                  "type": "about:blank",
                   "title": "Bad Request",
                   "status": 400,
                   "detail": "Failed to read request",

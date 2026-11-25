@@ -3,8 +3,6 @@ package org.example.usersservice.converter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.usersservice.dto.category.CategoryDto;
 import org.example.usersservice.dto.currency.CurrencyDto;
 import org.example.usersservice.dto.currency.FullCurrencyInfoDto;
@@ -13,14 +11,16 @@ import org.example.usersservice.model.Item;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @Mapper
 public interface ItemConverter {
 
     @Mapping(source = "Item", target = "ItemDto", qualifiedByName = "ItemToItemDto")
     @Named("ItemToItemDto")
-    default ItemDto toDto(Item item) throws RuntimeException, JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
+    default ItemDto toDto(Item item) throws RuntimeException {
+        ObjectMapper objectMapper = new JsonMapper();
         return ItemDto.builder()
                 .id(item.getId())
                 .description(item.getDescription())
@@ -40,8 +40,8 @@ public interface ItemConverter {
 
     @Mapping(source = "List<Item>", target = "List<ItemDto>", qualifiedByName = "ItemToItemDto")
     @Named("ItemToItemDto")
-    default List<ItemDto> toDto(List<Item> items) throws RuntimeException, JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
+    default List<ItemDto> toDto(List<Item> items) throws RuntimeException {
+        ObjectMapper objectMapper = new JsonMapper();
         List<ItemDto> itemDtoList = new ArrayList<>();
         for (Item item : items) {
             ItemDto convertedItem = ItemDto.builder()

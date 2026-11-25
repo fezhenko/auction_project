@@ -1,4 +1,9 @@
 spring:
+  jackson:
+    datatype:
+      datetime:
+        # Jackson 3 writes a zero UTC offset as "Z". Keep the "+00:00" that the API and the services' JSON use.
+        write-utc-as-offset: true
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:15432/postgres

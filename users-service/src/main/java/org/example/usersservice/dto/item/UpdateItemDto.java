@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 import org.example.usersservice.validator.ValidateItemStatuses;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Value
 @Builder

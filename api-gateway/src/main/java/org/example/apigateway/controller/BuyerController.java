@@ -11,7 +11,7 @@ import org.example.apigateway.dto.buyer.CreateBuyerDto;
 import org.example.apigateway.service.BidService;
 import org.example.apigateway.service.BuyerService;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,17 +32,17 @@ public class BuyerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private void enrollToAuction(@RequestBody @Valid CreateBuyerDto createBuyerDto) {
-        User user =
-                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private void enrollToAuction(
+            @AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @RequestBody @Valid CreateBuyerDto createBuyerDto) {
         buyerService.createBuyer(buyerConverter.toCreateBuyerWithUserEmailDto(createBuyerDto, user));
     }
 
     @PostMapping("/bids")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    private void makeBidToAuction(@RequestBody @Valid CreateBidDto createBidDto) {
-        User user =
-                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private void makeBidToAuction(
+            @AuthenticationPrincipal(errorOnInvalidType = true) User user,
+            @RequestBody @Valid CreateBidDto createBidDto) {
         bidService.makeBidToAuction(user.getUsername(), createBidDto.getAuctionId(), createBidDto.getAmount());
     }
 }
