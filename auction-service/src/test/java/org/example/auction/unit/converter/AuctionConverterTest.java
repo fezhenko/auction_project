@@ -33,9 +33,13 @@ public class AuctionConverterTest {
         List<AuctionDto> actualAuctionsDto = auctionConverter.toDto(auctions);
 
         // then
-        Assertions.assertEquals(auctions.get(0).getAuctionId(), actualAuctionsDto.get(0).getAuctionId());
-        Assertions.assertEquals(auctions.get(0).getItemId(), actualAuctionsDto.get(0).getItemDto().getId());
-        Assertions.assertEquals(auctions.get(0).getFinalPrice(), actualAuctionsDto.get(0).getPriceDto().getFinalPrice());
+        Assertions.assertEquals(
+                auctions.get(0).getAuctionId(), actualAuctionsDto.get(0).getAuctionId());
+        Assertions.assertEquals(
+                auctions.get(0).getItemId(),
+                actualAuctionsDto.get(0).getItemDto().getId());
+        Assertions.assertEquals(
+                auctions.get(0).getFinalPrice(),
+                actualAuctionsDto.get(0).getPriceDto().getFinalPrice());
     }
-
 }

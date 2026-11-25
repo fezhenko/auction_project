@@ -9,5 +9,6 @@ import org.mapstruct.Mapper;
 @Mapper
 public interface SellerConverter {
     List<SellerDto> toDto(List<Seller> sellers);
+
     SellerDto toDto(Seller seller);
 }

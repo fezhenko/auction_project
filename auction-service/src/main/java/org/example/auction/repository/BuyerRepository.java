@@ -17,8 +17,7 @@ public interface BuyerRepository extends Repository<Buyer, Long> {
     Buyer getBuyerByAuctionId(Long auctionId);
 
     @Modifying
-    @Query("insert into buyers (email, auction_id) " +
-            "values (:email, :auctionId);")
+    @Query("insert into buyers (email, auction_id) " + "values (:email, :auctionId);")
     void createBuyer(@Param("email") String email, @Param("auctionId") Long id);
 
     @Modifying

@@ -9,14 +9,14 @@ import org.example.auction.exceptions.auction.CurrentPriceDoesNotMatchWithMinima
 import org.example.auction.exceptions.auction.CurrentPriceLessThanStartPriceException;
 import org.example.auction.exceptions.auction.ItemAlreadyExistException;
 import org.example.auction.exceptions.auction.ItemIsNotAddedToAuctionException;
-import org.example.auction.exceptions.seller.SellerEmailDoesNotMatchWithOwnerEmailException;
-import org.example.auction.exceptions.seller.SellerIdIsNullException;
 import org.example.auction.exceptions.bid.AddBidToNotStartedAuctionException;
 import org.example.auction.exceptions.bid.BidAmountIsZeroException;
 import org.example.auction.exceptions.bid.BidAmountLessThanCurrentPriceException;
 import org.example.auction.exceptions.bid.BidDoesNotExistException;
 import org.example.auction.exceptions.buyer.BuyerDoesNotExistException;
 import org.example.auction.exceptions.dto.ExceptionDto;
+import org.example.auction.exceptions.seller.SellerEmailDoesNotMatchWithOwnerEmailException;
+import org.example.auction.exceptions.seller.SellerIdIsNullException;
 import org.example.auction.exceptions.seller.UserEmailIsNullException;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpHeaders;
@@ -37,9 +37,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handlePSQLException(final PSQLException psqlException) {
-        return ResponseEntity.badRequest().body(
-                ExceptionDto.builder().message(INTERNAL_SERVER_ERROR).build()
-        );
+        return ResponseEntity.badRequest()
+                .body(ExceptionDto.builder().message(INTERNAL_SERVER_ERROR).build());
     }
 
     @Override
@@ -47,11 +46,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @NonNull
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,
-            @NonNull HttpHeaders headers, @NonNull HttpStatus status, @NonNull WebRequest request
-    ) {
-        return ResponseEntity.badRequest().body(
-                ExceptionDto.builder().message(INTERNAL_SERVER_ERROR).status(status).build()
-        );
+            @NonNull HttpHeaders headers,
+            @NonNull HttpStatus status,
+            @NonNull WebRequest request) {
+        return ResponseEntity.badRequest()
+                .body(ExceptionDto.builder()
+                        .message(INTERNAL_SERVER_ERROR)
+                        .status(status)
+                        .build());
     }
 
     @ExceptionHandler
@@ -61,8 +63,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handleAuctionDateUpdatedByPastDateException(
-            AuctionDateUpdatedByPastDateException exception
-    ) {
+            AuctionDateUpdatedByPastDateException exception) {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
 
@@ -73,8 +74,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handleSellerEmailDoesNotMatchWithOwnerEmailException(
-            SellerEmailDoesNotMatchWithOwnerEmailException exception
-    ) {
+            SellerEmailDoesNotMatchWithOwnerEmailException exception) {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
 
@@ -90,77 +90,65 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handleItemIsNotAddedToAuctionException(
-            ItemIsNotAddedToAuctionException exception
-    ) {
+            ItemIsNotAddedToAuctionException exception) {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
 
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handleCurrentPriceLessThanStartPriceException(
-            CurrentPriceLessThanStartPriceException exception
-    ) {
+            CurrentPriceLessThanStartPriceException exception) {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
 
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handleCurrentPriceDoesNotMatchWithMinimalBidException(
-            CurrentPriceDoesNotMatchWithMinimalBidException exception
-    ) {
+            CurrentPriceDoesNotMatchWithMinimalBidException exception) {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
 
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handleAuctionStatusCannotBeUpdatedException(
-            AuctionStatusCannotBeUpdatedException exception
-    ) {
+            AuctionStatusCannotBeUpdatedException exception) {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ExceptionDto> handleBidAmountIsZeroException(
-            BidAmountIsZeroException exception
-    ) {
+    public ResponseEntity<ExceptionDto> handleBidAmountIsZeroException(BidAmountIsZeroException exception) {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ExceptionDto> handleBuyerDoesNotExistException(
-            BuyerDoesNotExistException exception
-    ) {
+    public ResponseEntity<ExceptionDto> handleBuyerDoesNotExistException(BuyerDoesNotExistException exception) {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
 
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handleAddBidToNotStartedAuctionException(
-            AddBidToNotStartedAuctionException exception
-    ) {
+            AddBidToNotStartedAuctionException exception) {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
 
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handleBidAmountLessThanCurrentPrice(
-            BidAmountLessThanCurrentPriceException exception
-    ) {
+            BidAmountLessThanCurrentPriceException exception) {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ExceptionDto> handleBidDoesNotExistException(
-            BidDoesNotExistException exception
-    ) {
+    public ResponseEntity<ExceptionDto> handleBidDoesNotExistException(BidDoesNotExistException exception) {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ExceptionDto> handleUserEmailIsNullException(
-            UserEmailIsNullException exception
-    ) {
+    public ResponseEntity<ExceptionDto> handleUserEmailIsNullException(UserEmailIsNullException exception) {
         return constructBadRequestEntityWithErrorMessage(exception);
     }
 
     private ResponseEntity<ExceptionDto> constructBadRequestEntityWithErrorMessage(RuntimeException e) {
-        return ResponseEntity.badRequest().body(
-                ExceptionDto.builder().message(e.getMessage()).status(HttpStatus.BAD_REQUEST).build()
-        );
+        return ResponseEntity.badRequest()
+                .body(ExceptionDto.builder()
+                        .message(e.getMessage())
+                        .status(HttpStatus.BAD_REQUEST)
+                        .build());
     }
 }

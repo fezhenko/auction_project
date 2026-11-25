@@ -18,12 +18,10 @@ public class ItemService {
 
     public void createItem(User user, CreateItemDto createItemDto) {
         AppUserDto appUser = userClient.findUserByEmail(user.getUsername());
-        itemClient.createItem(
-                CreateItemAdjustedDto.builder()
-                        .ownerId(appUser.getId())
-                        .price(createItemDto.getPrice())
-                        .description(createItemDto.getDescription())
-                        .build()
-        );
+        itemClient.createItem(CreateItemAdjustedDto.builder()
+                .ownerId(appUser.getId())
+                .price(createItemDto.getPrice())
+                .description(createItemDto.getDescription())
+                .build());
     }
 }

@@ -1,13 +1,12 @@
 package org.example.apigateway.dto.bid;
 
-import lombok.Builder;
-import lombok.Value;
-import lombok.extern.jackson.Jacksonized;
-
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
+import lombok.Builder;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
 @Value
 @Builder
@@ -15,10 +14,11 @@ import javax.validation.constraints.NotNull;
 public class CreateBidDtoWithUserEmail {
     @NotNull
     Long auctionId;
+
     @NotNull
     @Email
     String email;
+
     @DecimalMin(value = "0.001", message = "Please enter a valid amount more than 0")
     Double amount;
-
 }

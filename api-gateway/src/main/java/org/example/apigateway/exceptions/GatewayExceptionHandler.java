@@ -12,41 +12,41 @@ public class GatewayExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<Object> handleEmptyAuctions(CreateAuctionException exception) {
-        return ResponseEntity.badRequest().body(
-                ErrorMessageDto.builder().errorMessage(exception.getMessage())
-                        .build()
-        );
+        return ResponseEntity.badRequest()
+                .body(ErrorMessageDto.builder()
+                        .errorMessage(exception.getMessage())
+                        .build());
     }
 
     @ExceptionHandler
     public ResponseEntity<Object> handleUserEmailIsNullException(UserEmailIsNullException exception) {
-        return ResponseEntity.badRequest().body(
-                ErrorMessageDto.builder().errorMessage(exception.getMessage())
-                        .build()
-        );
+        return ResponseEntity.badRequest()
+                .body(ErrorMessageDto.builder()
+                        .errorMessage(exception.getMessage())
+                        .build());
     }
 
     @ExceptionHandler
     public ResponseEntity<Object> handleUserNameIsNullException(UserNameIsNullException exception) {
-        return ResponseEntity.badRequest().body(
-                ErrorMessageDto.builder().errorMessage(exception.getMessage())
-                        .build()
-        );
+        return ResponseEntity.badRequest()
+                .body(ErrorMessageDto.builder()
+                        .errorMessage(exception.getMessage())
+                        .build());
     }
 
     @ExceptionHandler
     public ResponseEntity<Object> handleAuctionIdIsNullException(AuctionIdIsNullException exception) {
-        return ResponseEntity.badRequest().body(
-                ErrorMessageDto.builder().errorMessage(exception.getMessage())
-                        .build()
-        );
+        return ResponseEntity.badRequest()
+                .body(ErrorMessageDto.builder()
+                        .errorMessage(exception.getMessage())
+                        .build());
     }
 
     @ExceptionHandler
     public ResponseEntity<Object> handleUserBalanceNotEnoughException(UserBalanceIsNotEnoughException exception) {
-        return ResponseEntity.badRequest().body(
-                ErrorMessageDto.builder().errorMessage(exception.getMessage())
-                        .build()
-        );
+        return ResponseEntity.badRequest()
+                .body(ErrorMessageDto.builder()
+                        .errorMessage(exception.getMessage())
+                        .build());
     }
 }

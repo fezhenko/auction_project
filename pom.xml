@@ -26,6 +26,8 @@
         <checkstyle.config.location>${maven.multiModuleProjectDirectory}/codequality/checkstyle.xml</checkstyle.config.location>
         <pmd.maven.plugin.version>3.19.0</pmd.maven.plugin.version>
         <pmd.failurePriority>2</pmd.failurePriority>
+        <spotless.maven.plugin.version>3.12.0</spotless.maven.plugin.version>
+        <palantir-java-format.version>2.103.0</palantir-java-format.version>
         <enforcer.maven.plugin.version>3.1.0</enforcer.maven.plugin.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <!-- Annotation processor path only; keep equal to the Lombok version spring-boot-dependencies manages. -->
@@ -209,6 +211,25 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.maven.plugin.version}</version>
+                <configuration>
+                    <java>
+                        <palantirJavaFormat>
+                            <version>${palantir-java-format.version}</version>
+                        </palantirJavaFormat>
+                        <!-- Same groups as the Checkstyle ImportOrder rule: java, javax, others, static imports last. -->
+                        <importOrder>
+                            <order>java,javax,,\#</order>
+                        </importOrder>
+                        <removeUnusedImports/>
+                        <trimTrailingWhitespace/>
+                        <endWithNewline/>
+                    </java>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

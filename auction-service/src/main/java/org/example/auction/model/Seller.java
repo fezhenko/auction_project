@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.data.annotation.Id;
@@ -18,12 +19,15 @@ public class Seller {
     @NotNull
     @Column("id")
     Long sellerId;
+
     @NotNull
     @Column("auction_id")
     Long auctionId;
+
     @Column("email")
     @Email
     String email;
+
     @Column("created_at")
     Date createdAt;
 }

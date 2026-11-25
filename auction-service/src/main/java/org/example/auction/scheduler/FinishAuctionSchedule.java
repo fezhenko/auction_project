@@ -13,8 +13,7 @@ public class FinishAuctionSchedule {
 
     private final AuctionService auctionService;
 
-
-    //if currentDate>plannedDate on 6 hours and auctionStatus = in_progress change status to finished
+    // if currentDate>plannedDate on 6 hours and auctionStatus = in_progress change status to finished
     @Scheduled(zone = "${custom.scheduler.zone}", cron = "${custom.scheduler.finish-auction-cron}")
     protected void finishAuction() {
 

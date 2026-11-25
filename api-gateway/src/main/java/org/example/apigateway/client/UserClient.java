@@ -3,6 +3,7 @@ package org.example.apigateway.client;
 import java.util.List;
 
 import javax.validation.Valid;
+
 import org.example.apigateway.client.dto.AppUserDto;
 import org.example.apigateway.client.dto.CredentialsDto;
 import org.example.apigateway.client.dto.UserVerificationDto;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 
 @FeignClient(name = "users-service", url = "${services.users-service.url}/api/v1/users")
 public interface UserClient {
@@ -28,5 +28,4 @@ public interface UserClient {
 
     @RequestMapping(method = RequestMethod.GET)
     List<AppUserDto> findAllUsers();
-
 }

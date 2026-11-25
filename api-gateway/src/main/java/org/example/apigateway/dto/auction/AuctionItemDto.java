@@ -11,7 +11,9 @@ import org.springframework.lang.Nullable;
 public class AuctionItemDto {
     @Nullable
     Long id;
+
     @Nullable
     String description;
+
     Long seller;
 }

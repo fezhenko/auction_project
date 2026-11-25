@@ -30,10 +30,10 @@ class AuctionServiceTest extends AbstractConfiguration {
     void shouldReturnListWithAuctions() {
         // given: auction-service answers with the JSON its AuctionController produces
         stubFor(get(urlEqualTo(AUCTIONS_PATH))
-            .willReturn(aResponse()
-                .withStatus(200)
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .withBodyFile("auction-service/auctions.json")));
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .withBodyFile("auction-service/auctions.json")));
 
         // when
         List<AuctionDto> auctions = auctionService.findAllAuction();
@@ -60,6 +60,7 @@ class AuctionServiceTest extends AbstractConfiguration {
         assertEquals("FINISHED", finished.getAuctionState());
         assertEquals(625.0, finished.getPriceDto().getFinalPrice());
         assertFalse(finished.getIsPayed());
-        assertEquals(Instant.parse("2026-11-22T18:00:00Z"), finished.getAuctionDate().toInstant());
+        assertEquals(
+                Instant.parse("2026-11-22T18:00:00Z"), finished.getAuctionDate().toInstant());
     }
 }

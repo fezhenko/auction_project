@@ -1,11 +1,14 @@
 package org.example.usersservice.controller;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-
 import org.example.usersservice.converter.CategoryConverter;
 import org.example.usersservice.dto.category.CategoryDto;
 import org.example.usersservice.dto.category.UpdateCategoryDto;
@@ -23,9 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.util.List;
-
 @Tag(name = "Categories")
 @RequestMapping("/api/v1/categories")
 @RestController
@@ -37,10 +37,9 @@ public class CategoryController {
     @Operation(summary = "find all categories")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "categories have been found"),
-                    @ApiResponse(responseCode = "204", description = "categories don't exist")
-            }
-    )
+                @ApiResponse(responseCode = "200", description = "categories have been found"),
+                @ApiResponse(responseCode = "204", description = "categories don't exist")
+            })
     @GetMapping
     private ResponseEntity<List<CategoryDto>> findAllCategories() {
         List<Category> categories = categoryService.findAllCategories();
@@ -53,10 +52,9 @@ public class CategoryController {
     @Operation(summary = "find a specific category")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "category have been found"),
-                    @ApiResponse(responseCode = "204", description = "category doesn't exist")
-            }
-    )
+                @ApiResponse(responseCode = "200", description = "category have been found"),
+                @ApiResponse(responseCode = "204", description = "category doesn't exist")
+            })
     @GetMapping("/{categoryId}")
     private ResponseEntity<CategoryDto> findCategoryById(@PathVariable("categoryId") Long id) {
         Category category = categoryService.findCategoryById(id);
@@ -69,12 +67,12 @@ public class CategoryController {
     @Operation(summary = "create a new category")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "201", description = "category has been created"),
-                    @ApiResponse(responseCode = "400", description = "invalid body")
-            }
-    )
+                @ApiResponse(responseCode = "201", description = "category has been created"),
+                @ApiResponse(responseCode = "400", description = "invalid body")
+            })
     @PostMapping
-    private ResponseEntity<UpdateCategoryResultDto> createCategory(@RequestBody @Valid UpdateCategoryDto createCategory) {
+    private ResponseEntity<UpdateCategoryResultDto> createCategory(
+            @RequestBody @Valid UpdateCategoryDto createCategory) {
         UpdateCategoryResultDto result = categoryService.createCategory(createCategory.getName());
         if (result.getMessage() == null) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -85,13 +83,12 @@ public class CategoryController {
     @Operation(summary = "update a specific category")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "202", description = "category has been updated"),
-                    @ApiResponse(responseCode = "400", description = "invalid body")
-            }
-    )
+                @ApiResponse(responseCode = "202", description = "category has been updated"),
+                @ApiResponse(responseCode = "400", description = "invalid body")
+            })
     @PatchMapping("/{categoryId}")
-    private ResponseEntity<UpdateCategoryResultDto> updateCategory(@PathVariable("categoryId") Long id,
-            @RequestBody @Valid UpdateCategoryDto updateCategory) {
+    private ResponseEntity<UpdateCategoryResultDto> updateCategory(
+            @PathVariable("categoryId") Long id, @RequestBody @Valid UpdateCategoryDto updateCategory) {
         UpdateCategoryResultDto result = categoryService.updateCategory(id, updateCategory.getName());
         if (result.getMessage() == null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
@@ -102,10 +99,9 @@ public class CategoryController {
     @Operation(summary = "delete a specific category")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "202", description = "category has been deleted"),
-                    @ApiResponse(responseCode = "400", description = "invalid body")
-            }
-    )
+                @ApiResponse(responseCode = "202", description = "category has been deleted"),
+                @ApiResponse(responseCode = "400", description = "invalid body")
+            })
     @DeleteMapping("/{categoryId}")
     private ResponseEntity<UpdateCategoryResultDto> updateCategory(@PathVariable("categoryId") Long id) {
         UpdateCategoryResultDto result = categoryService.deleteCategory(id);

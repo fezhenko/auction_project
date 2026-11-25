@@ -2,11 +2,12 @@ package org.example.auction.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.auction.converter.BidConverter;
 import org.example.auction.dto.bid.BidDto;
@@ -37,10 +38,9 @@ public class BidController {
     @Operation(summary = "find a specific bid")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "bids have been found"),
-                    @ApiResponse(responseCode = "204", description = "bids don't exist")
-            }
-    )
+                @ApiResponse(responseCode = "200", description = "bids have been found"),
+                @ApiResponse(responseCode = "204", description = "bids don't exist")
+            })
     @GetMapping
     private ResponseEntity<List<BidDto>> findAllBids() {
         List<Bid> bids = bidService.findAllBids();
@@ -53,10 +53,9 @@ public class BidController {
     @Operation(summary = "find a specific bid")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "bid has been found"),
-                    @ApiResponse(responseCode = "204", description = "bid doesn't exist")
-            }
-    )
+                @ApiResponse(responseCode = "200", description = "bid has been found"),
+                @ApiResponse(responseCode = "204", description = "bid doesn't exist")
+            })
     @GetMapping("/{bidId}")
     private ResponseEntity<BidDto> findBidById(@PathVariable("bidId") Long bidId) {
         Bid bid = bidService.findBidById(bidId);
@@ -69,10 +68,9 @@ public class BidController {
     @Operation(summary = "create new bid")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "201", description = "bid has been created"),
-                    @ApiResponse(responseCode = "400", description = "invalid body")
-            }
-    )
+                @ApiResponse(responseCode = "201", description = "bid has been created"),
+                @ApiResponse(responseCode = "400", description = "invalid body")
+            })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     private void createBid(@RequestBody @Valid CreateBidDto createBidDto) {
@@ -82,24 +80,21 @@ public class BidController {
     @Operation(summary = "update specified bid")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "202", description = "bid has been updated"),
-                    @ApiResponse(responseCode = "400", description = "invalid body")
-            }
-    )
+                @ApiResponse(responseCode = "202", description = "bid has been updated"),
+                @ApiResponse(responseCode = "400", description = "invalid body")
+            })
     @PatchMapping("/{bidId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    private void updateBid(
-            @PathVariable("bidId") Long id, @RequestBody @Valid UpdateBidDto updateBidDto) {
+    private void updateBid(@PathVariable("bidId") Long id, @RequestBody @Valid UpdateBidDto updateBidDto) {
         bidService.updateBid(updateBidDto.getAmount(), id);
     }
 
     @Operation(summary = "delete specified bid")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "204", description = "bid deleted"),
-                    @ApiResponse(responseCode = "400", description = "invalid body")
-            }
-    )
+                @ApiResponse(responseCode = "204", description = "bid deleted"),
+                @ApiResponse(responseCode = "400", description = "invalid body")
+            })
     @DeleteMapping("/{bidId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     private void deleteBid(@PathVariable("bidId") Long id) {

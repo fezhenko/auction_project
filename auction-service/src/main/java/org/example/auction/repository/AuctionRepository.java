@@ -53,28 +53,27 @@ public interface AuctionRepository extends CrudRepository<Auction, Long> {
 
     @Modifying
     @Query("update auctions set current_price = :amount, buyer_id = :buyerId where auction_id = :auctionId")
-    void updateBuyerIdForAuction(@Param("amount") Double amount, @Param("buyerId") Long buyerId,
-                                 @Param("auctionId") Long auctionId);
+    void updateBuyerIdForAuction(
+            @Param("amount") Double amount, @Param("buyerId") Long buyerId, @Param("auctionId") Long auctionId);
 
     @Modifying
-    @Query("update auctions " +
-        "set is_payed = true " +
-        "where auction_id = :auctionId;")
+    @Query("update auctions " + "set is_payed = true " + "where auction_id = :auctionId;")
     void updateIsPayedToTrue(@Param("auctionId") Long auctionId);
 
     @Modifying
-    @Query("update auctions " +
-        "set item_id     = :itemId, " +
-        "    start_price = :startPrice, " +
-        "    minimal_bid = :minBid " +
-        "where auction_id = :auctionId;")
-    void addItemToAuction(@Param("auctionId") Long auctionId, @Param("itemId") Long itemId,
-                          @Param("startPrice") Double startPrice, @Param("minBid") Double minimalBid);
+    @Query("update auctions " + "set item_id     = :itemId, "
+            + "    start_price = :startPrice, "
+            + "    minimal_bid = :minBid "
+            + "where auction_id = :auctionId;")
+    void addItemToAuction(
+            @Param("auctionId") Long auctionId,
+            @Param("itemId") Long itemId,
+            @Param("startPrice") Double startPrice,
+            @Param("minBid") Double minimalBid);
 
-    @Query("select a.* " +
-        "from auctions a " +
-        "         join sellers s on a.auction_id = s.auction_id " +
-        "where s.email = :sellerEmail;")
+    @Query("select a.* " + "from auctions a "
+            + "         join sellers s on a.auction_id = s.auction_id "
+            + "where s.email = :sellerEmail;")
     Auction findAuctionBySellerEmail(@Param("sellerEmail") String email);
 
     List<Auction> findAuctionsBySellerId(@Param("id") Long sellerId);

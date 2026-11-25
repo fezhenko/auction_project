@@ -1,5 +1,9 @@
 package org.example.auction.controller;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -21,9 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.util.List;
-
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/buyers")
@@ -37,10 +38,9 @@ public class BuyerController {
     @Operation(summary = "Find all existed buyers")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "List of buyers"),
-                    @ApiResponse(responseCode = "204", description = "No buyers")
-            }
-    )
+                @ApiResponse(responseCode = "200", description = "List of buyers"),
+                @ApiResponse(responseCode = "204", description = "No buyers")
+            })
     private ResponseEntity<List<BuyerDto>> findAll() {
         List<Buyer> buyers = buyerService.findAllBuyers();
         if (buyers.isEmpty()) {
@@ -53,10 +53,9 @@ public class BuyerController {
     @Operation(summary = "Find buyer by id")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "OK"),
-                    @ApiResponse(responseCode = "204", description = "No buyers")
-            }
-    )
+                @ApiResponse(responseCode = "200", description = "OK"),
+                @ApiResponse(responseCode = "204", description = "No buyers")
+            })
     private ResponseEntity<BuyerDto> findUserById(@PathVariable("buyerId") Long id) {
         Buyer buyer = buyerService.findBuyerById(id);
         if (buyer == null) {
@@ -70,10 +69,9 @@ public class BuyerController {
     @Operation(summary = "Create buyer")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "201", description = "Created"),
-                    @ApiResponse(responseCode = "400", description = "Check input body and try again")
-            }
-    )
+                @ApiResponse(responseCode = "201", description = "Created"),
+                @ApiResponse(responseCode = "400", description = "Check input body and try again")
+            })
     private void createBuyer(@RequestBody @Valid CreateBuyerDto buyer) {
         buyerService.createBuyer(buyer.getEmail(), buyer.getAuctionId());
     }
@@ -83,12 +81,10 @@ public class BuyerController {
     @Operation(summary = "Delete buyer")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "202", description = "Buyer updated"),
-                    @ApiResponse(responseCode = "204", description = "No content")
-            }
-    )
+                @ApiResponse(responseCode = "202", description = "Buyer updated"),
+                @ApiResponse(responseCode = "204", description = "No content")
+            })
     private void deleteBuyer(@PathVariable("buyerId") Long id) {
         buyerService.deleteBuyer(id);
     }
-
 }

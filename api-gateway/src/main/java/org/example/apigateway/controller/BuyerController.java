@@ -1,8 +1,9 @@
 package org.example.apigateway.controller;
 
+import javax.validation.Valid;
+
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.apigateway.converter.BuyerConverter;
@@ -32,23 +33,17 @@ public class BuyerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private void enrollToAuction(
-            @RequestBody @Valid CreateBuyerDto createBuyerDto
-    ) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        buyerService.createBuyer(
-            buyerConverter.toCreateBuyerWithUserEmailDto(createBuyerDto, user)
-        );
+    private void enrollToAuction(@RequestBody @Valid CreateBuyerDto createBuyerDto) {
+        User user =
+                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        buyerService.createBuyer(buyerConverter.toCreateBuyerWithUserEmailDto(createBuyerDto, user));
     }
 
     @PostMapping("/bids")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    private void makeBidToAuction(
-            @RequestBody @Valid CreateBidDto createBidDto
-    ) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        bidService.makeBidToAuction(user.getUsername(),
-                createBidDto.getAuctionId(), createBidDto.getAmount()
-        );
+    private void makeBidToAuction(@RequestBody @Valid CreateBidDto createBidDto) {
+        User user =
+                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        bidService.makeBidToAuction(user.getUsername(), createBidDto.getAuctionId(), createBidDto.getAmount());
     }
 }

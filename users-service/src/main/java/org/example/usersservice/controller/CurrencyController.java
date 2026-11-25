@@ -1,5 +1,9 @@
 package org.example.usersservice.controller;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.SneakyThrows;
-
 import org.example.usersservice.converter.CurrencyConverter;
 import org.example.usersservice.dto.currency.AddCurrencyDto;
 import org.example.usersservice.dto.currency.CurrencyDto;
@@ -32,9 +35,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/currencies")
 @Tag(name = "Currencies")
@@ -45,10 +45,11 @@ public class CurrencyController {
     private final String apiKey;
 
     @Autowired
-    public CurrencyController(CurrencyService currencyService,
-                              ObjectMapper objectMapper,
-                              CurrencyConverter currencyConverter,
-                              @Value("${services.exchange-service.api-key}") String apiKey) {
+    public CurrencyController(
+            CurrencyService currencyService,
+            ObjectMapper objectMapper,
+            CurrencyConverter currencyConverter,
+            @Value("${services.exchange-service.api-key}") String apiKey) {
         this.currencyService = currencyService;
         this.objectMapper = objectMapper;
         this.currencyConverter = currencyConverter;
@@ -58,14 +59,14 @@ public class CurrencyController {
     @Operation(summary = "Convert a specified amount from one currency to another")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Successfully converted"),
-                    @ApiResponse(responseCode = "404", description = "Currency does not exist")
+                @ApiResponse(responseCode = "200", description = "Successfully converted"),
+                @ApiResponse(responseCode = "404", description = "Currency does not exist")
             })
     @PostMapping("/convert")
     public ResponseEntity<ConvertedValuesDto> convertCurrencies(
             @Parameter(required = true) @RequestBody @Valid QueryDto queryDto) {
-        ConvertedValuesDto convertResponse = currencyService.convertCurrencies(
-                apiKey, queryDto.getTo(), queryDto.getFrom(), queryDto.getAmount());
+        ConvertedValuesDto convertResponse =
+                currencyService.convertCurrencies(apiKey, queryDto.getTo(), queryDto.getFrom(), queryDto.getAmount());
         return ResponseEntity.ok(convertResponse);
     }
 
@@ -78,8 +79,8 @@ public class CurrencyController {
     @Operation(summary = "Add new currency")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "201", description = "Successfully added"),
-                    @ApiResponse(responseCode = "404", description = "Currency does not exist")
+                @ApiResponse(responseCode = "201", description = "Successfully added"),
+                @ApiResponse(responseCode = "404", description = "Currency does not exist")
             })
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
@@ -91,8 +92,8 @@ public class CurrencyController {
     @Operation(summary = "Find all existing currencies")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Successfully find"),
-                    @ApiResponse(responseCode = "404", description = "Currency does not exist")
+                @ApiResponse(responseCode = "200", description = "Successfully find"),
+                @ApiResponse(responseCode = "404", description = "Currency does not exist")
             })
     @GetMapping()
     @SneakyThrows
@@ -104,51 +105,47 @@ public class CurrencyController {
     @Operation(summary = "Get currency information by currency id")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Successfully find"),
-                    @ApiResponse(responseCode = "404", description = "Currency does not exist")
+                @ApiResponse(responseCode = "200", description = "Successfully find"),
+                @ApiResponse(responseCode = "404", description = "Currency does not exist")
             })
     @GetMapping("/{currencyId}")
     @SneakyThrows
     public ResponseEntity<FullCurrencyInfoDto> findCurrencyById(@PathVariable("currencyId") Long currencyId) {
         Currency currency = currencyService.getCurrencyById(currencyId);
         CurrencyDto currencyDto = objectMapper.readValue(currency.getCurrency().toString(), CurrencyDto.class);
-        return ResponseEntity.ok(
-                FullCurrencyInfoDto.builder()
-                        .id(currency.getId())
-                        .currency(currencyDto)
-                        .build());
+        return ResponseEntity.ok(FullCurrencyInfoDto.builder()
+                .id(currency.getId())
+                .currency(currencyDto)
+                .build());
     }
 
     @Operation(summary = "Update currency info in database")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "202", description = "Successfully updated"),
-                    @ApiResponse(responseCode = "404", description = "Currency does not exist")
+                @ApiResponse(responseCode = "202", description = "Successfully updated"),
+                @ApiResponse(responseCode = "404", description = "Currency does not exist")
             })
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PutMapping("/{currencyId}")
-    public void updateCurrency(@PathVariable("currencyId") Long currencyId,
-                               @RequestBody @Valid CurrencyDto updateCurrencyDto) {
+    public void updateCurrency(
+            @PathVariable("currencyId") Long currencyId, @RequestBody @Valid CurrencyDto updateCurrencyDto) {
         if (updateCurrencyDto.getCurrencyValue() == null) {
-            currencyService.updateCurrency(currencyId, updateCurrencyDto.getCurrencyKey()
-            );
+            currencyService.updateCurrency(currencyId, updateCurrencyDto.getCurrencyKey());
         }
-        currencyService.updateCurrency(currencyId, updateCurrencyDto.getCurrencyKey(),
-                updateCurrencyDto.getCurrencyValue()
-        );
+        currencyService.updateCurrency(
+                currencyId, updateCurrencyDto.getCurrencyKey(), updateCurrencyDto.getCurrencyValue());
     }
 
     @Hidden
     @Operation(summary = "Delete a currency from database")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "202", description = "Successfully deleted"),
-                    @ApiResponse(responseCode = "404", description = "Currency does not exist")
+                @ApiResponse(responseCode = "202", description = "Successfully deleted"),
+                @ApiResponse(responseCode = "404", description = "Currency does not exist")
             })
     @DeleteMapping("/{currencyId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void deleteCurrency(@PathVariable("currencyId") Long currencyId) {
         currencyService.deleteCurrency(currencyId);
     }
-
 }

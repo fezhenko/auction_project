@@ -1,10 +1,10 @@
 package org.example.usersservice.dto.users;
 
+import java.util.Date;
+
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
-
-import java.util.Date;
 
 @Value
 @Builder

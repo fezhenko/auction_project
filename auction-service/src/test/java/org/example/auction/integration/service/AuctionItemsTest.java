@@ -1,5 +1,7 @@
 package org.example.auction.integration.service;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import org.example.auction.dto.auction.CreateAuctionDto;
 import org.example.auction.model.Auction;
@@ -9,17 +11,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("replaced by a Testcontainers test in change testcontainers-postgres")
 @ExtendWith(SpringExtension.class)
@@ -31,7 +29,7 @@ public class AuctionItemsTest {
 
     @BeforeEach()
     public void createNewAuction() {
-        //create an auction
+        // create an auction
         createAuctionBySellerId = CreateAuctionDto.builder().sellerId(777_777L).build();
     }
 
@@ -43,10 +41,10 @@ public class AuctionItemsTest {
     @Test
     @DisplayName("check auction can be created by seller id")
     public void testCreateAuctionHappyPath() {
-        //test creating auction
+        // test creating auction
         auctionService.createAuction(createAuctionBySellerId);
         List<Auction> auctions = auctionService.findAuctionsBySellerId(createAuctionBySellerId.getSellerId());
-        //verify the creation
+        // verify the creation
         auctions.forEach(auction -> {
             assertNotNull(auction);
             assertNotNull(auction.getAuctionId());

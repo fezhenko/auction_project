@@ -45,9 +45,7 @@ public class ItemService {
         itemRepository.createItem(item.getOwnerId(), item.getPrice(), item.getDescription());
     }
 
-    public void updateItem(
-        Long id, String description, String itemStatus, Double price, Long itemCategory
-    ) {
+    public void updateItem(Long id, String description, String itemStatus, Double price, Long itemCategory) {
         Item item = itemRepository.findItemById(id);
         Category category = categoryRepository.findCategoryById(itemCategory);
         if (item == null) {

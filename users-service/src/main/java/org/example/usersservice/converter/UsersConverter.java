@@ -1,13 +1,14 @@
 package org.example.usersservice.converter;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.example.usersservice.dto.users.AppUserDto;
 import org.example.usersservice.dto.users.UserPaymentsDto;
 import org.example.usersservice.model.AppUser;
 import org.example.usersservice.model.Payment;
 import org.mapstruct.Mapper;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @Mapper
 public interface UsersConverter {
@@ -19,5 +20,4 @@ public interface UsersConverter {
     List<UserPaymentsDto> paymentsToDto(@Valid List<Payment> payments);
 
     UserPaymentsDto paymentsToDto(@Valid Payment payments);
-
 }

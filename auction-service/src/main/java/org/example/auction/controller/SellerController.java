@@ -2,12 +2,13 @@ package org.example.auction.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.auction.converter.SellerConverter;
 import org.example.auction.dto.seller.CreateSellerDto;
@@ -38,8 +39,8 @@ public class SellerController {
     @Operation(summary = "find all existed sellers")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "List of sellers"),
-                    @ApiResponse(responseCode = "204", description = "No content")
+                @ApiResponse(responseCode = "200", description = "List of sellers"),
+                @ApiResponse(responseCode = "204", description = "No content")
             })
     public ResponseEntity<List<SellerDto>> findAllSellers() {
         List<Seller> sellers = sellerService.findAllSellers();
@@ -52,8 +53,8 @@ public class SellerController {
     @Operation(summary = "find user by id")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "List of sellers"),
-                    @ApiResponse(responseCode = "204", description = "No content")
+                @ApiResponse(responseCode = "200", description = "List of sellers"),
+                @ApiResponse(responseCode = "204", description = "No content")
             })
     @GetMapping("/{sellerId}")
     public ResponseEntity<SellerDto> findUserById(@PathVariable("sellerId") Long id) {
@@ -67,8 +68,8 @@ public class SellerController {
     @Operation(summary = "Create new seller, also new auction automatically created")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "201", description = "Seller created"),
-                    @ApiResponse(responseCode = "400")
+                @ApiResponse(responseCode = "201", description = "Seller created"),
+                @ApiResponse(responseCode = "400")
             })
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
@@ -80,8 +81,8 @@ public class SellerController {
     @Operation(summary = "Delete a seller")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "202", description = "Seller deleted"),
-                    @ApiResponse(responseCode = "204", description = "User with 'id' does not exist")
+                @ApiResponse(responseCode = "202", description = "Seller deleted"),
+                @ApiResponse(responseCode = "204", description = "User with 'id' does not exist")
             })
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping("/{sellerId}")

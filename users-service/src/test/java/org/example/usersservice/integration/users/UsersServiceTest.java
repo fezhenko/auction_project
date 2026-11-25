@@ -1,5 +1,9 @@
 package org.example.usersservice.integration.users;
 
+import java.sql.Date;
+import java.time.Clock;
+import java.time.LocalDate;
+
 import lombok.val;
 import org.example.usersservice.dto.users.AppUserDto;
 import org.example.usersservice.dto.users.UpdateBalanceResultDto;
@@ -13,12 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Date;
-import java.time.Clock;
-import java.time.LocalDate;
-
 import static org.assertj.core.api.Assertions.assertThat;
-
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = UsersServiceTestConfig.class)
@@ -46,7 +45,8 @@ class UsersServiceTest {
         Double price = 500d;
         Mockito.doReturn(1000d).when(userRepository).findBalanceByUserId(appUserDto.getId());
         Mockito.doReturn(appUserDto.getBalance() + price)
-                .when(userRepository).updateUserBalanceAfterAuctionFinish(appUserDto.getId(), appUserDto.getBalance());
+                .when(userRepository)
+                .updateUserBalanceAfterAuctionFinish(appUserDto.getId(), appUserDto.getBalance());
 
         val actualResult = usersService.updateUserBalance(appUserDto.getId(), userType, price);
         val expectedResult = UpdateBalanceResultDto.builder().balance(1500d).build();

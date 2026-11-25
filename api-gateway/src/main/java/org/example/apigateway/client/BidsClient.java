@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient(name = "bids-service", url = "${services.auction-service.url}/api/v1/bids")
 public interface BidsClient {
 
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
+    @RequestMapping(
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     void makeBidToAuction(CreateBidDtoWithUserEmail createBidDtoWithUserEmail);
 }

@@ -1,5 +1,10 @@
 package org.example.usersservice.unit.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.SneakyThrows;
 import org.example.usersservice.converter.UsersConverter;
 import org.example.usersservice.dto.users.AppUserDto;
@@ -10,11 +15,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class UsersConverterTest {
 
@@ -39,8 +39,7 @@ public class UsersConverterTest {
                                 .balance(user.getBalance())
                                 .phoneNumber(user.getPhoneNumber())
                                 .createdAt(user.getCreatedAt())
-                                .build()
-                        )
+                                .build())
                         .collect(Collectors.toList());
             }
 
@@ -80,19 +79,17 @@ public class UsersConverterTest {
                 "USER",
                 100D,
                 "1234567890",
-                new Date(3000)
-        );
-        appUserDto =
-                AppUserDto.builder()
-                        .id(123123L)
-                        .firstname("firstName")
-                        .lastname("lastName")
-                        .email("email@test.test")
-                        .role("USER")
-                        .balance(100D)
-                        .phoneNumber("1234567890")
-                        .createdAt(new Date(3000))
-                        .build();
+                new Date(3000));
+        appUserDto = AppUserDto.builder()
+                .id(123123L)
+                .firstname("firstName")
+                .lastname("lastName")
+                .email("email@test.test")
+                .role("USER")
+                .balance(100D)
+                .phoneNumber("1234567890")
+                .createdAt(new Date(3000))
+                .build();
         appUsersList.add(appUser);
         appUsersDtoList.add(appUserDto);
     }
@@ -110,5 +107,4 @@ public class UsersConverterTest {
     public void testConvertingFromListAppUserToAppUserDto() {
         Assertions.assertEquals(appUsersDtoList, usersConverter.toDto(appUsersList));
     }
-
 }

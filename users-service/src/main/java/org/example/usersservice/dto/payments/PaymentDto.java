@@ -1,10 +1,11 @@
 package org.example.usersservice.dto.payments;
 
-import lombok.Builder;
-import lombok.Value;
+import java.util.Date;
 
 import javax.validation.constraints.DecimalMin;
-import java.util.Date;
+
+import lombok.Builder;
+import lombok.Value;
 
 @Value
 @Builder
@@ -14,8 +15,9 @@ public class PaymentDto {
     Long userId;
     String cardNumber;
     String expirationDate;
+
     @DecimalMin(value = "0.001", message = "Please enter a valid amount more than 0")
     Double amount;
-    Date paymentDate;
 
+    Date paymentDate;
 }

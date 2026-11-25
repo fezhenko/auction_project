@@ -9,5 +9,6 @@ import org.mapstruct.Mapper;
 @Mapper
 public interface BidConverter {
     List<BidDto> toDto(List<Bid> bids);
+
     BidDto toDto(Bid bid);
 }

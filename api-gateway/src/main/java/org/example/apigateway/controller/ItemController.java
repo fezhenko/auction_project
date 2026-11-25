@@ -23,10 +23,9 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private void createItem(
-            @RequestBody @Valid CreateItemDto createItemDto
-    ) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private void createItem(@RequestBody @Valid CreateItemDto createItemDto) {
+        User user =
+                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         itemService.createItem(user, createItemDto);
     }
 }

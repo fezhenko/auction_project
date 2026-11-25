@@ -25,6 +25,7 @@ public class ItemServiceTest {
 
     @Mock
     private ItemRepository itemRepository;
+
     @InjectMocks
     private ItemService itemService;
 
@@ -38,7 +39,7 @@ public class ItemServiceTest {
 
         // then
         verify(itemRepository, times(1))
-            .createItem(eq(createItem.getOwnerId()), eq(createItem.getPrice()), eq(createItem.getDescription()));
+                .createItem(eq(createItem.getOwnerId()), eq(createItem.getPrice()), eq(createItem.getDescription()));
     }
 
     @Test
@@ -50,42 +51,50 @@ public class ItemServiceTest {
         itemService.createItem(createItem);
 
         // then
-        verify(itemRepository, times(1))
-            .createItem(eq(createItem.getOwnerId()), eq(createItem.getPrice()));
+        verify(itemRepository, times(1)).createItem(eq(createItem.getOwnerId()), eq(createItem.getPrice()));
     }
 
     @Test
     public void shouldThrowDatabaseException() {
         // given
         CreateItemDto createItem = generateCreateItemDto();
-        Mockito.doThrow(new RuntimeException("Database is down")).when(itemRepository)
-            .findItemById(createItem.getOwnerId());
+        Mockito.doThrow(new RuntimeException("Database is down"))
+                .when(itemRepository)
+                .findItemById(createItem.getOwnerId());
 
-        //then
-        assertThrows(RuntimeException.class, () -> itemService.findItemById(createItem.getOwnerId()),
-            "Database is down");
+        // then
+        assertThrows(
+                RuntimeException.class, () -> itemService.findItemById(createItem.getOwnerId()), "Database is down");
     }
 
     private CreateItemDto generateCreateItemDto() {
-        return CreateItemDto.builder().ownerId(777L).price(1000D).description("test").build();
+        return CreateItemDto.builder()
+                .ownerId(777L)
+                .price(1000D)
+                .description("test")
+                .build();
     }
 
     private CreateItemDto generateCreateItemDtoWithoutDescription() {
-        return CreateItemDto.builder().ownerId(777L).price(1000D).description(null).build();
+        return CreateItemDto.builder()
+                .ownerId(777L)
+                .price(1000D)
+                .description(null)
+                .build();
     }
 
     private Item generateItem(long ownedId, double price, String description) {
         return Item.builder()
-            .id(998L)
-            .description(description)
-            .price(price)
-            .currency(3L)
-            .currencyDesc("USD")
-            .itemCategory(1L)
-            .categoryName("cat name")
-            .itemState("ON_SOLD")
-            .createdAt(Date.valueOf(LocalDate.now(Clock.systemUTC())))
-            .ownerId(ownedId)
-            .build();
+                .id(998L)
+                .description(description)
+                .price(price)
+                .currency(3L)
+                .currencyDesc("USD")
+                .itemCategory(1L)
+                .categoryName("cat name")
+                .itemState("ON_SOLD")
+                .createdAt(Date.valueOf(LocalDate.now(Clock.systemUTC())))
+                .ownerId(ownedId)
+                .build();
     }
 }
