@@ -27,7 +27,7 @@
 
 ## 5. CI (one commit)
 
-- [ ] 5.1 Rewrite `.github/workflows/ci.yml`: current major versions of `actions/checkout` and `actions/setup-java`, `distribution: temurin`, `java-version: 17`, `cache: maven`, a separate "Check formatting" step that runs `./mvnw -B spotless:check` before the build, and run `./mvnw -B clean verify`. Keep the `push` (main), `pull_request` (main) and `workflow_dispatch` triggers.
+- [x] 5.1 Rewrite `.github/workflows/ci.yml`: current major versions of `actions/checkout` and `actions/setup-java`, `distribution: temurin`, `java-version: 17`, `cache: maven`, a separate "Check formatting" step that runs `./mvnw -B spotless:check` before the build, and run `./mvnw -B clean verify`. Keep the `push` (main), `pull_request` (main) and `workflow_dispatch` triggers.
 - [ ] 5.2 Verify `./mvnw clean verify` is green locally, then commit. After the branch is pushed, verify that `gh workflow run ci.yml --ref modernize/java21-boot-kafka` finishes green (the first green CI run).
 
 ## 6. README matches the code (one commit)
