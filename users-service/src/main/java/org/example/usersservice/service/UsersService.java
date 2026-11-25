@@ -107,6 +107,10 @@ public class UsersService {
                 usersRepository.updateUserBalanceAfterAuctionFinish(id, newBalance);
                 break;
             }
+            default: {
+                log.warn("unknown user type '{}', balance of user id:'{}' is not changed", userType, id);
+                break;
+            }
         }
         return UpdateBalanceResultDto.builder().balance(newBalance).build();
     }

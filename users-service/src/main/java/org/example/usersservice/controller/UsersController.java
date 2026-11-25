@@ -61,9 +61,6 @@ public class UsersController {
     @PostMapping("/verify")
     public ResponseEntity<UserVerificationDto> verifyUser(@RequestBody @Valid CredentialsDto credentials) {
         UserVerificationDto userVerificationDto = usersService.verifyUser(credentials.getEmail());
-        if (userVerificationDto == null) {
-            return ResponseEntity.badRequest().build();
-        }
         return ResponseEntity.ok(userVerificationDto);
     }
 

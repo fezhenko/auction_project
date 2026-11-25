@@ -1,9 +1,7 @@
 <FindBugsFilter>
+	<!-- One comma-separated list: a bug is reported when it is in ANY of these categories.
+	     Separate <Bug> elements inside one <Match> are ANDed and would match nothing. -->
 	<Match>
-		<Bug category="SECURITY"/>
-		<Bug category="BAD_PRACTICE"/>
-		<Bug category="STYLE"/>
-		<Bug category="NOISE"/>
-		<Bug category="EXPERIMENTAL"/>
+		<Bug category="SECURITY,BAD_PRACTICE,STYLE,NOISE,EXPERIMENTAL"/>
 	</Match>
 </FindBugsFilter>

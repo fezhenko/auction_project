@@ -33,7 +33,7 @@ public class AuctionService {
                     CreateSellerDto.builder().email(user.getUsername()).build();
             SellerDto seller = sellerClient.createNewSeller(createSellerRequest);
             return auctionsClient.createAuction(seller.getSellerId());
-        } catch (Exception exception) {
+        } catch (RuntimeException exception) {
             throw new CreateAuctionException("Auction creation fails, please try again later");
         }
     }
