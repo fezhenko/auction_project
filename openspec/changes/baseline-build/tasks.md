@@ -28,7 +28,7 @@
 ## 5. CI (one commit)
 
 - [x] 5.1 Rewrite `.github/workflows/ci.yml`: current major versions of `actions/checkout` and `actions/setup-java`, `distribution: temurin`, `java-version: 17`, `cache: maven`, a separate "Check formatting" step that runs `./mvnw -B spotless:check` before the build, and run `./mvnw -B clean verify`. Keep the `push` (main), `pull_request` (main) and `workflow_dispatch` triggers.
-- [ ] 5.2 Verify `./mvnw clean verify` is green locally, then commit. After the branch is pushed, verify that `gh workflow run ci.yml --ref modernize/java21-boot-kafka` finishes green (the first green CI run).
+- [x] 5.2 Verify `./mvnw clean verify` is green locally, then commit. After the branch is pushed, verify that `gh workflow run ci.yml --ref modernize/java21-boot-kafka` finishes green (the first green CI run). Done: the branch was force-pushed with a lease (owner-approved) over a parallel baseline line, and dispatched run [45523564488](https://github.com/fezhenko/auction_project/actions/runs/45523564488) on `a004893` (same tree as `05c63e3` after the branch was replayed onto main) passed: Check formatting and Build and verify are green.
 
 ## 6. README matches the code (one commit)
 
@@ -41,3 +41,10 @@
   - Point to the changes that fix each item.
   Verify: every README sentence about behavior matches the code paths in `AuctionService` (gateway and auction-service) and `UsersService`.
 - [x] 6.2 Verify `./mvnw clean verify` is green, then commit.
+
+## 7. Ported from the parallel baseline line (two commits)
+
+A parallel baseline-build line (`7e93a09`..`40a039f`) was pushed to the branch and then replaced at the owner's decision (not kept on any branch; the hashes are for the record). These parts of it were worth keeping.
+
+- [x] 7.1 Give `spring-boot-starter-test` the `test` scope in all three modules (from `7e93a09`). Verify: `dependency:tree` shows it as `test`, and no test library is on a runtime classpath. Done in `5cd3702`.
+- [x] 7.2 README: link each known limitation to its proposal, describe the start and finish jobs precisely, mention the read-only settlement transaction and the disabled `AuctionItemsTest` (from `40a039f`). Done in `05c63e3`.
