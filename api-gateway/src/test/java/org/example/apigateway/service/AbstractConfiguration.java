@@ -1,12 +1,10 @@
 package org.example.apigateway.service;
 
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -19,7 +17,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  * on the same port, while a cached context would keep Feign's pooled keep-alive connections to the stopped server.
  * The next class would then fail its first request with NoHttpResponseException.
  */
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(
         webEnvironment = RANDOM_PORT,
         properties = {

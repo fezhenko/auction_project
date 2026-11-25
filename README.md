@@ -29,7 +29,7 @@ Each data service owns its own PostgreSQL database. Their schemas are versioned 
 
 ## Tech stack
 
-- Java 21, Spring Boot 2.7, Spring Security, Spring Data JDBC, Spring Cloud OpenFeign
+- Java 21, Spring Boot 3.5, Spring Security 6, Spring Data JDBC, Spring Cloud OpenFeign
 - PostgreSQL 13, Flyway
 - JWT (jjwt), BCrypt
 - MapStruct, Lombok, springdoc-openapi (Swagger UI)
@@ -91,7 +91,7 @@ The fixes are planned as OpenSpec changes in [`openspec/changes/`](openspec/chan
 
 ## Roadmap
 
-- Upgrade to Spring Boot 4.2, through Spring Boot 3.5
+- Upgrade to Spring Boot 4.2
 - Replace the balance-settlement Feign call with Kafka events
 - Integration tests with Testcontainers
 - Dockerfiles and a single-command `docker compose` setup for the whole system

@@ -21,7 +21,17 @@ Deviations from brief: the brief named Boot 3.x as the target. Here 3.5 is only 
 ## Non-goals
 
 - No Boot 4, Jackson 3 or jjwt change.
-- No change to HTTP routes, security rules or JSON shapes.
+- No change to HTTP routes, security rules or JSON shapes, apart from trailing-slash matching and error bodies (below).
+
+## Known behavior changes
+
+Accepted by the owner on 2026-11-25. All come from new defaults in Spring Boot 3 and Spring Framework 6.
+
+- Spring Framework 6 no longer matches a trailing slash, so `GET /api/v1/auctions/` returns 404 in all three services. No Feign client or test uses a trailing slash.
+- Log timestamps use the ISO-8601 default, `yyyy-MM-dd'T'HH:mm:ss.SSSXXX`.
+- Actuator `/env` and `/configprops` mask every value.
+- api-gateway and auction-service answer framework errors with an RFC 9457 ProblemDetail body (`type`, `title`, `status`, `detail`, `instance`), because their exception handlers extend `ResponseEntityExceptionHandler`. Malformed JSON (400), a wrong method (405) and a wrong media type (415) used to return an empty body. An unknown path (404) used to return Boot's `timestamp`/`status`/`error`/`path` JSON; Spring 6.1 now raises `NoResourceFoundException` for it, which the handlers answer. Status codes don't change. users-service and Spring Security's 403 keep their bodies.
+- Feign keeps a pooled Apache HttpClient, now version 5 through `feign-hc5`, because Spring Cloud OpenFeign 4 dropped HttpClient 4. Without it, Feign would fall back to the JDK client.
 
 ## Capabilities
 

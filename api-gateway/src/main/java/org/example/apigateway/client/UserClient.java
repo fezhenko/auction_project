@@ -2,30 +2,29 @@ package org.example.apigateway.client;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
+import jakarta.validation.Valid;
 import org.example.apigateway.client.dto.AppUserDto;
 import org.example.apigateway.client.dto.CredentialsDto;
 import org.example.apigateway.client.dto.UserVerificationDto;
 import org.example.apigateway.dto.CreateUserDto;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "users-service", url = "${services.users-service.url}/api/v1/users")
 public interface UserClient {
 
-    @RequestMapping(method = RequestMethod.POST, value = "/verify")
+    @PostMapping("/verify")
     UserVerificationDto verifyUserByCredentials(@RequestBody @Valid CredentialsDto credentials);
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     void createUser(@RequestBody @Valid CreateUserDto userWithEncodedPassword);
 
-    @RequestMapping(method = RequestMethod.GET, value = "/validate")
+    @GetMapping("/validate")
     AppUserDto findUserByEmail(@RequestParam(value = "email") String email);
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     List<AppUserDto> findAllUsers();
 }

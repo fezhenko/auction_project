@@ -2,8 +2,7 @@ package org.example.usersservice.dto.payments;
 
 import java.util.Date;
 
-import javax.validation.constraints.DecimalMin;
-
+import jakarta.validation.constraints.DecimalMin;
 import lombok.Builder;
 import lombok.Value;
 

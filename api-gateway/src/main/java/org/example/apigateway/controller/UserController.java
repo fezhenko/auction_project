@@ -2,11 +2,10 @@ package org.example.apigateway.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.apigateway.client.dto.AppUserDto;

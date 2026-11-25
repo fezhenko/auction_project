@@ -2,8 +2,7 @@ package org.example.usersservice.dto.users;
 
 import java.util.Date;
 
-import javax.validation.constraints.Pattern;
-
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Value;
 

@@ -7,8 +7,8 @@
 
 ## 2. Boot 4.0.x through OpenRewrite (one commit)
 
-- [ ] 2.1 Run `org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0` once, and pin Boot 4.0.x with Spring Cloud 2025.1.x. Add a root `lombok.config` with `lombok.jacksonized.jacksonVersion += 3`. Verify: `./mvnw -q compile` succeeds with no Lombok Jackson-version warnings.
-- [ ] 2.2 Update the Security 7 configuration so the access-rule test from `java21-boot35` passes unchanged. Move springdoc to the 3.x line for Boot 4.0. Verify: the access-rule test, the JSON tests from 1.1 and a `/v3/api-docs` context test pass.
+- [ ] 2.1 Run `org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0` once, and pin Boot 4.0.x with Spring Cloud 2025.1.x. Add a root `lombok.config` with `lombok.jacksonized.jacksonVersion += 3`. Verify: `./mvnw -q compile` succeeds with no Lombok Jackson-version warnings. Note from java21-boot35: the root `lombok.config` already exists with `lombok.jacksonized.jacksonVersion += 2`, because jackson-annotations 2.20+ is shared by Jackson 2 and 3; add `+= 3` to it. Per the Boot 4.0 migration guide, also add `spring-boot-properties-migrator` (runtime) for this step and remove it before the commit. The guide's modular starters replace `spring-boot-starter-web` with `spring-boot-starter-webmvc` and want the technology test starters (`spring-boot-starter-webmvc-test`, `spring-boot-starter-security-test` and so on) instead of `spring-boot-starter-test`.
+- [ ] 2.2 Update the Security 7 configuration so the access-rule test from `java21-boot35` passes unchanged. Move springdoc to the 3.x line for Boot 4.0. Verify: the access-rule test, the JSON tests from 1.1 and a `/v3/api-docs` context test pass. Note from java21-boot35: Boot 4 no longer provides `TestRestTemplate` from `@SpringBootTest`. The container rows in `SecurityConfigAccessTest` need `@AutoConfigureTestRestTemplate` and the test-scoped `spring-boot-resttestclient`; put the annotation on the gateway `AbstractConfiguration` so the test itself stays unchanged. The service `OpenApiDocsTest` slices import springdoc's auto-configuration classes by name; check those names on springdoc 3. `@MockBean` is already replaced by `@MockitoBean`.
 - [ ] 2.3 Verify `./mvnw clean verify` is green, then commit.
 
 ## 3. Boot 4.2.0 and Spring Cloud 2026.0.0 (one commit)
@@ -29,7 +29,7 @@
 
 ## 5. Actuator exposure (one commit)
 
-- [ ] 5.1 Set `management.endpoints.web.exposure.include: health,info`, `endpoint.health.show-details: never` and `show-components: never` in all three services. Verify: for auction-service and users-service, a test where `/actuator/health` and `/actuator/info` return 200, `/actuator/env` returns 404, and the health body has no `components`.
+- [ ] 5.1 Set `management.endpoints.web.exposure.include: health,info`, `endpoint.health.show-details: never` and `show-components: never` in all three services. Verify: for auction-service and users-service, a test where `/actuator/health` and `/actuator/info` return 200, `/actuator/env` returns 404, and the health body has no `components`. Note from the Boot 4.0 migration guide: liveness and readiness probes are on by default, so `/actuator/health` also exposes the `liveness` and `readiness` groups; decide whether they stay.
 - [ ] 5.2 Permit anonymous `GET /actuator/health` and `/actuator/info` in the gateway security chain. Verify:
   - the access-rule test (from `java21-boot35`) gains rows: anonymous health → 200, anonymous info → 200, anonymous `GET /api/v1/auctions` → rejected;
   - gateway tests where `/actuator/env` and `/actuator/heapdump` with an ADMIN token → 404.
