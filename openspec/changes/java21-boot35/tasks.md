@@ -2,9 +2,9 @@
 
 ## 1. Security behavior safety net (one commit)
 
-- [ ] 1.1 Add an api-gateway test for the current access rules: anonymous, USER and ADMIN requests against `/api/v1/auth`, `/api/v1/users/**`, `/api/v1/bids/**` and `/swagger-ui/index.html`, asserting today's allow or deny outcome for each. Verify: the test passes on Boot 2.7.18.
-- [ ] 1.2 Add an api-gateway test that issues a token through the login flow and gets it accepted by `JwtFilter`. Verify: the test passes.
-- [ ] 1.3 Verify `./mvnw clean verify` is green on JDK 17, then commit.
+- [x] 1.1 Add an api-gateway test for the current access rules: anonymous, USER and ADMIN requests against `/api/v1/auth`, `/api/v1/users/**`, `/api/v1/bids/**` and `/swagger-ui/index.html`, asserting today's allow or deny outcome for each. Verify: the test passes on Boot 2.7.18.
+- [x] 1.2 Add an api-gateway test that issues a token through the login flow and gets it accepted by `JwtFilter`. Verify: the test passes.
+- [x] 1.3 Verify `./mvnw clean verify` is green on JDK 17, then commit.
 
 ## 2. Java 21 and current quality tools on Boot 2.7.18 (one commit)
 
@@ -16,7 +16,7 @@
 
 ## 3. Boot 3.5.16, jakarta, Security 6, springdoc 2 (one commit)
 
-- [ ] 3.1 Run OpenRewrite `UpgradeSpringBoot_3_5` once, keeping `javax.xml.bind` for jjwt 0.9.1. Switch the BOMs to Boot 3.5.16 and Spring Cloud 2025.0.x. Verify: `grep -rE 'import javax\.(servlet|validation|annotation)'` over `*/src` returns nothing.
-- [ ] 3.2 Rewrite `SecurityConfig` with the lambda DSL and `requestMatchers`, keeping the same rules. Verify: the access-rule test from 1.1 passes unchanged.
+- [ ] 3.1 Run OpenRewrite `UpgradeSpringBoot_3_5` once, keeping `javax.xml.bind` for jjwt 0.9.1. Switch the BOMs to Boot 3.5.16 and Spring Cloud 2025.0.x. Verify: `grep -rE 'import javax\.(servlet|validation|annotation)'` over `*/src` returns nothing. Note from section 1: jjwt 0.9.1 needs `javax.xml.bind.DatatypeConverter`, which reaches the gateway today only through springdoc-openapi-ui 1.6.9 → swagger-core 2.2.0 → `jakarta.xml.bind-api` 2.3.3. springdoc 2 drops it, so add `javax.xml.bind:jaxb-api` to the gateway explicitly. Do not pin `jakarta.xml.bind:jakarta.xml.bind-api` to 2.3.3, because Boot 3.5 manages it at 4.x for the `jakarta.*` packages. `JwtFilterLoginFlowTest` fails if this is missing. If Feign moves off Apache HttpClient 4 here, keep `@DirtiesContext` on the gateway `AbstractConfiguration` unless an A/B run shows the stale-connection failure is gone.
+- [ ] 3.2 Rewrite `SecurityConfig` with the lambda DSL and `requestMatchers`, keeping the same rules. Verify: the access-rule test from 1.1 passes unchanged. Note from section 1: Security 6 authorizes the ERROR dispatch, which Security 5 skipped. A 403 or 404 keeps its status in Tomcat only if the /error dispatch is permitted (for example `dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()`) or the caller is authenticated again there, which `JwtFilter` (a `GenericFilterBean`) does today. The container rows in `SecurityConfigAccessTest` guard this. Do not turn `JwtFilter` into a `OncePerRequestFilter` without them green. Known and out of scope: Boot also registers `JwtFilter` as a servlet filter, so each request looks the user up in users-service twice.
 - [ ] 3.3 Replace `springdoc-openapi-ui` with `springdoc-openapi-starter-webmvc-ui` 2.x. Verify: a context test confirms `/v3/api-docs` is served in each service.
 - [ ] 3.4 Verify that the token test from 1.2 passes and `./mvnw clean verify` is green on JDK 21, then commit.

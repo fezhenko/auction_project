@@ -1,0 +1,11 @@
+{
+  "id": 2,
+  "firstname": "Test",
+  "lastname": "User",
+  "email": "user@auction.test",
+  "password": "$2a$10$aqmzCLUwQL2zP80p0RU9f.2kAFif/C6g9Yoxii2yzBUPj1SAICaIO",
+  "role": "USER",
+  "balance": 500.0,
+  "phoneNumber": "+48500100200",
+  "createdAt": "2026-11-21T09:30:00.000+00:00"
+}
