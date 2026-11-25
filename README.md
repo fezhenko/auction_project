@@ -35,6 +35,7 @@ Each data service owns its own PostgreSQL database. Their schemas are versioned 
 - MapStruct, Lombok, springdoc-openapi (Swagger UI)
 - JUnit 5, Mockito, Spring Boot Test
 - Checkstyle, PMD and SpotBugs, which fail the Maven build on violations
+- Spotless with palantir-java-format, which fails the build on unformatted Java
 - Docker Compose for the databases, plus a GitHub Actions workflow that runs `mvn clean verify`
 
 ## Running locally
@@ -70,6 +71,12 @@ Requirements: JDK 17, Maven 3.8+, Docker.
    ```
 
 Each service serves Swagger UI at `/swagger-ui/index.html`. On the gateway, that path requires an ADMIN JWT.
+
+## Development
+
+- Format before every commit: `./mvnw spotless:apply`. Unformatted Java fails `./mvnw verify` at `validate`, locally and in CI.
+- Optional pre-commit hook, once per clone: `git config core.hooksPath .githooks`. It formats your staged Java files and stops the commit if it changed any of them, so you can review and `git add` the result.
+- `git config blame.ignoreRevsFile .git-blame-ignore-revs` makes local `git blame` skip the one-time reformat. GitHub does this automatically.
 
 ## Known limitations
 

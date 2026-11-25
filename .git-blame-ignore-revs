@@ -1,0 +1,5 @@
+# Format-only commits, skipped by git blame. GitHub reads this file automatically.
+# Locally, once per clone: git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# style: reformat Java sources with Spotless and palantir-java-format
+68ed1ceb07d7f5a20b78ea1d5b5ed8d466e7da8f
