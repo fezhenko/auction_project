@@ -8,11 +8,11 @@
 
 ## 2. Java 21 and current quality tools on Boot 2.7.18 (one commit)
 
-- [ ] 2.1 Set `maven.compiler.release` to 21. Remove the hard-coded `<source>/<target>` 17 from the compiler plugin. Move Lombok to ≥ 1.18.34 and MapStruct to 1.6.3. Verify: `./mvnw -q compile` succeeds on JDK 21. Note from baseline-build: the Boot 2.7.18 BOM manages byte-buddy 1.12.23, which knows class files only up to Java 20, so Mockito mocks will likely fail on JDK 21. Add `net.bytebuddy:byte-buddy` and `byte-buddy-agent` ≥ 1.14 to dependency management here, and drop them in section 3 once Boot 3.5 manages a newer version.
-- [ ] 2.2 Move to SpotBugs 4.10.x, PMD 7.x through a current `maven-pmd-plugin`, and current Checkstyle through a current `maven-checkstyle-plugin`. Re-check the versions at apply time. Verify: each plugin runs on JDK 21 without a configuration error.
-- [ ] 2.3 Migrate the rules PMD 7 renamed in `codequality/pmd-ruleset.xml`, keeping the same priorities. Verify: PMD loads the ruleset with no "rule not found" warnings.
-- [ ] 2.4 Fix every new Checkstyle, PMD and SpotBugs violation in code, without editing thresholds or excluding rules. Verify: the quality plugins pass. Note from baseline-build: Spotless (palantir-java-format) owns layout, and palantir has no layout options. If the newer Checkstyle flags palantir output (for example `Indentation` on lambdas, switch expressions or records), stop and ask the owner whether to align those checks with the formatter. Do not loosen them silently.
-- [ ] 2.5 Set the CI `java-version` to 21. Verify `./mvnw clean verify` is green on JDK 21, then commit.
+- [x] 2.1 Set `maven.compiler.release` to 21. Remove the hard-coded `<source>/<target>` 17 from the compiler plugin. Move Lombok to ≥ 1.18.34 and MapStruct to 1.6.3. Verify: `./mvnw -q compile` succeeds on JDK 21. Note from baseline-build: the Boot 2.7.18 BOM manages byte-buddy 1.12.23, which knows class files only up to Java 20, so Mockito mocks will likely fail on JDK 21. Add `net.bytebuddy:byte-buddy` and `byte-buddy-agent` ≥ 1.14 to dependency management here, and drop them in section 3 once Boot 3.5 manages a newer version.
+- [x] 2.2 Move to SpotBugs 4.10.x, PMD 7.x through a current `maven-pmd-plugin`, and current Checkstyle through a current `maven-checkstyle-plugin`. Re-check the versions at apply time. Verify: each plugin runs on JDK 21 without a configuration error.
+- [x] 2.3 Migrate the rules PMD 7 renamed in `codequality/pmd-ruleset.xml`, keeping the same priorities. Verify: PMD loads the ruleset with no "rule not found" warnings.
+- [x] 2.4 Fix every new Checkstyle, PMD and SpotBugs violation in code, without editing thresholds or excluding rules. Verify: the quality plugins pass. Note from baseline-build: Spotless (palantir-java-format) owns layout, and palantir has no layout options. If the newer Checkstyle flags palantir output (for example `Indentation` on lambdas, switch expressions or records), stop and ask the owner whether to align those checks with the formatter. Do not loosen them silently.
+- [x] 2.5 Set the CI `java-version` to 21. Verify `./mvnw clean verify` is green on JDK 21, then commit.
 
 ## 3. Boot 3.5.16, jakarta, Security 6, springdoc 2 (one commit)
 

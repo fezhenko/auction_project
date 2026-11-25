@@ -126,14 +126,14 @@ public class AuctionController {
 
     @PostMapping("/{auctionId}/item")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    private void updateAuctionItem(
+    void updateAuctionItem(
             @PathVariable("auctionId") Long auctionId, @RequestBody @Valid AddItemToAuctionDto itemToAuctionDto) {
         auctionService.addItemToAuction(auctionId, itemToAuctionDto);
     }
 
     @PatchMapping("/{auctionId}/item")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    private void updateAuctionItem(
+    void updateAuctionItem(
             @PathVariable("auctionId") Long auctionId, @RequestBody @Valid UpdateAuctionItemDto auctionItemDto) {
         auctionService.updateAuctionItem(auctionId, auctionItemDto.getItemId());
     }

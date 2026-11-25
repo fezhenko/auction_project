@@ -33,7 +33,8 @@
 			<property name="tokens" value="METHOD_DEF"/> <!-- Constructors don't always need Javadoc -->
 			<property name="severity" value="warning"/>
 		</module>
-		<module name="JavadocStyle">
+		<!-- Checkstyle 13.9 removed JavadocStyle; SummaryJavadoc is its documented replacement (checkstyle#20610). -->
+		<module name="SummaryJavadoc">
 			<property name="severity" value="warning"/>
 		</module>
 

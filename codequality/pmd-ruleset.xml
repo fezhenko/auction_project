@@ -8,7 +8,6 @@
 
 	<rule ref="category/java/bestpractices.xml/AvoidUsingHardCodedIP"/>
 	<rule ref="category/java/bestpractices.xml/CheckResultSet"/>
-	<rule ref="category/java/bestpractices.xml/UnusedImports"/>
 	<rule ref="category/java/bestpractices.xml/UnusedFormalParameter"/>
 	<rule ref="category/java/bestpractices.xml/UnusedLocalVariable"/>
 	<rule ref="category/java/bestpractices.xml/UnusedPrivateField"/>
@@ -21,9 +20,16 @@
 		</properties>
 	</rule>
 	<rule ref="category/java/bestpractices.xml/UseTryWithResources"/>
+	<!-- PMD 7: replaces BooleanInstantiation (2) and also covers the other primitive wrappers. Priority 2 as before. -->
+	<rule ref="category/java/bestpractices.xml/PrimitiveWrapperInstantiation">
+		<priority>2</priority>
+	</rule>
 
-	<rule ref="category/java/codestyle.xml/DontImportJavaLang"/>
-	<rule ref="category/java/codestyle.xml/DuplicateImports"/>
+	<!-- PMD 7: replaces UnusedImports (4), DontImportJavaLang (4), DuplicateImports (4) and ImportFromSamePackage (3).
+	     Priority 3, the highest of the four. -->
+	<rule ref="category/java/codestyle.xml/UnnecessaryImport">
+		<priority>3</priority>
+	</rule>
 	<rule ref="category/java/codestyle.xml/ExtendsObject"/>
 	<rule ref="category/java/codestyle.xml/ForLoopShouldBeWhileLoop"/>
 	<rule ref="category/java/codestyle.xml/UnnecessaryFullyQualifiedName"/>
@@ -32,6 +38,11 @@
 	<rule ref="category/java/codestyle.xml/UselessQualifiedThis"/>
 	<rule ref="category/java/codestyle.xml/IdenticalCatchBranches"/>
 	<rule ref="category/java/codestyle.xml/UnnecessaryCast"/>
+	<!-- PMD 7: replaces EmptyFinallyBlock, EmptyIfStmt, EmptyInitializer, EmptyStatementBlock, EmptySwitchStatements,
+	     EmptySynchronizedBlock, EmptyTryBlock and EmptyWhileStmt, all priority 3. -->
+	<rule ref="category/java/codestyle.xml/EmptyControlStatement"/>
+	<!-- PMD 7: replaces EmptyStatementNotInLoop (3). -->
+	<rule ref="category/java/codestyle.xml/UnnecessarySemicolon"/>
 
 	<rule ref="category/java/design.xml/CollapsibleIfStatements"/>
 	<rule ref="category/java/design.xml/SimplifiedTernary"/>
@@ -46,19 +57,8 @@
 	<rule ref="category/java/errorprone.xml/AvoidMultipleUnaryOperators"/>
 	<rule ref="category/java/errorprone.xml/AvoidUsingOctalValues"/>
 	<rule ref="category/java/errorprone.xml/BrokenNullCheck"/>
-	<rule ref="category/java/errorprone.xml/CheckSkipResult"/>
 	<rule ref="category/java/errorprone.xml/ClassCastExceptionWithToArray"/>
 	<rule ref="category/java/errorprone.xml/DontUseFloatTypeForLoopIndices"/>
-	<rule ref="category/java/errorprone.xml/EmptyFinallyBlock"/>
-	<rule ref="category/java/errorprone.xml/EmptyIfStmt"/>
-	<rule ref="category/java/errorprone.xml/EmptyInitializer"/>
-	<rule ref="category/java/errorprone.xml/EmptyStatementBlock"/>
-	<rule ref="category/java/errorprone.xml/EmptyStatementNotInLoop"/>
-	<rule ref="category/java/errorprone.xml/EmptySwitchStatements"/>
-	<rule ref="category/java/errorprone.xml/EmptySynchronizedBlock"/>
-	<rule ref="category/java/errorprone.xml/EmptyTryBlock"/>
-	<rule ref="category/java/errorprone.xml/EmptyWhileStmt"/>
-	<rule ref="category/java/errorprone.xml/ImportFromSamePackage"/>
 	<rule ref="category/java/errorprone.xml/JumbledIncrementer"/>
 	<rule ref="category/java/errorprone.xml/MisplacedNullCheck"/>
 	<rule ref="category/java/errorprone.xml/OverrideBothEqualsAndHashcode"/>
@@ -66,9 +66,15 @@
 	<rule ref="category/java/errorprone.xml/UnconditionalIfStatement"/>
 	<rule ref="category/java/errorprone.xml/UnnecessaryConversionTemporary"/>
 	<rule ref="category/java/errorprone.xml/UnusedNullCheckInEquals"/>
-	<rule ref="category/java/errorprone.xml/UselessOperationOnImmutable"/>
+	<!-- PMD 7.27: replaces the deprecated CheckSkipResult (3) and UselessOperationOnImmutable (3). -->
+	<rule ref="category/java/errorprone.xml/UnusedReturnValue"/>
 	<rule ref="category/java/errorprone.xml/AvoidCallingFinalize"/>
-	<rule ref="category/java/errorprone.xml/AvoidCatchingNPE"/>
+	<!-- PMD 7.18: replaces the deprecated AvoidCatchingNPE (3), limited to NullPointerException as before. -->
+	<rule ref="category/java/errorprone.xml/AvoidCatchingGenericException">
+		<properties>
+			<property name="typesThatShouldNotBeCaught" value="java.lang.NullPointerException"/>
+		</properties>
+	</rule>
 	<rule ref="category/java/errorprone.xml/CompareObjectsWithEquals"/>
 	<rule ref="category/java/errorprone.xml/DoNotCallGarbageCollectionExplicitly"/>
 	<rule ref="category/java/errorprone.xml/IdempotentOperations"/>
@@ -81,7 +87,6 @@
 	<rule ref="category/java/multithreading.xml/DoubleCheckedLocking"/>
 
 	<rule ref="category/java/performance.xml/BigIntegerInstantiation"/>
-	<rule ref="category/java/performance.xml/BooleanInstantiation"/>
 	<rule ref="category/java/performance.xml/UselessStringValueOf"/>
 
 	<rule ref="category/java/security.xml/HardCodedCryptoKey"/>
