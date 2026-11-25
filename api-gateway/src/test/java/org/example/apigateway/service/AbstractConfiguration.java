@@ -7,7 +7,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
@@ -22,15 +21,17 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  *
  * <p>Each test class gets its own context, and with it its own WireMock server and Feign connection pool, so nothing
  * carries over from one test class to the next.
+ *
+ * <p>The JWT secret is a test-only value set as an inline test property. That outranks a JWT_SECRET exported in the
+ * shell, so the tests never sign with an operator's real secret, and a short one can't fail them.
  */
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT, properties = "jwt.secret=test-only-dummy-jwt-secret-not-for-production")
 @EnableWireMock(
         @ConfigureWireMock(
                 baseUrlProperties = {"services.auction-service.url", "services.users-service.url"},
                 filesUnderClasspath = "wiremock"))
 @AutoConfigureMockMvc
 @DirtiesContext
-@ActiveProfiles("test")
 public abstract class AbstractConfiguration {
 
     @LocalServerPort

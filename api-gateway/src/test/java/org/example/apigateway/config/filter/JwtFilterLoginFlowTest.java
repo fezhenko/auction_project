@@ -1,5 +1,9 @@
 package org.example.apigateway.config.filter;
 
+import java.nio.charset.StandardCharsets;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.example.apigateway.client.dto.AuthResultDto;
 import org.example.apigateway.service.AbstractConfiguration;
 import org.example.apigateway.support.UsersServiceStubs;
@@ -71,6 +75,25 @@ class JwtFilterLoginFlowTest extends AbstractConfiguration {
                 // then: JwtFilter does not authenticate the caller, so form login sends it to /login
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrlPattern("**/login"));
+    }
+
+    @Test
+    void tokenSignedWithAnotherKeyIsRejected() throws Exception {
+        // given: a well-formed HS256 token for the admin, signed with a key the gateway doesn't have (test-only value)
+        String foreign = Jwts.builder()
+                .subject(ADMIN_EMAIL)
+                .signWith(
+                        Keys.hmacShaKeyFor("test-only-key-the-gateway-never-saw".getBytes(StandardCharsets.UTF_8)),
+                        Jwts.SIG.HS256)
+                .compact();
+
+        // when: it is sent on an ADMIN-only endpoint
+        mockMvc.perform(get("/api/v1/users").header(HttpHeaders.AUTHORIZATION, "Bearer " + foreign))
+                // then: JwtFilter does not authenticate the caller, so neither the user lookup nor the endpoint runs
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrlPattern("**/login"));
+        verify(0, getRequestedFor(urlPathEqualTo("/api/v1/users/validate")));
+        verify(0, getRequestedFor(urlPathEqualTo("/api/v1/users")));
     }
 
     @Test

@@ -61,7 +61,7 @@ Requirements: JDK 21, Docker, and `curl` or `wget` plus `unzip` for the Maven Wr
 
    | Variable | Used by | Purpose |
    |---|---|---|
-   | `JWT_SECRET` | api-gateway | HMAC key that signs and validates JWTs |
+   | `JWT_SECRET` | api-gateway | Secret that signs and validates JWTs with HMAC-SHA256. Its UTF-8 bytes are the key as they are, so it must be at least 32 bytes long; without it, or with a shorter one, the gateway doesn't start. Earlier versions base64-decoded it, so tokens they issued are no longer valid. |
    | `EXCHANGE_API_KEY` | users-service | API key for the [apilayer Exchange Rates Data API](https://apilayer.com/marketplace/exchangerates_data-api). Only the currency convert and symbols endpoints call it, so any non-empty value lets the service start. |
 
 4. Build the project, then run `UsersApplication`, `AuctionApplication` and `ApiGatewayApplication`, for example from your IDE:

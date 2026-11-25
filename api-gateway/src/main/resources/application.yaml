@@ -16,7 +16,8 @@ spring:
             readTimeout: 3000
 
 jwt:
-  secret: ${JWT_SECRET}
+  # Empty when JWT_SECRET is unset, so JwtProperties can fail startup with its own message.
+  secret: ${JWT_SECRET:}
 
 services:
   auction-service:

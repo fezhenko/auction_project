@@ -28,14 +28,16 @@
 
 ## 6. JWT signing key (one commit)
 
-- [ ] 6.1 Replace jjwt 0.9.1 with jjwt 0.13.x (`jjwt-api`, `jjwt-impl`, `jjwt-jackson`). Build the key from `JWT_SECRET` as UTF-8 bytes. Fail startup when it is missing or shorter than 32 bytes, with a message that names the variable but not its value. Verify these tests:
+- [x] 6.1 Replace jjwt 0.9.1 with jjwt 0.13.x (`jjwt-api`, `jjwt-impl`, `jjwt-jackson`). Build the key from `JWT_SECRET` as UTF-8 bytes. Fail startup when it is missing or shorter than 32 bytes, with a message that names the variable but not its value. Verify these tests:
   - a context test where a 31-byte secret fails startup;
   - a context test where a 32-byte secret starts;
   - a check that the failure output doesn't contain the secret;
   - the login-and-call token test passes;
   - a token signed with another key is rejected.
-- [ ] 6.2 Update the README variable table: `JWT_SECRET` is used as raw UTF-8, at least 32 bytes, and tokens from older versions are invalid. Verify: the README text matches the startup check.
-- [ ] 6.3 Verify `./mvnw clean verify` is green, then commit.
+
+  Note from implementation: `application.yaml` reads `${JWT_SECRET:}`, so a missing variable reaches the same check and message as a short one. `JwtProperties.signingKey()` runs the check from the `Jwt` constructor, not during binding, because a binding failure report would print the value. The startup tests start the whole gateway and check that Tomcat never started.
+- [x] 6.2 Update the README variable table: `JWT_SECRET` is used as raw UTF-8, at least 32 bytes, and tokens from older versions are invalid. Verify: the README text matches the startup check.
+- [x] 6.3 Verify `./mvnw clean verify` is green, then commit.
 
 ## 7. Actuator exposure (one commit)
 
