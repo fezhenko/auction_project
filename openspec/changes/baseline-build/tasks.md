@@ -32,7 +32,7 @@
 
 ## 6. README matches the code (one commit)
 
-- [ ] 6.1 Correct the README overview and "Known limitations":
+- [x] 6.1 Correct the README overview and "Known limitations":
   - Creating an auction through the gateway fails.
   - The gateway can't set a start date.
   - Finishing rolls back because the item-SOLD call fails.
@@ -40,4 +40,4 @@
   - Drop the line about failing tests.
   - Point to the changes that fix each item.
   Verify: every README sentence about behavior matches the code paths in `AuctionService` (gateway and auction-service) and `UsersService`.
-- [ ] 6.2 Verify `./mvnw clean verify` is green, then commit.
+- [x] 6.2 Verify `./mvnw clean verify` is green, then commit.

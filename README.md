@@ -2,7 +2,7 @@
 
 Online auction platform built as three Spring Boot microservices behind a JWT-secured API gateway.
 
-An ADMIN creates accounts, and users log in at `POST /api/v1/auth` to get a JWT. Sellers put items up for auction, buyers place bids, and scheduled jobs start auctions, finish them and mark the item as sold.
+An ADMIN creates accounts, and users log in at `POST /api/v1/auth` to get a JWT. The intended flow: sellers put items up for auction, buyers place bids, and scheduled jobs start auctions, finish them, mark the item as sold and settle the balances. Most of that flow does not work yet; see [Known limitations](#known-limitations).
 
 ## Architecture
 
@@ -20,7 +20,7 @@ flowchart LR
 | Service | Port | Responsibility |
 |---|---|---|
 | `api-gateway` | 8080 | Public REST API under `/api/v1`. Issues and validates JWTs, hashes passwords with BCrypt, keeps sessions stateless and enforces ADMIN / USER roles. Forwards calls to the other services through OpenFeign clients. |
-| `auction-service` | 8081 | Auctions, bids, buyers and sellers. Scheduled jobs move auctions from `PLANNED` to `IN_PROGRESS` to `FINISHED` and mark the sold item in `users-service`. A third job requests balance settlement for finished auctions (see [Known limitations](#known-limitations)). |
+| `auction-service` | 8081 | Auctions, bids, buyers and sellers. Scheduled jobs are meant to move auctions from `PLANNED` to `IN_PROGRESS` to `FINISHED`, mark the sold item in `users-service` and request balance settlement. Today finishing and settlement do not complete (see [Known limitations](#known-limitations)). |
 | `users-service` | 8082 | Users and balances, payments, items and categories, and currencies with conversion through the apilayer Exchange Rates Data API. |
 
 Each data service owns its own PostgreSQL database. Their schemas are versioned with Flyway, and database triggers keep current prices, buyers and sellers in sync with new bids and auctions.
@@ -36,11 +36,11 @@ Each data service owns its own PostgreSQL database. Their schemas are versioned 
 - JUnit 5, Mockito, Spring Boot Test
 - Checkstyle, PMD and SpotBugs, which fail the Maven build on violations
 - Spotless with palantir-java-format, which fails the build on unformatted Java
-- Docker Compose for the databases, plus a GitHub Actions workflow that runs `mvn clean verify`
+- Docker Compose for the databases, plus a GitHub Actions workflow that checks formatting and runs `./mvnw clean verify` on Temurin 17
 
 ## Running locally
 
-Requirements: JDK 17, Maven 3.8+, Docker.
+Requirements: JDK 17, Docker, and `curl` or `wget` plus `unzip` for the Maven Wrapper (`./mvnw` downloads Maven 3.9.16). The migration script in step 2 still calls Maven directly, so it also needs Maven 3.8+.
 
 1. Start the databases. users-service gets port 15432 and auction-service gets port 15433.
 
@@ -67,7 +67,7 @@ Requirements: JDK 17, Maven 3.8+, Docker.
 4. Build the project, then run `UsersApplication`, `AuctionApplication` and `ApiGatewayApplication`, for example from your IDE:
 
    ```bash
-   mvn clean install -DskipTests
+   ./mvnw clean install -DskipTests
    ```
 
 Each service serves Swagger UI at `/swagger-ui/index.html`. On the gateway, that path requires an ADMIN JWT.
@@ -80,12 +80,17 @@ Each service serves Swagger UI at `/swagger-ui/index.html`. On the gateway, that
 
 ## Known limitations
 
-- Balance settlement currently does nothing. auction-service sends the user type as `BUYER` / `SELLER`, users-service expects `buyer` / `seller`, and the auction is marked as paid anyway. Settlement moves to Kafka events in the planned rework.
-- Two tests fail on the current dependency set: one hits a Spring Security version clash, the other needs a manually migrated database. The upgrade below addresses both.
+The fixes are planned as OpenSpec changes in [`openspec/changes/`](openspec/changes/).
+
+- Creating an auction through the gateway fails. auction-service's `POST /api/v1/sellers` returns no body, so the gateway reads a null seller and answers "Auction creation fails, please try again later". Fixed in `auction-lifecycle-fixes`.
+- The gateway can't set an auction's start date, so auctions created through it never start. Only auction-service itself has `PATCH /api/v1/auctions/{id}/date`. Fixed in `auction-lifecycle-fixes`.
+- Joining and bidding through the gateway fail. Joining throws before the first bid, because the self-join check reads the auction's leading buyer, which is still empty. A successful bid still answers "balance is not enough", because the gateway's bid path has no `return` after placing it. Fixed in `auction-lifecycle-fixes`.
+- Finishing an auction rolls back. Inside its database transaction, the finish job asks users-service to mark the item `SOLD`. That request carries no price, users-service writes `NULL` into the `NOT NULL` `items.price` column and fails, and the whole finish is rolled back. Fixed in `outbox-publisher`, which takes the call out of the transaction, and `settlement-consumer`, which marks the item sold.
+- Balance settlement does nothing. auction-service sends the user type as `BUYER` / `SELLER`, users-service expects `buyer` / `seller`, so it logs a warning and leaves the balance unchanged, and the auction is marked as paid anyway. Fixed in `settlement-consumer`, which moves settlement to Kafka events.
 
 ## Roadmap
 
-- Upgrade to Java 21 and Spring Boot 3
+- Upgrade to Java 21 and Spring Boot 4.2, through Spring Boot 3.5
 - Replace the balance-settlement Feign call with Kafka events
 - Integration tests with Testcontainers
 - Dockerfiles and a single-command `docker compose` setup for the whole system
