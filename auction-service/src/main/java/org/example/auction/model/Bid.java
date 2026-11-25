@@ -2,9 +2,8 @@ package org.example.auction.model;
 
 import java.util.Date;
 
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.data.annotation.Id;

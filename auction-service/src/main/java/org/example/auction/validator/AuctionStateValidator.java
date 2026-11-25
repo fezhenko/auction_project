@@ -3,8 +3,8 @@ package org.example.auction.validator;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class AuctionStateValidator implements ConstraintValidator<ValidateAuctionRelatedStatuses, String> {
     @Override

@@ -1,9 +1,8 @@
 package org.example.apigateway.controller;
 
-import javax.validation.Valid;
-
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.apigateway.converter.BuyerConverter;

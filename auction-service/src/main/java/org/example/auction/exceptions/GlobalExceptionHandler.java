@@ -21,6 +21,7 @@ import org.example.auction.exceptions.seller.UserEmailIsNullException;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,12 +48,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,
             @NonNull HttpHeaders headers,
-            @NonNull HttpStatus status,
+            @NonNull HttpStatusCode status,
             @NonNull WebRequest request) {
         return ResponseEntity.badRequest()
                 .body(ExceptionDto.builder()
                         .message(INTERNAL_SERVER_ERROR)
-                        .status(status)
+                        .status(HttpStatus.resolve(status.value()))
                         .build());
     }
 

@@ -2,8 +2,6 @@ package org.example.usersservice.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.SneakyThrows;
 import org.example.usersservice.converter.CurrencyConverter;
 import org.example.usersservice.dto.currency.AddCurrencyDto;

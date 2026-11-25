@@ -1,12 +1,14 @@
 server:
   port: 8080
 
-feign:
-  client:
-    config:
-      domain:
-        connectTimeout: 5000
-        readTimeout: 3000
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          domain:
+            connectTimeout: 5000
+            readTimeout: 3000
 
 jwt:
   secret: ${JWT_SECRET}

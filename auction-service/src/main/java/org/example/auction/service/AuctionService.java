@@ -277,7 +277,7 @@ public class AuctionService {
         FinalPriceDto finalPrice = FinalPriceDto.builder()
                 .finalPrice(auction.getPriceDto().getFinalPrice())
                 .build();
-        userClient.updateUserBalance(user.getId(), org.example.auction.scheduler.UserType.BUYER.name(), finalPrice);
+        userClient.updateUserBalance(user.getId(), UserType.BUYER.name(), finalPrice);
         log.info("user id:'%d' balance has been updated".formatted(user.getId()));
         auctionRepository.updateIsPayedToTrue(auction.getAuctionId());
         log.info("auction id:'%d' has been payed by buyer:'%d'"
@@ -313,6 +313,6 @@ public class AuctionService {
     }
 
     private int convertMillisecondsToMinutes(long milliseconds) {
-        return (int) ((milliseconds / (1000 * 60)) % 60);
+        return (int) (milliseconds / (1000 * 60) % 60);
     }
 }

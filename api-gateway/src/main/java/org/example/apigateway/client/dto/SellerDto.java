@@ -2,10 +2,9 @@ package org.example.apigateway.client.dto;
 
 import java.util.Date;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;

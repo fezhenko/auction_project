@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "firstname": null,
+  "lastname": null,
+  "email": "admin@auction.test",
+  "password": "$2a$10$aqmzCLUwQL2zP80p0RU9f.2kAFif/C6g9Yoxii2yzBUPj1SAICaIO",
+  "role": "ADMIN",
+  "balance": 0.0,
+  "phoneNumber": null,
+  "createdAt": "2026-11-20T08:15:30.000+00:00"
+}

@@ -25,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>io.github.openfeign</groupId>
-            <artifactId>feign-httpclient</artifactId>
+            <artifactId>feign-hc5</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -40,6 +40,13 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
             <scope>compile</scope>
+        </dependency>
+        <!-- jjwt 0.9.1 needs javax.xml.bind.DatatypeConverter. springdoc 1.x used to bring it; Boot 3 manages only the
+             jakarta.xml.bind API. Goes away with jjwt 0.13 in boot42-upgrade. -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -90,11 +97,11 @@
         </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
+            <artifactId>swagger-annotations-jakarta</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

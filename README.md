@@ -29,18 +29,18 @@ Each data service owns its own PostgreSQL database. Their schemas are versioned 
 
 ## Tech stack
 
-- Java 17, Spring Boot 2.7, Spring Security, Spring Data JDBC, Spring Cloud OpenFeign
+- Java 21, Spring Boot 3.5, Spring Security 6, Spring Data JDBC, Spring Cloud OpenFeign
 - PostgreSQL 13, Flyway
 - JWT (jjwt), BCrypt
 - MapStruct, Lombok, springdoc-openapi (Swagger UI)
 - JUnit 5, Mockito, Spring Boot Test
 - Checkstyle, PMD and SpotBugs, which fail the Maven build on violations
 - Spotless with palantir-java-format, which fails the build on unformatted Java
-- Docker Compose for the databases, plus a GitHub Actions workflow that checks formatting and runs `./mvnw clean verify` on Temurin 17
+- Docker Compose for the databases, plus a GitHub Actions workflow that checks formatting and runs `./mvnw clean verify` on Temurin 21
 
 ## Running locally
 
-Requirements: JDK 17, Docker, and `curl` or `wget` plus `unzip` for the Maven Wrapper (`./mvnw` downloads Maven 3.9.16). The migration script in step 2 still calls Maven directly, so it also needs Maven 3.8+.
+Requirements: JDK 21, Docker, and `curl` or `wget` plus `unzip` for the Maven Wrapper (`./mvnw` downloads Maven 3.9.16). The migration script in step 2 still calls Maven directly, so it also needs Maven 3.8+.
 
 1. Start the databases. users-service gets port 15432 and auction-service gets port 15433.
 
@@ -91,7 +91,7 @@ The fixes are planned as OpenSpec changes in [`openspec/changes/`](openspec/chan
 
 ## Roadmap
 
-- Upgrade to Java 21 and Spring Boot 4.2, through Spring Boot 3.5
+- Upgrade to Spring Boot 4.2
 - Replace the balance-settlement Feign call with Kafka events
 - Integration tests with Testcontainers
 - Dockerfiles and a single-command `docker compose` setup for the whole system

@@ -1,8 +1,7 @@
 package org.example.apigateway.dto.bid;
 
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;

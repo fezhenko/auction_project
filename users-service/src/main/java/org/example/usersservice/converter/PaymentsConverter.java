@@ -2,8 +2,7 @@ package org.example.usersservice.converter;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
+import jakarta.validation.Valid;
 import org.example.usersservice.dto.payments.PaymentDto;
 import org.example.usersservice.model.Payment;
 import org.mapstruct.Mapper;

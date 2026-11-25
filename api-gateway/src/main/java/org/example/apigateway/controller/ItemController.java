@@ -1,7 +1,6 @@
 package org.example.apigateway.controller;
 
-import javax.validation.Valid;
-
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.apigateway.dto.items.CreateItemDto;
 import org.example.apigateway.service.ItemService;

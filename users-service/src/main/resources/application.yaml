@@ -4,6 +4,13 @@ spring:
     url: jdbc:postgresql://localhost:15432/postgres
     username: postgres
     password: postgres
+  cloud:
+    openfeign:
+      client:
+        config:
+          domain:
+            connectTimeout: 5000
+            readTimeout: 3000
 
 management:
   endpoints:
@@ -13,13 +20,6 @@ management:
 
 server:
   port: 8082
-
-feign:
-  client:
-    config:
-      domain:
-        connectTimeout: 5000
-        readTimeout: 3000
 
 services:
   exchange-service:

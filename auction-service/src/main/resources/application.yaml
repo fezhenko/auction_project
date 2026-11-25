@@ -4,6 +4,13 @@ spring:
     url: jdbc:postgresql://localhost:15433/postgres
     username: postgres
     password: postgres
+  cloud:
+    openfeign:
+      client:
+        config:
+          domain:
+            connectTimeout: 5000
+            readTimeout: 3000
 
 management:
   endpoints:
@@ -14,20 +21,12 @@ management:
 server:
   port: 8081
 
-
 custom:
   scheduler:
     zone: "ECT"
     start-auction-cron: "3 * * * * 0-6"
     finish-auction-cron: "4 * * * * 0-6"
     update-balance-cron: "*/60 * * * * 0-7"
-
-feign:
-  client:
-    config:
-      domain:
-        connectTimeout: 5000
-        readTimeout: 3000
 
 services:
   users-service:

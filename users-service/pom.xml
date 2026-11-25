@@ -79,16 +79,15 @@
     </dependency>
     <dependency>
       <groupId>io.swagger.core.v3</groupId>
-      <artifactId>swagger-annotations</artifactId>
+      <artifactId>swagger-annotations-jakarta</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-ui</artifactId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.inject</groupId>
-      <artifactId>javax.inject</artifactId>
-      <version>1</version>
+      <groupId>jakarta.inject</groupId>
+      <artifactId>jakarta.inject-api</artifactId>
     </dependency>
     <!--Feign-->
     <dependency>
@@ -97,7 +96,7 @@
     </dependency>
     <dependency>
       <groupId>io.github.openfeign</groupId>
-      <artifactId>feign-httpclient</artifactId>
+      <artifactId>feign-hc5</artifactId>
     </dependency>
   </dependencies>
 

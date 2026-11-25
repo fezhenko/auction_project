@@ -2,10 +2,9 @@ package org.example.apigateway.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.example.apigateway.dto.auction.AuctionDto;

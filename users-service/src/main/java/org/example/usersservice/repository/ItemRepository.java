@@ -2,8 +2,7 @@ package org.example.usersservice.repository;
 
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.NotNull;
 import org.example.usersservice.model.Item;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;

@@ -4,26 +4,22 @@ import java.sql.Date;
 import java.time.Clock;
 import java.time.LocalDate;
 
-import lombok.val;
 import org.example.usersservice.dto.users.AppUserDto;
 import org.example.usersservice.dto.users.UpdateBalanceResultDto;
 import org.example.usersservice.repository.UsersRepository;
 import org.example.usersservice.service.UsersService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = UsersServiceTestConfig.class)
 class UsersServiceTest {
 
-    @MockBean
+    @MockitoBean
     UsersRepository userRepository;
 
     @Autowired
@@ -48,8 +44,9 @@ class UsersServiceTest {
                 .when(userRepository)
                 .updateUserBalanceAfterAuctionFinish(appUserDto.getId(), appUserDto.getBalance());
 
-        val actualResult = usersService.updateUserBalance(appUserDto.getId(), userType, price);
-        val expectedResult = UpdateBalanceResultDto.builder().balance(1500d).build();
+        final var actualResult = usersService.updateUserBalance(appUserDto.getId(), userType, price);
+        final var expectedResult =
+                UpdateBalanceResultDto.builder().balance(1500d).build();
         assertThat(actualResult).isEqualTo(expectedResult);
     }
 }
