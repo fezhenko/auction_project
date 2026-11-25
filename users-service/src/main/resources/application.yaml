@@ -21,7 +21,14 @@ management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+      show-components: never
+      # Boot 4 turns the liveness and readiness probes on; the healthchecks use /actuator/health alone.
+      probes:
+        enabled: false
 
 server:
   port: 8082

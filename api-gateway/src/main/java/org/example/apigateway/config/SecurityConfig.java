@@ -5,6 +5,7 @@ import org.example.apigateway.config.filter.JwtFilter;
 import org.example.apigateway.config.service.AuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.ObjectPostProcessor;
@@ -33,6 +34,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> requests.requestMatchers("/api/v1/auth")
+                        .permitAll()
+                        // container healthchecks call these without a token
+                        .requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/info")
                         .permitAll()
                         .requestMatchers("/api/v1/users/**")
                         .hasAnyRole("ADMIN")

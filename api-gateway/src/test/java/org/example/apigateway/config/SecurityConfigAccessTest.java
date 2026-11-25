@@ -82,6 +82,12 @@ class SecurityConfigAccessTest extends AbstractConfiguration {
         "GET,  /swagger-ui/index.html, ANONYMOUS, LOGIN",
         "GET,  /swagger-ui/index.html, USER,      403",
         "GET,  /swagger-ui/index.html, ADMIN,     200",
+        // permitAll for GET, for container healthchecks. Every other actuator endpoint is not exposed: 404.
+        "GET,  /actuator/health,       ANONYMOUS, 200",
+        "GET,  /actuator/info,         ANONYMOUS, 200",
+        "GET,  /actuator/env,          ANONYMOUS, LOGIN",
+        "GET,  /actuator/env,          ADMIN,     404",
+        "GET,  /actuator/heapdump,     ADMIN,     404",
         // anyRequest: any authenticated caller
         "GET,  /api/v1/auctions,       ANONYMOUS, LOGIN",
         "GET,  /api/v1/auctions,       USER,      200",

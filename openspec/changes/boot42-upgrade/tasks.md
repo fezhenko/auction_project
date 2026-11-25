@@ -41,9 +41,9 @@
 
 ## 7. Actuator exposure (one commit)
 
-- [ ] 7.1 Set `management.endpoints.web.exposure.include: health,info`, `endpoint.health.show-details: never`, `show-components: never` and `endpoint.health.probes.enabled: false` in all three services. Boot 4 turns the liveness and readiness probes on by default; the owner decided (2026-11-25) to keep them off, as on Boot 3.5. Verify: for auction-service and users-service, a test where `/actuator/health` returns 200 with the body exactly `{"status":"UP"}`, `/actuator/info` returns 200, and `/actuator/env` returns 404.
-- [ ] 7.2 Permit anonymous `GET /actuator/health` and `/actuator/info` in the gateway security chain. Verify:
+- [x] 7.1 Set `management.endpoints.web.exposure.include: health,info`, `endpoint.health.show-details: never`, `show-components: never` and `endpoint.health.probes.enabled: false` in all three services. Boot 4 turns the liveness and readiness probes on by default; the owner decided (2026-11-25) to keep them off, as on Boot 3.5. Verify: for auction-service and users-service, a test where `/actuator/health` returns 200 with the body exactly `{"status":"UP"}`, `/actuator/info` returns 200, and `/actuator/env` returns 404. Note from implementation: the service tests run Boot's auto-configuration with the service's `application.yaml` and none of its beans, with the database health check and the JDBC repositories off, so they need no PostgreSQL. `testcontainers-postgres` adds tests against a real database. The gateway also gets a test over real HTTP: anonymous health gives exactly `{"status":"UP"}`, and `env`, `beans`, `configprops` and `heapdump` give 404 even to an ADMIN.
+- [x] 7.2 Permit anonymous `GET /actuator/health` and `/actuator/info` in the gateway security chain. Verify:
   - the access-rule test (from `java21-boot35`) gains rows: anonymous health → 200, anonymous info → 200, anonymous `GET /api/v1/auctions` → rejected;
   - gateway tests where `/actuator/env` and `/actuator/heapdump` with an ADMIN token → 404.
-- [ ] 7.3 Update the README sentence that says the services "expose all actuator endpoints" and the tech-stack versions. Verify: the README matches the configuration.
-- [ ] 7.4 Verify `./mvnw clean verify` is green, then commit.
+- [x] 7.3 Update the README sentence that says the services "expose all actuator endpoints" and the tech-stack versions. Verify: the README matches the configuration.
+- [x] 7.4 Verify `./mvnw clean verify` is green, then commit.
