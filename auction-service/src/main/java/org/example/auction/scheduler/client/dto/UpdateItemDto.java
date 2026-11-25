@@ -11,10 +11,13 @@ import org.springframework.lang.Nullable;
 public class UpdateItemDto {
     @Nullable
     String description;
+
     @Nullable
     String itemStatus;
+
     @Nullable
     Double price;
+
     @Nullable
     Long itemCategory;
 }

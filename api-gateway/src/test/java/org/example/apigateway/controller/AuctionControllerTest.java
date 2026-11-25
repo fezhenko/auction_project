@@ -44,12 +44,16 @@ public class AuctionControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
     @MockBean
     private Jwt jwt;
+
     @MockBean
     private AuthService authService;
+
     @MockBean
     private AuctionService auctionService;
+
     private final Random random = new Random();
     private final List<String> auctionStates = List.of("PLANNED", "IN_PROGRESS", "FINISHED", "CANCELED");
     private ObjectMapper objectMapper;
@@ -66,22 +70,19 @@ public class AuctionControllerTest {
     @WithMockUser(username = "test@username.com", password = "testPassword", roles = "ADMIN")
     public void auctions_should_be_returned() {
         // given
-        List<AuctionDto> expectedAuctions = Arrays.asList(
-            generateAuctionDto(), generateAuctionDto(), generateAuctionDto());
+        List<AuctionDto> expectedAuctions =
+                Arrays.asList(generateAuctionDto(), generateAuctionDto(), generateAuctionDto());
         Mockito.doReturn(expectedAuctions).when(auctionService).findAllAuction();
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/auctions"));
 
         // then
-        result
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
+        result.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
 
         // Deserialize the response JSON into a list of AuctionDto
-        List<AuctionDto> actualAuctions = objectMapper.readValue(
-            result.andReturn().getResponse().getContentAsString(), new TypeReference<>() {}
-        );
+        List<AuctionDto> actualAuctions =
+                objectMapper.readValue(result.andReturn().getResponse().getContentAsString(), new TypeReference<>() {});
 
         assertEquals(expectedAuctions.size(), actualAuctions.size());
         assertTrue(expectedAuctions.containsAll(actualAuctions));
@@ -116,32 +117,31 @@ public class AuctionControllerTest {
 
     private AuctionDto generateAuctionDto() {
         return AuctionDto.builder()
-            .auctionId(random.nextLong())
-            .auctionDate(new Date())
-            .auctionState(auctionStates.get(random.nextInt(3)))
-            .itemDto(generateItemDto())
-            .priceDto(generatePriceDto())
-            .isPayed(random.nextBoolean())
-            .createdAt(new Date())
-            .build();
+                .auctionId(random.nextLong())
+                .auctionDate(new Date())
+                .auctionState(auctionStates.get(random.nextInt(3)))
+                .itemDto(generateItemDto())
+                .priceDto(generatePriceDto())
+                .isPayed(random.nextBoolean())
+                .createdAt(new Date())
+                .build();
     }
 
     private AuctionItemDto generateItemDto() {
         return AuctionItemDto.builder()
-            .id(random.nextLong())
-            .description("item description")
-            .seller(random.nextLong())
-            .build();
+                .id(random.nextLong())
+                .description("item description")
+                .seller(random.nextLong())
+                .build();
     }
 
     private PriceDto generatePriceDto() {
         return PriceDto.builder()
-            .startPrice(random.nextDouble())
-            .minimalBid(random.nextDouble())
-            .currentPrice(random.nextDouble())
-            .finalPrice(random.nextDouble())
-            .buyer(random.nextLong())
-            .build();
+                .startPrice(random.nextDouble())
+                .minimalBid(random.nextDouble())
+                .currentPrice(random.nextDouble())
+                .finalPrice(random.nextDouble())
+                .buyer(random.nextLong())
+                .build();
     }
-
 }

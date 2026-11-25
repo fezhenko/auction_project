@@ -13,5 +13,4 @@ public class PriceDto {
     Double currentPrice;
     Double finalPrice;
     Long buyer;
-
 }

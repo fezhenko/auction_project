@@ -45,9 +45,11 @@ public class BidService {
             throw new BuyerDoesNotExistException("buyer with specified email:'%s' does not exist".formatted(email));
         }
         Auction auction = auctionRepository.findAuctionByAuctionId(auctionId);
-        if (auction.getAuctionState().equals("PLANNED") || auction.getAuctionState().equals("FINISHED")) {
+        if (auction.getAuctionState().equals("PLANNED")
+                || auction.getAuctionState().equals("FINISHED")) {
             log.error("auction with id '%d' in not in progress, bid is canceled".formatted(auctionId));
-            throw new AddBidToNotStartedAuctionException("auction with id '%d' in not in progress, bid is canceled".formatted(auctionId));
+            throw new AddBidToNotStartedAuctionException(
+                    "auction with id '%d' in not in progress, bid is canceled".formatted(auctionId));
         }
         if (amount > auction.getCurrentPrice()) {
             bidRepository.createBid(amount, buyer.getId());
@@ -55,8 +57,7 @@ public class BidService {
             return;
         }
         throw new BidAmountLessThanCurrentPriceException(
-                "bid amount: %s less than current price: %s".formatted(amount, auction.getCurrentPrice())
-        );
+                "bid amount: %s less than current price: %s".formatted(amount, auction.getCurrentPrice()));
     }
 
     public void updateBid(Double amount, Long bidId) {

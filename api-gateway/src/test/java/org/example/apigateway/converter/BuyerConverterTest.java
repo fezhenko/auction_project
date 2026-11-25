@@ -21,7 +21,7 @@ public class BuyerConverterTest {
                 }
 
                 CreateBuyerWithUserEmailDto.CreateBuyerWithUserEmailDtoBuilder createBuyerWithUserEmailDto =
-                    CreateBuyerWithUserEmailDto.builder();
+                        CreateBuyerWithUserEmailDto.builder();
 
                 if (buyerDto != null) {
                     createBuyerWithUserEmailDto.auctionId(buyerDto.getAuctionId());
@@ -39,7 +39,7 @@ public class BuyerConverterTest {
 
         // when
         CreateBuyerWithUserEmailDto createBuyerWithUserEmailDto =
-            buyerConverter.toCreateBuyerWithUserEmailDto(createBuyerDto, user);
+                buyerConverter.toCreateBuyerWithUserEmailDto(createBuyerDto, user);
 
         // then
         Assertions.assertEquals(user.getUsername(), createBuyerWithUserEmailDto.getUsername());

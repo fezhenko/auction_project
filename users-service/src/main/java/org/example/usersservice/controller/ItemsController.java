@@ -2,11 +2,12 @@ package org.example.usersservice.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.example.usersservice.converter.ItemConverter;
@@ -39,8 +40,8 @@ public class ItemsController {
     @Operation(summary = "find all items")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "list of items"),
-                    @ApiResponse(responseCode = "204", description = "no content")
+                @ApiResponse(responseCode = "200", description = "list of items"),
+                @ApiResponse(responseCode = "204", description = "no content")
             })
     @GetMapping
     @SneakyThrows
@@ -55,8 +56,8 @@ public class ItemsController {
     @Operation(summary = "find item by id")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "item is found"),
-                    @ApiResponse(responseCode = "204", description = "no content")
+                @ApiResponse(responseCode = "200", description = "item is found"),
+                @ApiResponse(responseCode = "204", description = "no content")
             })
     @GetMapping("/{itemId}")
     @SneakyThrows
@@ -71,40 +72,37 @@ public class ItemsController {
     @Operation(summary = "create new item")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "201", description = "item is created"),
-                    @ApiResponse(responseCode = "400", description = "invalid body")
+                @ApiResponse(responseCode = "201", description = "item is created"),
+                @ApiResponse(responseCode = "400", description = "invalid body")
             })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private void createItem(
-            @RequestBody @Valid CreateItemDto createItemDto
-    ) {
+    private void createItem(@RequestBody @Valid CreateItemDto createItemDto) {
         itemService.createItem(createItemDto);
     }
 
     @Operation(summary = "update item by id")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "202", description = "item is updated"),
-                    @ApiResponse(responseCode = "204", description = "no content")
+                @ApiResponse(responseCode = "202", description = "item is updated"),
+                @ApiResponse(responseCode = "204", description = "no content")
             })
     @PatchMapping("/{itemId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    private void updateItem(
-            @PathVariable("itemId") Long id,
-            @RequestBody @Valid UpdateItemDto updateItemDto
-    ) {
+    private void updateItem(@PathVariable("itemId") Long id, @RequestBody @Valid UpdateItemDto updateItemDto) {
         itemService.updateItem(
-                id, updateItemDto.getDescription(), updateItemDto.getItemStatus(), updateItemDto.getPrice(),
-                updateItemDto.getItemCategory()
-        );
+                id,
+                updateItemDto.getDescription(),
+                updateItemDto.getItemStatus(),
+                updateItemDto.getPrice(),
+                updateItemDto.getItemCategory());
     }
 
     @Operation(summary = "delete item by id")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "item is deleted"),
-                    @ApiResponse(responseCode = "204", description = "no content")
+                @ApiResponse(responseCode = "200", description = "item is deleted"),
+                @ApiResponse(responseCode = "204", description = "no content")
             })
     @DeleteMapping("/{itemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

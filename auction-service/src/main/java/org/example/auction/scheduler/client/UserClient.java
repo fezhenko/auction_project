@@ -1,7 +1,7 @@
 package org.example.auction.scheduler.client;
 
-
 import javax.validation.Valid;
+
 import org.example.auction.scheduler.client.dto.AppUserDto;
 import org.example.auction.scheduler.client.dto.FinalPriceDto;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -17,9 +17,13 @@ public interface UserClient {
     @RequestMapping(method = RequestMethod.GET, value = "/validate")
     AppUserDto findUserByEmail(@RequestParam(value = "email") String email);
 
-    @RequestMapping(method = RequestMethod.PATCH, value = "/{userId}/balance",
-        consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    void updateUserBalance(@PathVariable("userId") Long userId,
-                           @RequestParam(value = "userType") String userType,
-                           @RequestBody @Valid FinalPriceDto finalPrice);
+    @RequestMapping(
+            method = RequestMethod.PATCH,
+            value = "/{userId}/balance",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    void updateUserBalance(
+            @PathVariable("userId") Long userId,
+            @RequestParam(value = "userType") String userType,
+            @RequestBody @Valid FinalPriceDto finalPrice);
 }

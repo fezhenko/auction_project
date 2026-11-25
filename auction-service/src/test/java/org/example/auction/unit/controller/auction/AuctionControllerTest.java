@@ -23,14 +23,15 @@ import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest({AuctionController.class, AuctionConverter.class})
 public class AuctionControllerTest {
     @Autowired
     private MockMvc mockMvc;
+
     @MockBean
     private AuctionService auctionService;
+
     @MockBean
     private AuctionConverter auctionConverter;
 
@@ -53,9 +54,8 @@ public class AuctionControllerTest {
         // then
         result.andExpect(status().isOk());
 
-        AuctionDto actualResult = objectMapper.readValue(
-            result.andReturn().getResponse().getContentAsString(), new TypeReference<>() {}
-        );
+        AuctionDto actualResult =
+                objectMapper.readValue(result.andReturn().getResponse().getContentAsString(), new TypeReference<>() {});
         Assertions.assertEquals(auction.getAuctionId(), actualResult.getAuctionId());
     }
 

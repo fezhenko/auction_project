@@ -1,11 +1,11 @@
 package org.example.usersservice.dto.users;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
-
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 @Value
 @Builder

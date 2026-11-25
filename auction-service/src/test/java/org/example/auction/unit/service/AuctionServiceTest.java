@@ -49,7 +49,7 @@ public class AuctionServiceTest {
 
     @Test
     public void should_add_item_to_auction() {
-        //given
+        // given
         long auctionId = 89789L;
         long itemId = 123L;
         double price = 1_000_000;
@@ -59,19 +59,20 @@ public class AuctionServiceTest {
 
         Mockito.doReturn(auctionWithoutItem).when(auctionRepository).findAuctionByAuctionId(any(Long.class));
         Mockito.doReturn(seller).when(sellerRepository).findSellersBySellerId(any(Long.class));
-        Mockito.doNothing().when(auctionRepository)
-            .addItemToAuction(any(Long.class), any(Long.class), any(Double.class), any(Double.class));
+        Mockito.doNothing()
+                .when(auctionRepository)
+                .addItemToAuction(any(Long.class), any(Long.class), any(Double.class), any(Double.class));
 
-        //when
+        // when
         auctionService.addItemToAuction(auctionId, itemToAuctionDto);
 
-        //then
+        // then
         verify(auctionRepository).addItemToAuction(eq(auctionId), eq(itemId), eq(price), eq(50000.0d));
     }
 
     @Test
     public void should_return_item_already_exist_exception_if_item_already_exist() {
-        //given
+        // given
         long auctionId = 89789L;
         long itemId = 123L;
         double price = 1_000_000;
@@ -82,9 +83,9 @@ public class AuctionServiceTest {
 
         Mockito.doReturn(auction).when(auctionRepository).findAuctionByAuctionId(auctionId);
 
-        //then
+        // then
         assertThrows(
-            ItemAlreadyExistException.class, () -> auctionService.addItemToAuction(auctionId, addItemToAuctionDto));
+                ItemAlreadyExistException.class, () -> auctionService.addItemToAuction(auctionId, addItemToAuctionDto));
     }
 
     @Test
@@ -93,8 +94,9 @@ public class AuctionServiceTest {
         AppUserDto appUserDto = generateAppUserDto();
         Seller seller = generateSeller();
         AuctionDto auctionDto = AuctionUtil.generateAuctionDto();
-        FinalPriceDto finalPrice =
-            FinalPriceDto.builder().finalPrice(auctionDto.getPriceDto().getFinalPrice()).build();
+        FinalPriceDto finalPrice = FinalPriceDto.builder()
+                .finalPrice(auctionDto.getPriceDto().getFinalPrice())
+                .build();
 
         Mockito.doReturn(seller).when(sellerRepository).findSellerByAuctionId(anyLong());
         Mockito.doReturn(appUserDto).when(userClient).findUserByEmail(any(String.class));
@@ -105,30 +107,29 @@ public class AuctionServiceTest {
 
         // then
         verify(userClient, Mockito.times(1))
-            .updateUserBalance(eq(appUserDto.getId()), eq(UserType.SELLER.name()), eq(finalPrice));
+                .updateUserBalance(eq(appUserDto.getId()), eq(UserType.SELLER.name()), eq(finalPrice));
     }
 
     private Seller generateSeller() {
         return Seller.builder()
-            .sellerId(89789L)
-            .auctionId(123L)
-            .createdAt(Date.valueOf(LocalDate.now(Clock.systemUTC()).minusMonths(12)))
-            .email("test@user.com")
-            .build();
+                .sellerId(89789L)
+                .auctionId(123L)
+                .createdAt(Date.valueOf(LocalDate.now(Clock.systemUTC()).minusMonths(12)))
+                .email("test@user.com")
+                .build();
     }
 
     private AppUserDto generateAppUserDto() {
         return AppUserDto.builder()
-            .id(2L)
-            .balance(1000d)
-            .role("USER")
-            .email("test@user.com")
-            .firstname("test")
-            .lastname("test")
-            .password("test")
-            .createdAt(Date.valueOf(LocalDate.now(Clock.systemUTC()).minusMonths(36)))
-            .phoneNumber(null)
-            .build();
+                .id(2L)
+                .balance(1000d)
+                .role("USER")
+                .email("test@user.com")
+                .firstname("test")
+                .lastname("test")
+                .password("test")
+                .createdAt(Date.valueOf(LocalDate.now(Clock.systemUTC()).minusMonths(36)))
+                .phoneNumber(null)
+                .build();
     }
-
 }

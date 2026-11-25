@@ -1,5 +1,6 @@
 package org.example.apigateway.service;
 
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +18,6 @@ import org.example.apigateway.exceptions.UserEmailIsNullException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @Slf4j
 @AllArgsConstructor
@@ -30,18 +29,19 @@ public class AuctionService {
 
     public AuctionDto createAuction(User user) throws CreateAuctionException, UserEmailIsNullException {
         try {
-            CreateSellerDto createSellerRequest = CreateSellerDto.builder().email(user.getUsername()).build();
+            CreateSellerDto createSellerRequest =
+                    CreateSellerDto.builder().email(user.getUsername()).build();
             SellerDto seller = sellerClient.createNewSeller(createSellerRequest);
             return auctionsClient.createAuction(seller.getSellerId());
-        } catch (Exception exception) {
+        } catch (RuntimeException exception) {
             throw new CreateAuctionException("Auction creation fails, please try again later");
         }
     }
 
     public void addItemToAuction(User user, Long auctionId, AddItemDto addItemDto) {
         ItemDto item = itemClient.findItem(addItemDto.getItemId());
-        auctionsClient.addItemToAuction(auctionId,
-                AddItemToAuctionDto.of(user.getUsername(), item.getId(), item.getPrice()));
+        auctionsClient.addItemToAuction(
+                auctionId, AddItemToAuctionDto.of(user.getUsername(), item.getId(), item.getPrice()));
     }
 
     public List<AuctionDto> findAllAuction() {

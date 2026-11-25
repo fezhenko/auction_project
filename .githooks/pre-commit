@@ -1,0 +1,50 @@
+#!/bin/sh
+# Formats the staged Java files with Spotless before a commit.
+#
+# Enable once per clone:  git config core.hooksPath .githooks
+#
+# If formatting changes a staged file, the commit stops so you can review the
+# result and `git add` it. The hook never stages anything itself, so partly
+# staged files stay as you left them. It is a convenience: `spotless:check` in
+# the Maven build and in CI is the real gate.
+set -euf
+
+root=$(git rev-parse --show-toplevel)
+cd "$root"
+
+IFS='
+'
+staged=""
+for f in $(git -c core.quotePath=false diff --cached --name-only --diff-filter=ACMR -- '*.java'); do
+    [ -f "$f" ] && staged="${staged}${f}
+"
+done
+[ -n "$staged" ] || exit 0
+
+snapshot() {
+    for f in $staged; do
+        printf '%s %s\n' "$(git hash-object -- "$f")" "$f"
+    done
+}
+
+patterns=""
+for f in $staged; do
+    patterns="${patterns:+$patterns,}.*\\Q/$f\\E"
+done
+
+before=$(snapshot)
+if ! ./mvnw -q -B spotless:apply -DspotlessFiles="$patterns"; then
+    echo "pre-commit: spotless:apply failed, see the output above." >&2
+    exit 1
+fi
+after=$(snapshot)
+
+[ "$before" = "$after" ] && exit 0
+
+tmp=$(mktemp)
+printf '%s\n' "$before" > "$tmp"
+echo "pre-commit: Spotless reformatted these staged files:" >&2
+printf '%s\n' "$after" | grep -vxF -f "$tmp" | cut -d' ' -f2- | sed 's/^/  /' >&2
+rm -f "$tmp"
+echo "Review the changes, stage them ('git add -p' for partly staged files), and commit again." >&2
+exit 1

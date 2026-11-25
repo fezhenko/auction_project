@@ -1,0 +1,56 @@
+[
+  {
+    "id": 101,
+    "auctionDate": null,
+    "status": "PLANNED",
+    "item": {
+      "id": null,
+      "seller": 7
+    },
+    "prices": {
+      "startPrice": 0.0,
+      "minimalBid": 0.0,
+      "currentPrice": 0.0,
+      "finalPrice": null,
+      "buyer": null
+    },
+    "isPayed": false,
+    "createdAt": "2026-11-20T08:15:30.000+00:00"
+  },
+  {
+    "id": 102,
+    "auctionDate": "2026-11-24T12:00:00.000+00:00",
+    "status": "IN_PROGRESS",
+    "item": {
+      "id": 31,
+      "seller": 7
+    },
+    "prices": {
+      "startPrice": 150.0,
+      "minimalBid": 10.0,
+      "currentPrice": 190.0,
+      "finalPrice": null,
+      "buyer": 12
+    },
+    "isPayed": false,
+    "createdAt": "2026-11-21T09:00:00.000+00:00"
+  },
+  {
+    "id": 103,
+    "auctionDate": "2026-11-22T18:00:00.000+00:00",
+    "status": "FINISHED",
+    "item": {
+      "id": 42,
+      "seller": 9
+    },
+    "prices": {
+      "startPrice": 500.0,
+      "minimalBid": 25.0,
+      "currentPrice": 625.0,
+      "finalPrice": 625.0,
+      "buyer": 12
+    },
+    "isPayed": false,
+    "createdAt": "2026-11-18T14:45:00.000+00:00"
+  }
+]

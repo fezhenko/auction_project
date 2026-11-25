@@ -1,10 +1,10 @@
 package org.example.usersservice.dto.currency;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
-
-import javax.validation.constraints.NotNull;
 
 @Jacksonized
 @Builder
@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 public class FullCurrencyInfoDto {
     @NotNull
     Long id;
+
     @NotNull
     CurrencyDto currency;
 }

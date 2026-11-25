@@ -10,11 +10,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @FeignClient(name = "items-client", url = "${services.users-service.url}/api/v1/items")
 public interface ItemClient {
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     void createItem(CreateItemAdjustedDto createItemAdjustedDto);
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{itemId}", consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{itemId}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     ItemDto findItem(@PathVariable("itemId") Long itemId);
 }

@@ -1,5 +1,8 @@
 package org.example.usersservice.unit.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.example.usersservice.controller.UsersController;
@@ -22,10 +25,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 @ExtendWith(SpringExtension.class)
 @WebMvcTest({UsersController.class, UsersConverter.class})
 @Slf4j
@@ -45,19 +44,11 @@ public class UsersControllerTest {
     @Test
     @DisplayName("Successfully find users")
     public void findUsersTest() {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/users")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers
-                        .status()
-                        .isOk());
-        BDDMockito.then(usersService)
-                .should()
-                .findUsers();
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users").accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        BDDMockito.then(usersService).should().findUsers();
         final List<AppUser> users = new ArrayList<>();
-        BDDMockito.then(usersConverter)
-                .should()
-                .toDto(users);
+        BDDMockito.then(usersConverter).should().toDto(users);
     }
 
     @SneakyThrows
@@ -66,15 +57,10 @@ public class UsersControllerTest {
     public void testUserCanBeFoundByValidUserId() {
         final Long userId = 123123L;
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/users/{userId}", userId)
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/{userId}", userId)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers
-                        .status()
-                        .isOk());
-        BDDMockito.then(usersService)
-                .should()
-                .getUserById(userId);
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        BDDMockito.then(usersService).should().getUserById(userId);
     }
 
     @Test
@@ -85,17 +71,15 @@ public class UsersControllerTest {
                 .password("myPassword1")
                 .role("ADMIN")
                 .build();
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/users")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(createUserWithValidData))
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers
-                        .status()
-                        .isCreated());
+                .andExpect(MockMvcResultMatchers.status().isCreated());
         BDDMockito.then(usersService)
                 .should()
-                .createUser(createUserWithValidData.getEmail(),
+                .createUser(
+                        createUserWithValidData.getEmail(),
                         createUserWithValidData.getPassword(),
                         createUserWithValidData.getRole());
     }
@@ -105,16 +89,11 @@ public class UsersControllerTest {
     @DisplayName("verify that user is deleted if valid user Id is provided")
     public void testUserDeletingWithValidUserId() {
         final Long userId = 123L;
-        mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/api/v1/users/{userId}", userId)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/users/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers
-                        .status()
-                        .isAccepted());
-        BDDMockito.then(usersService)
-                .should()
-                .deleteUserById(userId);
+                .andExpect(MockMvcResultMatchers.status().isAccepted());
+        BDDMockito.then(usersService).should().deleteUserById(userId);
     }
 
     @Test
@@ -128,14 +107,11 @@ public class UsersControllerTest {
                 .lastname("updatedLastName")
                 .phoneNumber("12312312312")
                 .build();
-        mockMvc.perform(MockMvcRequestBuilders
-                        .put("/api/v1/users/{userId}", userId)
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(MAPPER.writeValueAsString(fieldsToUpdate))
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers
-                        .status()
-                        .isAccepted());
+                .andExpect(MockMvcResultMatchers.status().isAccepted());
         BDDMockito.then(usersService)
                 .should()
                 .updateFieldsByUserId(
@@ -151,17 +127,10 @@ public class UsersControllerTest {
     @SneakyThrows
     public void testUserPaymentsCanBeFoundByUserId() {
         final Long userId = 32132L;
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/users/{userId}/payments", userId)
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/{userId}/payments", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers
-                        .status()
-                        .isOk());
-        BDDMockito.then(usersService)
-                .should()
-                .findPaymentsByUserId(userId);
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        BDDMockito.then(usersService).should().findPaymentsByUserId(userId);
     }
-
-
 }

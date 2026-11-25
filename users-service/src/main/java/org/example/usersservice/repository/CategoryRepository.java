@@ -1,12 +1,12 @@
 package org.example.usersservice.repository;
 
+import java.util.List;
+
 import org.example.usersservice.model.Category;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 public interface CategoryRepository extends Repository<Category, Long> {
     @Query("select * from categories")

@@ -1,8 +1,10 @@
 package org.example.usersservice.converter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.example.usersservice.dto.category.CategoryDto;
 import org.example.usersservice.dto.currency.CurrencyDto;
 import org.example.usersservice.dto.currency.FullCurrencyInfoDto;
@@ -11,9 +13,6 @@ import org.example.usersservice.model.Item;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Mapper
 public interface ItemConverter {
@@ -27,20 +26,14 @@ public interface ItemConverter {
                 .description(item.getDescription())
                 .itemState(item.getItemState())
                 .price(item.getPrice())
-                .currencyDto(
-                        FullCurrencyInfoDto.builder()
-                                .id(item.getCurrency())
-                                .currency(
-                                        objectMapper.readValue(item.getCurrencyDesc().toString(), CurrencyDto.class)
-                                )
-                                .build()
-                )
-                .categoryDto(
-                        CategoryDto.builder()
-                                .id(item.getItemCategory())
-                                .categoryName(item.getCategoryName())
-                                .build()
-                )
+                .currencyDto(FullCurrencyInfoDto.builder()
+                        .id(item.getCurrency())
+                        .currency(objectMapper.readValue(item.getCurrencyDesc().toString(), CurrencyDto.class))
+                        .build())
+                .categoryDto(CategoryDto.builder()
+                        .id(item.getItemCategory())
+                        .categoryName(item.getCategoryName())
+                        .build())
                 .createdAt(item.getCreatedAt())
                 .build();
     }
@@ -56,20 +49,15 @@ public interface ItemConverter {
                     .description(item.getDescription())
                     .itemState(item.getItemState())
                     .price(item.getPrice())
-                    .currencyDto(
-                            FullCurrencyInfoDto.builder()
-                                    .id(item.getCurrency())
-                                    .currency(
-                                            objectMapper.readValue(item.getCurrencyDesc().toString(), CurrencyDto.class)
-                                    )
-                                    .build()
-                    )
-                    .categoryDto(
-                            CategoryDto.builder()
-                                    .id(item.getItemCategory())
-                                    .categoryName(item.getCategoryName())
-                                    .build()
-                    )
+                    .currencyDto(FullCurrencyInfoDto.builder()
+                            .id(item.getCurrency())
+                            .currency(objectMapper.readValue(
+                                    item.getCurrencyDesc().toString(), CurrencyDto.class))
+                            .build())
+                    .categoryDto(CategoryDto.builder()
+                            .id(item.getItemCategory())
+                            .categoryName(item.getCategoryName())
+                            .build())
                     .createdAt(item.getCreatedAt())
                     .build();
             itemDtoList.add(convertedItem);

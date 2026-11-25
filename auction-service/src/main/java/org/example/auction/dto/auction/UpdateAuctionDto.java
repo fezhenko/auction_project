@@ -1,10 +1,10 @@
 package org.example.auction.dto.auction;
 
+import java.util.Date;
+
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
-
-import java.util.Date;
 
 @Value
 @Builder

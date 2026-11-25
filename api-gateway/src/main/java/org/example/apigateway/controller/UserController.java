@@ -1,30 +1,31 @@
 package org.example.apigateway.controller;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.apigateway.client.dto.AppUserDto;
-import org.example.apigateway.config.jwt.Jwt;
 import org.example.apigateway.client.dto.AuthResultDto;
 import org.example.apigateway.client.dto.CredentialsDto;
 import org.example.apigateway.client.dto.VerificationResultDto;
+import org.example.apigateway.config.jwt.Jwt;
 import org.example.apigateway.converter.UserConverter;
 import org.example.apigateway.dto.CreateUserDto;
 import org.example.apigateway.dto.UserDto;
 import org.example.apigateway.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import javax.validation.Valid;
-import java.util.List;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("api/v1")
 @RestController
@@ -44,9 +45,11 @@ public class UserController {
         VerificationResultDto isVerified = userService.verifyUser(credentials);
         if (isVerified.isValid()) {
             final String token = jwt.generateToken(credentials.getEmail());
-            return ResponseEntity.accepted().body(AuthResultDto.builder().token(token).build());
+            return ResponseEntity.accepted()
+                    .body(AuthResultDto.builder().token(token).build());
         }
-        return ResponseEntity.badRequest().body(AuthResultDto.builder().token("Invalid credentials").build());
+        return ResponseEntity.badRequest()
+                .body(AuthResultDto.builder().token("Invalid credentials").build());
     }
 
     @Tag(name = "Users")
@@ -59,9 +62,7 @@ public class UserController {
     @Tag(name = "Users")
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    private void createUser(
-            @RequestBody @Valid CreateUserDto createUserDto
-    ) {
+    private void createUser(@RequestBody @Valid CreateUserDto createUserDto) {
         userService.createUser(createUserDto);
     }
 }

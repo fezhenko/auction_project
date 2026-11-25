@@ -1,5 +1,7 @@
 package org.example.usersservice.service;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.usersservice.dto.users.UpdateBalanceResultDto;
@@ -12,8 +14,6 @@ import org.example.usersservice.model.Payment;
 import org.example.usersservice.repository.UsersRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -34,9 +34,7 @@ public class UsersService {
         usersRepository.createUser(email, password, role);
     }
 
-    public void updateFieldsByUserId(
-            Long userId, String email, String firstname, String lastname, String phoneNumber
-    ) {
+    public void updateFieldsByUserId(Long userId, String email, String firstname, String lastname, String phoneNumber) {
         usersRepository.updateFieldsByUserId(userId, email, firstname, lastname, phoneNumber);
     }
 
@@ -65,7 +63,10 @@ public class UsersService {
         if (user == null) {
             return UserVerificationDto.builder().build();
         }
-        return UserVerificationDto.builder().email(user.getEmail()).password(user.getPassword()).build();
+        return UserVerificationDto.builder()
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .build();
     }
 
     public AppUser findUserByEmail(String email) {
@@ -77,7 +78,9 @@ public class UsersService {
         if (user == null) {
             return UserBalanceDto.builder().build();
         }
-        return UserBalanceDto.builder().balance(usersRepository.getCurrentUserBalance(userId)).build();
+        return UserBalanceDto.builder()
+                .balance(usersRepository.getCurrentUserBalance(userId))
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -97,10 +100,15 @@ public class UsersService {
             case "buyer": {
                 if (price > userBalance) {
                     log.error("user id:'%d' balance is less than price".formatted(id));
-                    throw new UserBalanceIsLessThanPriceException("user id:'%d' balance is less than price".formatted(id));
+                    throw new UserBalanceIsLessThanPriceException(
+                            "user id:'%d' balance is less than price".formatted(id));
                 }
                 newBalance = userBalance - price;
                 usersRepository.updateUserBalanceAfterAuctionFinish(id, newBalance);
+                break;
+            }
+            default: {
+                log.warn("unknown user type '{}', balance of user id:'{}' is not changed", userType, id);
                 break;
             }
         }

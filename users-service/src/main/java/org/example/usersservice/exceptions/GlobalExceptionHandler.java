@@ -10,18 +10,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handleValidationException(
-            final MethodArgumentNotValidException methodArgumentNotValidException
-    ) {
+            final MethodArgumentNotValidException methodArgumentNotValidException) {
         log.error("%s".formatted(methodArgumentNotValidException.getFieldError()));
-        return ResponseEntity.badRequest().body(
-                ExceptionDto.builder()
+        return ResponseEntity.badRequest()
+                .body(ExceptionDto.builder()
                         .error("%s".formatted(methodArgumentNotValidException.getLocalizedMessage()))
                         .build());
     }
@@ -29,8 +27,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handleClassCastException(final ClassCastException classCastException) {
         log.error(classCastException.getLocalizedMessage());
-        return ResponseEntity.badRequest().body(
-                ExceptionDto.builder()
+        return ResponseEntity.badRequest()
+                .body(ExceptionDto.builder()
                         .error("%s".formatted(classCastException.getLocalizedMessage()))
                         .build());
     }
@@ -38,17 +36,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> handlePSQLException(final PSQLException psqlException) {
         log.error(psqlException.getLocalizedMessage());
-        return ResponseEntity.badRequest().body(
-                ExceptionDto.builder()
+        return ResponseEntity.badRequest()
+                .body(ExceptionDto.builder()
                         .error("%s".formatted(psqlException.getLocalizedMessage()))
                         .build());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Object> handleUserBalanceLessThanPriceException(final UserBalanceIsLessThanPriceException ex) {
-        return ResponseEntity.badRequest().body(
-                ExceptionDto.builder()
+    public ResponseEntity<Object> handleUserBalanceLessThanPriceException(
+            final UserBalanceIsLessThanPriceException ex) {
+        return ResponseEntity.badRequest()
+                .body(ExceptionDto.builder()
                         .error("%s".formatted(ex.getMessage()))
                         .build());
     }
@@ -56,8 +55,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleUserIdIsNullException(final UserIdIsNullException ex) {
-        return ResponseEntity.badRequest().body(
-                ExceptionDto.builder()
+        return ResponseEntity.badRequest()
+                .body(ExceptionDto.builder()
                         .error("%s".formatted(ex.getMessage()))
                         .build());
     }
@@ -65,8 +64,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleItemIsNullException(final ItemIsNullException ex) {
-        return ResponseEntity.badRequest().body(
-                ExceptionDto.builder()
+        return ResponseEntity.badRequest()
+                .body(ExceptionDto.builder()
                         .error("%s".formatted(ex.getMessage()))
                         .build());
     }

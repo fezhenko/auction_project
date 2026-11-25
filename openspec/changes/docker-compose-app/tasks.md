@@ -2,7 +2,7 @@
 
 ## 1. Service images (one commit)
 
-- [ ] 1.1 Add `.dockerignore` and a multi-stage `Dockerfile` for each service, following design decision 1. Verify: `docker build -f <module>/Dockerfile .` succeeds for all three, and `docker run --rm --entrypoint id <image> -u` prints a non-zero id.
+- [ ] 1.1 Add `.dockerignore` and a multi-stage `Dockerfile` for each service, following design decision 1. Verify: `docker build -f <module>/Dockerfile .` succeeds for all three, and `docker run --rm --entrypoint id <image> -u` prints a non-zero id. Note from baseline-build: the build stage must install `unzip` before `./mvnw`. Without it, the script-only wrapper downloads the `.tar.gz`, which fails the SHA-256 pinned for the zip (`eclipse-temurin` images ship without `unzip`).
 - [ ] 1.2 Verify that `docker history <image>` and `docker run --rm --entrypoint env <image>` show no secret values (no `JWT_SECRET` or `EXCHANGE_API_KEY` values baked in).
 - [ ] 1.3 Verify `./mvnw clean verify` is green, then commit.
 

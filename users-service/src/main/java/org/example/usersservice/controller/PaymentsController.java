@@ -1,5 +1,9 @@
 package org.example.usersservice.controller;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -13,17 +17,14 @@ import org.example.usersservice.model.Payment;
 import org.example.usersservice.service.PaymentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -70,14 +71,8 @@ public class PaymentsController {
     @PatchMapping("/{paymentId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updatePaymentInformationById(
-            @PathVariable Long paymentId,
-            @Valid @RequestBody UpdatePaymentFieldsDto updatePaymentFieldsDto
-    ) {
+            @PathVariable Long paymentId, @Valid @RequestBody UpdatePaymentFieldsDto updatePaymentFieldsDto) {
         paymentService.updatePaymentInformation(
-                paymentId,
-                updatePaymentFieldsDto.getCardNumber(),
-                updatePaymentFieldsDto.getExpirationDate()
-        );
+                paymentId, updatePaymentFieldsDto.getCardNumber(), updatePaymentFieldsDto.getExpirationDate());
     }
-
 }

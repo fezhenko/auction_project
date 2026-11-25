@@ -8,7 +8,6 @@ import lombok.extern.jackson.Jacksonized;
 import org.example.apigateway.dto.category.CategoryDto;
 import org.example.apigateway.dto.currency.FullCurrencyInfoDto;
 
-
 @Value
 @Jacksonized
 @Builder

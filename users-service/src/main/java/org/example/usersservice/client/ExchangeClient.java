@@ -1,6 +1,5 @@
 package org.example.usersservice.client;
 
-
 import org.example.usersservice.dto.exchange.ConvertedValuesDto;
 import org.example.usersservice.dto.exchange.CurrenciesResultDto;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -17,10 +16,8 @@ public interface ExchangeClient {
             @RequestHeader(name = "apikey") String apiKey,
             @RequestParam("to") String convertedTo,
             @RequestParam("from") String convertedFrom,
-            @RequestParam("amount") Double amount
-    );
+            @RequestParam("amount") Double amount);
 
     @RequestMapping(method = RequestMethod.GET, path = "/symbols")
     CurrenciesResultDto getCurrencies(@RequestHeader(name = "apikey") String apiKey);
-
 }

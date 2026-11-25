@@ -1,9 +1,10 @@
 package org.example.usersservice.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 public class ItemStatusValidator implements ConstraintValidator<ValidateItemStatuses, String> {
     @Override

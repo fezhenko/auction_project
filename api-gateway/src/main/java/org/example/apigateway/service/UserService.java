@@ -1,5 +1,7 @@
 package org.example.apigateway.service;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import org.example.apigateway.client.UserClient;
 import org.example.apigateway.client.dto.AppUserDto;
@@ -10,8 +12,6 @@ import org.example.apigateway.dto.CreateUserDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @AllArgsConstructor
 public class UserService {
@@ -20,8 +20,7 @@ public class UserService {
 
     public VerificationResultDto verifyUser(CredentialsDto credentials) {
         UserVerificationDto userVerification = userClient.verifyUserByCredentials(credentials);
-        if (passwordEncoder.matches(credentials.getPassword(),
-                userVerification.getPassword())) {
+        if (passwordEncoder.matches(credentials.getPassword(), userVerification.getPassword())) {
             return VerificationResultDto.builder().isValid(true).build();
         }
         return VerificationResultDto.builder().isValid(false).build();
@@ -31,7 +30,8 @@ public class UserService {
         CreateUserDto userWithEncodedPassword = CreateUserDto.builder()
                 .email(createUserDto.getEmail())
                 .password(passwordEncoder.encode(createUserDto.getPassword()))
-                .role(createUserDto.getRole()).build();
+                .role(createUserDto.getRole())
+                .build();
         userClient.createUser(userWithEncodedPassword);
     }
 

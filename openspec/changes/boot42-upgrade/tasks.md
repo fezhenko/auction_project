@@ -13,7 +13,7 @@
 
 ## 3. Boot 4.2.0 and Spring Cloud 2026.0.0 (one commit)
 
-- [ ] 3.1 Bump to Boot 4.2.0, Spring Cloud 2026.0.0 and springdoc 3.2.x. Apply the 4.1 property renames and the 4.2 release-note changes. Switch Testcontainers coordinates to the 2.x artifact names in dependency management. Verify: `./mvnw dependency:tree` shows `spring-boot` 4.2.0 and `spring-cloud-openfeign-core` 5.1.0.
+- [ ] 3.1 Bump to Boot 4.2.0, Spring Cloud 2026.0.0 and springdoc 3.2.x. Apply the 4.1 property renames and the 4.2 release-note changes. Switch Testcontainers coordinates to the 2.x artifact names in dependency management. Verify: `./mvnw dependency:tree` shows `spring-boot` 4.2.0 and `spring-cloud-openfeign-core` 5.1.0. Note from baseline-build: delete the root Testcontainers entries and the `testcontainers.version` property instead of renaming them. Explicit entries would override the Testcontainers 2.x that Boot manages. Also confirm that Spring Cloud 2026.0 still manages `spring-cloud-contract-wiremock`, which the gateway tests use. If it does not, switch to `org.wiremock.integrations:wiremock-spring-boot` (`@EnableWireMock`).
 - [ ] 3.2 Verify `./mvnw clean verify` is green, then commit. If it is blocked by a 4.2.0 regression, apply the 4.1.3 / 2025.1.5 fallback and note it for the PR description.
 
 ## 4. JWT signing key (one commit)

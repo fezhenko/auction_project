@@ -1,6 +1,5 @@
 package org.example.apigateway.client;
 
-
 import java.util.List;
 
 import org.example.apigateway.client.dto.BuyerDto;
@@ -18,16 +17,24 @@ public interface AuctionsClient {
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     List<AuctionDto> getAllAuctions();
 
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE,
-        consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     AuctionDto createAuction(Long sellerId);
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{auctionId}/buyer",
-        consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{auctionId}/buyer",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     BuyerDto getBuyerByAuctionId(@PathVariable("auctionId") Long auctionId);
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{auctionId}/seller",
-        consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/{auctionId}/seller",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     SellerDto getSellerByAuctionId(@PathVariable("auctionId") Long auctionId);
 
     @RequestMapping(method = RequestMethod.PATCH, value = "/{auctionId}/pay")

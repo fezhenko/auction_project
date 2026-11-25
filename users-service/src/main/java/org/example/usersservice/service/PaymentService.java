@@ -1,12 +1,12 @@
 package org.example.usersservice.service;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import org.example.usersservice.model.Payment;
 import org.example.usersservice.repository.PaymentsRepository;
 import org.example.usersservice.repository.UsersRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -32,5 +32,4 @@ public class PaymentService {
     public void updatePaymentInformation(Long paymentId, String cardNumber, String expirationDate) {
         paymentsRepository.updatePaymentInformationById(paymentId, cardNumber, expirationDate);
     }
-
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
@@ -14,8 +15,10 @@ import lombok.extern.jackson.Jacksonized;
 public class BuyerDto {
     @NotNull
     Long id;
+
     @Email
     String email;
+
     Long bidId;
     Date createdAt;
 }
