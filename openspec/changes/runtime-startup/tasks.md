@@ -2,9 +2,9 @@
 
 ## 1. Flyway at startup (one commit)
 
-- [ ] 1.1 Add `spring-boot-starter-flyway` and `flyway-database-postgresql` to auction-service and users-service. Delete both `flyway.conf` files and `script/migration.sh`. Verify: against an empty compose database, each service starts and `flyway_schema_history` lists every migration. users-service has the two seeded accounts.
-- [ ] 1.2 Update the README "Running locally" steps to drop the manual migration. Verify: following the README on an empty database starts both services.
-- [ ] 1.3 Verify `./mvnw clean verify` is green, then commit.
+- [x] 1.1 Add `spring-boot-starter-flyway` and `flyway-database-postgresql` to auction-service and users-service. Delete both `flyway.conf` files and `script/migration.sh`. Verify: against an empty compose database, each service starts and `flyway_schema_history` lists every migration. users-service has the two seeded accounts.
+- [x] 1.2 Update the README "Running locally" steps to drop the manual migration. Verify: following the README on an empty database starts both services.
+- [x] 1.3 Verify `./mvnw clean verify` is green, then commit.
 
 ## 2. Runnable layered jars (one commit)
 
