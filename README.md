@@ -20,7 +20,7 @@ flowchart LR
 | Service | Port | Responsibility |
 |---|---|---|
 | `api-gateway` | 8080 | Public REST API under `/api/v1`. Issues and validates JWTs, hashes passwords with BCrypt, keeps sessions stateless and enforces ADMIN / USER roles. Forwards calls to the other services through OpenFeign clients. |
-| `auction-service` | 8081 | Auctions, bids, buyers and sellers. A scheduled job starts `PLANNED` auctions once their start date has passed. The finish job tries to finish `IN_PROGRESS` auctions six hours after their start date and mark the item `SOLD`, but the failing item call rolls the finish back. A third job requests balance settlement, which currently changes no balances (see [Known limitations](#known-limitations)). |
+| `auction-service` | 8081 | Auctions, bids, buyers and sellers. A scheduled job starts `PLANNED` auctions once their start date has passed. The finish job tries to finish `IN_PROGRESS` auctions once `auction.duration` (6 hours by default) has passed since their start date and mark the item `SOLD`, but the failing item call rolls the finish back. A third job requests balance settlement, which currently changes no balances (see [Known limitations](#known-limitations)). |
 | `users-service` | 8082 | Users and balances, payments, items and categories, and currencies with conversion through the apilayer Exchange Rates Data API. |
 
 Each data service owns its own PostgreSQL database. Their schemas are versioned with Flyway, each service applies its pending migrations at startup, and database triggers keep current prices, buyers and sellers in sync with new bids and auctions.
@@ -55,11 +55,16 @@ Requirements: JDK 21, Docker, and `curl` or `wget` plus `unzip` for the Maven Wr
    | `JWT_SECRET` | api-gateway | Secret that signs and validates JWTs with HMAC-SHA256. Its UTF-8 bytes are the key as they are, so it must be at least 32 bytes long; without it, or with a shorter one, the gateway doesn't start. Earlier versions base64-decoded it, so tokens they issued are no longer valid. |
    | `EXCHANGE_API_KEY` | users-service | API key for the [apilayer Exchange Rates Data API](https://apilayer.com/marketplace/exchangerates_data-api). Only the currency convert and symbols endpoints call it, so any non-empty value lets the service start. |
 
-3. Build the project, then run `UsersApplication`, `AuctionApplication` and `ApiGatewayApplication`, for example from your IDE:
+3. Build the project, then start each service in its own terminal:
 
    ```bash
    ./mvnw clean install -DskipTests
+   java -Duser.timezone=UTC -jar users-service/target/users-service-1.0-SNAPSHOT.jar
+   java -Duser.timezone=UTC -jar auction-service/target/auction-service-1.0-SNAPSHOT.jar
+   java -Duser.timezone=UTC -jar api-gateway/target/api-gateway-1.0-SNAPSHOT.jar
    ```
+
+   If you run `UsersApplication`, `AuctionApplication` and `ApiGatewayApplication` from your IDE instead, add the VM option `-Duser.timezone=UTC`. The `TIMESTAMP` columns store UTC wall-clock times, and another JVM time zone shifts auction start times.
 
    On startup, users-service and auction-service apply their pending Flyway migrations, so an empty database needs no manual step. A service whose migration fails, or whose applied migration no longer matches its file, doesn't start. The users-service migrations seed an ADMIN account (`test@admin.com`) and a USER account (`test@user.com`) for local development.
 

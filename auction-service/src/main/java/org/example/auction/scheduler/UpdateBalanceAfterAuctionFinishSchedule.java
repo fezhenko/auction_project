@@ -15,7 +15,7 @@ public class UpdateBalanceAfterAuctionFinishSchedule {
     private final AuctionService auctionService;
 
     @Async
-    @Scheduled(zone = "${custom.scheduler.zone}", cron = "${custom.scheduler.update-balance-cron}")
+    @Scheduled(zone = "${auction.scheduler.zone}", cron = "${custom.scheduler.update-balance-cron}")
     void updateUserBalance() {
 
         auctionService.updateUserBalance();

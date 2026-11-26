@@ -33,11 +33,17 @@ management:
 server:
   port: 8081
 
+auction:
+  # How long an auction runs after its start time before it can finish (ISO-8601). Defaults to PT6H when unset.
+  # duration: PT6H
+  scheduler:
+    start-cron: "3 * * * * 0-6"
+    finish-cron: "4 * * * * 0-6"
+    zone: UTC
+
 custom:
   scheduler:
-    zone: "ECT"
-    start-auction-cron: "3 * * * * 0-6"
-    finish-auction-cron: "4 * * * * 0-6"
+    # Only the balance job still reads custom.scheduler; settlement-consumer deletes the job and this key.
     update-balance-cron: "*/60 * * * * 0-7"
 
 services:
