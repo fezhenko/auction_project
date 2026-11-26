@@ -8,8 +8,8 @@
 
 ## 2. Runnable layered jars (one commit)
 
-- [ ] 2.1 Add `spring-boot-maven-plugin` (`repackage`) to the three service modules. Verify: `java -Djarmode=tools -jar <module>/target/<module>-*.jar list-layers` prints the layers for each module.
-- [ ] 2.2 Verify `./mvnw clean verify` is green, then commit.
+- [x] 2.1 Add `spring-boot-maven-plugin` (`repackage`) to the three service modules. Verify: `java -Djarmode=tools -jar <module>/target/<module>-*.jar list-layers` prints the layers for each module.
+- [x] 2.2 Verify `./mvnw clean verify` is green, then commit.
 
 ## 3. Clock, duration and schedules (one commit)
 
