@@ -1,6 +1,7 @@
 package org.example.auction.repository;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 import org.example.auction.model.Auction;
@@ -50,6 +51,17 @@ public interface AuctionRepository extends CrudRepository<Auction, Long> {
     @Modifying
     @Query("update auctions set auction_state = :state where auction_id = :id")
     void updateAuctionStateBySchedule(@Param("state") AuctionStatus auctionStatus, @Param("id") Long id);
+
+    /**
+     * Moves every PLANNED auction whose start time is at or before {@code now} to IN_PROGRESS in one statement.
+     *
+     * @param now the current time from the application clock
+     * @return the number of auctions started
+     */
+    @Modifying
+    @Query("update auctions set auction_state = 'IN_PROGRESS', last_updated = now() "
+            + "where auction_state = 'PLANNED' and auction_date <= :now")
+    int startDueAuctions(@Param("now") Instant now);
 
     @Modifying
     @Query("update auctions set current_price = :amount, buyer_id = :buyerId where auction_id = :auctionId")

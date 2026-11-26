@@ -18,12 +18,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * auction-service exposes only the health and info actuator endpoints, and health reports only the overall status. The
  * context has Boot's auto-configuration and the service's application.yaml, but none of the service's own beans, so it
- * needs no PostgreSQL: the database health check and the JDBC repositories are off. testcontainers-postgres adds the
- * tests against a real database.
+ * needs no PostgreSQL: the database health check, the JDBC repositories and Flyway are off. testcontainers-postgres
+ * adds the tests against a real database.
  */
 @SpringBootTest(
         classes = ActuatorExposureTest.AutoConfigurationOnly.class,
-        properties = {"management.health.db.enabled=false", "spring.data.jdbc.repositories.enabled=false"})
+        properties = {
+            "management.health.db.enabled=false",
+            "spring.data.jdbc.repositories.enabled=false",
+            "spring.flyway.enabled=false"
+        })
 @AutoConfigureMockMvc
 class ActuatorExposureTest {
 

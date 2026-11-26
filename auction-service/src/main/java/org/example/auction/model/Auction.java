@@ -1,5 +1,7 @@
 package org.example.auction.model;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -57,4 +59,16 @@ public class Auction {
 
     @Column("is_payed")
     Boolean isPayed;
+
+    /**
+     * Tells whether this auction has run long enough to finish.
+     *
+     * @param duration the configured auction duration
+     * @param now the current time
+     * @return true once {@code now} is at or after the start time plus {@code duration}; false without a start time
+     */
+    public boolean isDueToFinish(Duration duration, Instant now) {
+        return auctionDate != null
+                && !now.isBefore(Instant.ofEpochMilli(auctionDate.getTime()).plus(duration));
+    }
 }

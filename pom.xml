@@ -30,6 +30,7 @@
         <pmd.maven.plugin.version>3.28.0</pmd.maven.plugin.version>
         <pmd.version>7.29.0</pmd.version>
         <pmd.failurePriority>2</pmd.failurePriority>
+        <surefire.maven.plugin.version>3.5.4</surefire.maven.plugin.version>
         <spotless.maven.plugin.version>3.12.0</spotless.maven.plugin.version>
         <palantir-java-format.version>2.103.0</palantir-java-format.version>
         <enforcer.maven.plugin.version>3.1.0</enforcer.maven.plugin.version>
@@ -109,6 +110,33 @@
     </dependencyManagement>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Each service module declares this plugin to get a runnable, layered jar. Library modules leave it out. -->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                    <configuration>
+                        <!-- The plugin packs provided dependencies too; Lombok is needed only at compile time. -->
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>repackage</id>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
@@ -274,6 +302,15 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.maven.plugin.version}</version>
+                <configuration>
+                    <!-- TIMESTAMP columns hold UTC wall-clock values, so tests run in UTC like the services do. -->
+                    <argLine>-Duser.timezone=UTC</argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

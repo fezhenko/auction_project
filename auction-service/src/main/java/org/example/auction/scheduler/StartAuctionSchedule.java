@@ -13,7 +13,7 @@ public class StartAuctionSchedule {
 
     private final AuctionService auctionService;
 
-    @Scheduled(zone = "${custom.scheduler.zone}", cron = "${custom.scheduler.start-auction-cron}")
+    @Scheduled(zone = "${auction.scheduler.zone}", cron = "${auction.scheduler.start-cron}")
     protected void startAuction() {
 
         auctionService.startAuction();

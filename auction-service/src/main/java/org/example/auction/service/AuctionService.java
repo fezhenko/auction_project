@@ -1,9 +1,9 @@
 package org.example.auction.service;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Calendar;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +30,7 @@ import org.example.auction.model.Seller;
 import org.example.auction.repository.AuctionRepository;
 import org.example.auction.repository.BuyerRepository;
 import org.example.auction.repository.SellerRepository;
+import org.example.auction.scheduler.AuctionProperties;
 import org.example.auction.scheduler.AuctionStatus;
 import org.example.auction.scheduler.UserType;
 import org.example.auction.scheduler.client.ItemClient;
@@ -57,6 +58,8 @@ public class AuctionService {
     private final BuyerRepository buyerRepository;
     private final ItemClient itemClient;
     private final UserClient userClient;
+    private final Clock clock;
+    private final AuctionProperties auctionProperties;
 
     public List<Auction> findAllAuctions() {
         return (List<Auction>) auctionRepository.findAll();
@@ -109,12 +112,9 @@ public class AuctionService {
             throw new AuctionDoesNotExistException("auction with id:'%s' doesn't exist".formatted(id));
         }
 
-        LocalDateTime auctionDateToLocalDate =
-                auctionDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        int compareDateResult = auctionDateToLocalDate.compareTo(LocalDateTime.now());
         Timestamp newAuctionDate = new Timestamp(auctionDate.getTime());
 
-        if (compareDateResult <= 0) {
+        if (!Instant.ofEpochMilli(auctionDate.getTime()).isAfter(clock.instant())) {
             log.error("auction date can be updated with feature date only, now date:'%s'".formatted(newAuctionDate));
             throw new AuctionDateUpdatedByPastDateException(
                     "auction date can be updated with feature date only, now date:'%s'".formatted(newAuctionDate));
@@ -200,15 +200,12 @@ public class AuctionService {
 
     public void finishAuction() {
         List<Auction> auctionsList = (List<Auction>) auctionRepository.findAll();
-        long currentDate = System.currentTimeMillis();
+        Instant now = clock.instant();
+        Duration duration = auctionProperties.duration();
 
         auctionsList.stream()
-                .filter(auction -> auction.getAuctionDate() != null)
-                .filter(auction -> {
-                    long plannedTime = auction.getAuctionDate().getTime();
-                    return (currentDate - plannedTime) >= 21600000
-                            && auction.getAuctionState().equals(AuctionStatus.IN_PROGRESS.name());
-                })
+                .filter(auction -> auction.getAuctionState().equals(AuctionStatus.IN_PROGRESS.name())
+                        && auction.isDueToFinish(duration, now))
                 .forEach(auction -> {
                     log.info("auction with id:'%d' finished".formatted(auction.getAuctionId()));
                     auctionRepository.updateAuctionStateBySchedule(AuctionStatus.FINISHED, auction.getAuctionId());
@@ -221,28 +218,10 @@ public class AuctionService {
     }
 
     public void startAuction() {
-        List<Auction> auctionsList = (List<Auction>) auctionRepository.findAll();
-        long currentDate = System.currentTimeMillis();
-
-        auctionsList.stream()
-                .filter(auction -> auction.getAuctionDate() != null)
-                .forEach(auction -> {
-                    long plannedTime = auction.getAuctionDate().getTime();
-                    if ((plannedTime - currentDate) <= 0
-                            && auction.getAuctionState().equals(AuctionStatus.PLANNED.name())) {
-                        log.info("auction with id:'%d' starts now".formatted(auction.getAuctionId()));
-                        auctionRepository.updateAuctionStateBySchedule(
-                                AuctionStatus.IN_PROGRESS, auction.getAuctionId());
-                        auctionRepository.updateLastUpdatedTime(auction.getAuctionId());
-                    }
-                    if ((plannedTime - currentDate) > 0
-                            && auction.getAuctionState().equals(AuctionStatus.PLANNED.name())) {
-                        log.info("Auction '%d' will be started in '%d' minutes"
-                                .formatted(
-                                        auction.getAuctionId(),
-                                        convertMillisecondsToMinutes(plannedTime - currentDate)));
-                    }
-                });
+        int started = auctionRepository.startDueAuctions(clock.instant());
+        if (started > 0) {
+            log.info("'%d' planned auctions started".formatted(started));
+        }
     }
 
     public void updateUserBalance(List<Auction> auctionsPage) {
@@ -255,8 +234,7 @@ public class AuctionService {
             List<AuctionDto> todayAuctions = auctions.stream()
                     .filter(auction -> auction.getAuctionDate() != null)
                     .filter(auction -> auction.getPriceDto().getBuyer() != null)
-                    .filter(auction -> DateUtils.isSameDay(
-                            auction.getAuctionDate(), Calendar.getInstance().getTime()))
+                    .filter(auction -> DateUtils.isSameDay(auction.getAuctionDate(), Date.from(clock.instant())))
                     .filter(auction -> !auction.getIsPayed())
                     .toList();
             todayAuctions.forEach(auction -> {
@@ -310,9 +288,5 @@ public class AuctionService {
             pageNumber++;
             pageable = PageRequest.of(pageNumber, pageSize);
         } while (page.hasNext());
-    }
-
-    private int convertMillisecondsToMinutes(long milliseconds) {
-        return (int) (milliseconds / (1000 * 60) % 60);
     }
 }
