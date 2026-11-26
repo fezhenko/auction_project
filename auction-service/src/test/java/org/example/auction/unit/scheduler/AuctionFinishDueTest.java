@@ -1,11 +1,12 @@
 package org.example.auction.unit.scheduler;
 
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 
+import org.example.auction.model.Auction;
 import org.example.auction.scheduler.AuctionProperties;
-import org.example.auction.scheduler.AuctionTiming;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -15,7 +16,7 @@ import org.springframework.boot.context.properties.source.MapConfigurationProper
 import static org.assertj.core.api.Assertions.assertThat;
 
 /** An auction in progress becomes eligible to finish once its start time plus the auction duration is reached. */
-class AuctionTimingTest {
+class AuctionFinishDueTest {
 
     private static final Instant START = Instant.parse("2026-11-26T06:00:00Z");
 
@@ -29,7 +30,8 @@ class AuctionTimingTest {
     void defaultDurationIsDueSixHoursAfterTheStart(Duration elapsed, boolean due) {
         Duration duration = bind(Map.of()).duration();
 
-        assertThat(AuctionTiming.isDue(START, duration, START.plus(elapsed))).isEqualTo(due);
+        assertThat(startedAt(START).isDueToFinish(duration, START.plus(elapsed)))
+                .isEqualTo(due);
     }
 
     @ParameterizedTest(name = "{0} after the start: due = {1}")
@@ -38,7 +40,22 @@ class AuctionTimingTest {
         Duration duration = bind(Map.of("auction.duration", "PT1M")).duration();
 
         assertThat(duration).isEqualTo(Duration.ofMinutes(1));
-        assertThat(AuctionTiming.isDue(START, duration, START.plus(elapsed))).isEqualTo(due);
+        assertThat(startedAt(START).isDueToFinish(duration, START.plus(elapsed)))
+                .isEqualTo(due);
+    }
+
+    @Test
+    void auctionWithoutStartTimeIsNeverDue() {
+        Auction auction = Auction.builder().auctionId(1L).build();
+
+        assertThat(auction.isDueToFinish(Duration.ZERO, START)).isFalse();
+    }
+
+    private static Auction startedAt(Instant startTime) {
+        return Auction.builder()
+                .auctionId(1L)
+                .auctionDate(Timestamp.from(startTime))
+                .build();
     }
 
     private static AuctionProperties bind(Map<String, String> properties) {

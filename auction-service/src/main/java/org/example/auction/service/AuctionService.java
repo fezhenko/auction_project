@@ -32,7 +32,6 @@ import org.example.auction.repository.BuyerRepository;
 import org.example.auction.repository.SellerRepository;
 import org.example.auction.scheduler.AuctionProperties;
 import org.example.auction.scheduler.AuctionStatus;
-import org.example.auction.scheduler.AuctionTiming;
 import org.example.auction.scheduler.UserType;
 import org.example.auction.scheduler.client.ItemClient;
 import org.example.auction.scheduler.client.UserClient;
@@ -205,10 +204,8 @@ public class AuctionService {
         Duration duration = auctionProperties.duration();
 
         auctionsList.stream()
-                .filter(auction -> auction.getAuctionDate() != null)
                 .filter(auction -> auction.getAuctionState().equals(AuctionStatus.IN_PROGRESS.name())
-                        && AuctionTiming.isDue(
-                                Instant.ofEpochMilli(auction.getAuctionDate().getTime()), duration, now))
+                        && auction.isDueToFinish(duration, now))
                 .forEach(auction -> {
                     log.info("auction with id:'%d' finished".formatted(auction.getAuctionId()));
                     auctionRepository.updateAuctionStateBySchedule(AuctionStatus.FINISHED, auction.getAuctionId());

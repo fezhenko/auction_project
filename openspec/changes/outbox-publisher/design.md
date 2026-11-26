@@ -3,7 +3,7 @@
 ## Context
 
 - After `auction-lifecycle-fixes`, `auctions.buyer_id` points at the leading buyer, and bids update the auction with a conditional `UPDATE … WHERE auction_state = 'IN_PROGRESS'`.
-- `runtime-startup` provides `Clock`, `auction.duration` and `isDue`.
+- `runtime-startup` provides `Clock` and `auction.duration`.
 - The event contract is fixed by `auction-finished-contract`.
 - Spring's default task scheduler has one thread, which the start and finish jobs share today.
 
